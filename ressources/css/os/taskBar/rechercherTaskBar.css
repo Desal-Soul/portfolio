@@ -1,0 +1,19 @@
+#rechercherTaskBar {
+    margin: 0.1% 1%;
+    background-color: #424242;
+    border-top: rgba(255, 255, 255, 0.24) 0.1vh solid;
+}
+
+#rechercherTaskBar input{
+    background-color: rgba(0, 0, 0, 0);
+    color: white;
+}
+#rechercherTaskBar input::placeholder{
+    background-color: rgba(0, 0, 0, 0);
+    color: #bbbbbb;
+}
+
+#rechercherTaskBar:focus-within {
+    background-color: #252525;
+    border: rgba(255, 255, 255, 0.24) 0.1vh solid;
+}

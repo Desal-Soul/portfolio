@@ -1,0 +1,27 @@
+@import url("rechercherTaskBar.css");
+#taskbar {
+    position: fixed;
+    height: 4vh;
+    width: 100vw;
+    bottom : 0;
+    left: 0;
+    background-color: rgba(35, 35, 35, 0.9);
+    border-top: rgba(255, 255, 255, 0.25) 0.1vh solid;
+    backdrop-filter: blur(2rem);
+    -webkit-backdrop-filter: blur(2rem);
+    padding: 0.5vh 0;
+}
+
+#bMenuWindows {
+    margin-left: 1vw;
+}
+
+
+
+#liste_applications {
+
+}
+
+#date_heure {
+
+}

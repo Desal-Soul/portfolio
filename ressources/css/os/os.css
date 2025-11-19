@@ -1,0 +1,11 @@
+@import url('screen.css');
+@import url('taskBar/taskBar.css');
+@import url('outils/chercher.css');
+@import url('outils/barreRecherche.css');
+
+html {
+    background-image: url("../../images/wallpapers/wallpaper.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+}
