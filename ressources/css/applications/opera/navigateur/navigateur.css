@@ -1,0 +1,28 @@
+#navigateur {
+
+}
+#onglets {
+    height: 4vh;
+    width: calc(100vw - 7.5vh);
+    margin-left: 0.5vh;
+
+    padding: 0.25vh;
+}
+#bar_opera {
+    max-height: 4vh;
+    min-height: 4vh;
+    height: 4vh;
+    background-color: var(--couleur_navigateur);
+    width: calc(100vw - 7.5vh);
+    padding: 0.25vh;
+    margin-left: 0.5vh;
+    border-radius: 1vh;
+}
+#page {
+    border: var(--couleur_fond_opera) 0.5vh solid;
+    margin-left: 0.5vh;
+    width: calc(100% - 1vh);
+    height: calc(100% - 0.5vh);
+    border-radius: 1vh;
+
+}

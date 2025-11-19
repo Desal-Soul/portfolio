@@ -1,0 +1,89 @@
+/* Conteneur des onglets */
+#onglets_liste {
+    display: flex;
+    overflow-x: auto;
+}
+
+#btn_nouvel_onglet {
+    color : white;
+    background-color: rgba(51, 53, 59, 0.65);
+    margin: auto 0.4vh;
+    padding: 0 0.5vh;
+    border-radius: 100%;
+}
+#btn_nouvel_onglet:hover {
+    padding: 0.2vh 0.7vh;
+    margin: auto 0.2vh;
+    font-weight: bold;
+}
+
+/* Onglet individuel */
+.onglet {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    background-color: #121213;
+    border-radius: 2.5% / 20%;
+    min-width: 150px;
+    max-width: 200px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    position: relative;
+}
+
+.onglet:hover {
+    background-color: #303046;
+}
+
+.onglet.actif {
+    background-color: var(--couleur_fond_opera);
+}
+
+/* Image du logo */
+.onglet img {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+/* Nom de la page */
+.onglet .name {
+    flex: 1;
+    font-size: 13px;
+    color: #e0e0e0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin: 0;
+}
+
+/* Bouton fermer */
+.onglet .fermer {
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #999;
+    margin: 0;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+}
+
+.onglet .fermer:hover {
+    background-color: rgba(0, 0, 0, 0.33);
+    color: #fff;
+}
+
+.onglet.selected {
+    background-color: rgba(127, 140, 161, 0.6);
+}
+
+.onglet.hidden {
+    display: none;
+}

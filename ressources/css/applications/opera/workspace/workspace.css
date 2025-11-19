@@ -1,0 +1,8 @@
+@import url("icon_workspace.css");
+#workspaces {
+    width: 5vh;
+    padding: 0.25vh;
+    border: var(--couleur_fond_opera) 0.25vh solid;
+    border-radius: 1vh;
+    background-color: var(--couleur_navigateur);
+}

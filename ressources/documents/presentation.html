@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alexandre Deschanel • Système en construction</title>
+    <style>
+        :root {
+            --color-primary: #d4af37;
+            --color-accent: #8b4513;
+            --color-accent-light: #cd853f;
+            --color-text: #e8d7c3;
+            --color-text-soft: #a89968;
+            --color-bg: #1a1410;
+            --color-border: #3d2817;
+            --space: 1.5rem;
+            --radius: 8px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scrollbar-color: #d4af37 #3d2817;
+            scrollbar-width: thin;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Georgia', 'Palatino', serif;
+            color: var(--color-text);
+            background: var(--color-bg) url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200"><rect fill="%231a1410" width="200" height="200"/><circle cx="50" cy="50" r="2" fill="%23362817" opacity="0.5"/><circle cx="150" cy="100" r="1.5" fill="%23362817" opacity="0.3"/></svg>');
+            line-height: 1.7;
+            letter-spacing: 0.3px;
+        }
+
+        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+           LAYOUT DE BASE - Système modulaire
+        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: var(--space);
+        }
+
+        .stack {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space);
+        }
+
+        .row {
+            display: flex;
+            gap: var(--space);
+            align-items: flex-start;
+        }
+
+        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+           HEADER - Entrée du système
+        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+        header {
+            background: linear-gradient(180deg, #2a1f1a 0%, #1a1410 100%);
+            border-bottom: 2px solid var(--color-accent);
+            padding: calc(var(--space) * 2) 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.8);
+        }
+
+        .header-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 var(--space);
+        }
+
+        .header-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--color-primary);
+            letter-spacing: 1px;
+            text-shadow: 0 2px 8px rgba(212, 175, 55, 0.3);
+            font-family: 'Georgia', serif;
+        }
+
+        .header-status {
+            font-size: 0.85rem;
+            color: var(--color-text-soft);
+            font-family: 'Courier New', monospace;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #48bb78;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+           SECTION INTRO - Présentation cohérente
+        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+        .intro-section {
+            background: linear-gradient(135deg, #2a1f1a 0%, #1f1714 100%);
+            border-radius: var(--radius);
+            padding: calc(var(--space) * 2.5);
+            border: 2px solid var(--color-accent);
+            margin-top: calc(var(--space) * 2);
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8), 0 0 20px rgba(212, 175, 55, 0.15);
+            position: relative;
+        }
+
+        .intro-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                    linear-gradient(45deg, transparent 30%, rgba(212, 175, 55, 0.03) 50%, transparent 70%),
+                    linear-gradient(-45deg, transparent 30%, rgba(212, 175, 55, 0.03) 50%, transparent 70%);
+            pointer-events: none;
+            border-radius: var(--radius);
+        }
+
+        .intro-section h1 {
+            font-size: 2.8rem;
+            margin-bottom: 0.5rem;
+            line-height: 1.1;
+            color: var(--color-primary);
+            font-weight: 700;
+            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.6), 0 0 20px rgba(212, 175, 55, 0.2);
+            font-family: 'Georgia', serif;
+            letter-spacing: 1px;
+        }
+
+        .intro-section .subtitle {
+            font-size: 1.1rem;
+            color: var(--color-accent);
+            font-weight: 500;
+            margin-bottom: var(--space);
+        }
+
+        .intro-section p {
+            color: var(--color-text-soft);
+            margin-bottom: 1rem;
+        }
+
+        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+           MODULES - Blocs thématiques du système
+        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+        .module {
+            background: linear-gradient(135deg, #2a1f1a 0%, #1f1714 100%);
+            border-radius: var(--radius);
+            padding: calc(var(--space) * 2);
+            border: 1px solid var(--color-border);
+            transition: var(--transition);
+            scroll-margin-top: 100px;
+            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.6), 0 4px 15px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .module::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.1), transparent);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .module:hover {
+            border-color: var(--color-accent);
+            box-shadow: inset 0 0 20px rgba(212, 175, 55, 0.1), 0 8px 25px rgba(212, 175, 55, 0.2);
+        }
+
+        .module-header {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            align-items: flex-start;
+        }
+
+        .module-icon {
+            font-size: 2rem;
+            flex-shrink: 0;
+            min-width: 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .module-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--color-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .module-meta {
+            font-size: 0.85rem;
+            color: var(--color-text-soft);
+            font-family: 'Courier New', monospace;
+        }
+
+        .module-content {
+            color: var(--color-text-soft);
+            line-height: 1.8;
+        }
+
+        .module-content p {
+            margin-bottom: 1rem;
+        }
+
+        .module-content p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+           SYSTÈME - Arborescence des concepts
+        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+        .system-tree {
+            background: rgba(0, 0, 0, 0.4);
+            border-left: 3px solid var(--color-accent);
+            padding: var(--space);
+            font-family: 'Courier New', monospace;
+            font-size: 0.95rem;
+            border-radius: 4px;
+            margin: var(--space) 0;
+            overflow-x: auto;
+            color: var(--color-accent-light);
+        }
+
+        .tree-line {
+            margin-bottom: 0.5rem;
+            color: var(--color-text-soft);
+            white-space: pre;
+            letter-spacing: 0.5px;
+        }
+
+        .tree-highlight {
+            color: var(--color-accent);
+            font-weight: 600;
+        }
+
+        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+           CALLOUT - Mise en avant des concepts clés
+        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+        .callout {
+            background: linear-gradient(135deg, rgba(139, 69, 19, 0.3) 0%, rgba(205, 133, 63, 0.2) 100%);
+            border-left: 4px solid var(--color-accent);
+            padding: var(--space);
+            border-radius: 4px;
+            margin: var(--space) 0;
+            font-style: italic;
+            color: var(--color-accent-light);
+        }
+
+        .callout-strong {
+            font-weight: 600;
+            color: var(--color-accent);
+        }
+
+        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+           EASTER EGG - Couche de découverte
+        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+        .easter-egg-trigger {
+            cursor: pointer;
+            position: relative;
+            display: inline-block;
+        }
+
+        .easter-egg-trigger::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--color-accent);
+            transition: width 0.3s ease;
+        }
+
+        .easter-egg-trigger:hover::after {
+            width: 100%;
+        }
+
+        .easter-egg-hidden {
+            display: none;
+            background: rgba(139, 69, 19, 0.4);
+            border: 2px dashed var(--color-accent);
+            padding: 1rem;
+            border-radius: 4px;
+            margin-top: 0.5rem;
+            font-size: 0.95rem;
+            color: var(--color-accent-light);
+            animation: slideIn 0.3s ease;
+        }
+
+        .easter-egg-hidden.revealed {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+           FOOTER - Fermeture du système
+        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+        footer {
+            background: linear-gradient(180deg, #1a1410 0%, #0f0d0a 100%);
+            border-top: 2px solid var(--color-accent);
+            margin-top: calc(var(--space) * 3);
+            padding: calc(var(--space) * 2) 0;
+            text-align: center;
+            color: var(--color-text-soft);
+            font-size: 0.9rem;
+            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.8);
+        }
+
+        .footer-inner {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 var(--space);
+        }
+
+        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+           RESPONSIVE
+        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+        @media (max-width: 768px) {
+            :root {
+                --space: 1rem;
+            }
+
+            .intro-section h1 {
+                font-size: 2rem;
+            }
+
+            .row {
+                flex-direction: column;
+            }
+
+            .header-inner {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
+
+        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+           ACCESSIBILITÉ - Focus visible
+        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+        a, button, [tabindex] {
+            outline-offset: 2px;
+        }
+
+        a:focus-visible, button:focus-visible, [tabindex]:focus-visible {
+            outline: 2px solid var(--color-accent);
+        }
+
+        /* Animation de chargement des modules */
+        .module {
+            animation: fadeIn 0.6s ease-out forwards;
+            opacity: 0;
+        }
+
+        .module:nth-child(1) { animation-delay: 0s; }
+        .module:nth-child(2) { animation-delay: 0.15s; }
+        .module:nth-child(3) { animation-delay: 0.3s; }
+        .module:nth-child(4) { animation-delay: 0.45s; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<main class="container">
+    <section class="intro-section">
+        <h1>Alexandre Deschanel</h1>
+        <p class="subtitle">Étudiant en BUT Informatique • IUT Montpellier-Sète</p>
+
+        <p>
+            Je suis fasciné par les <span class="easter-egg-trigger" data-egg="1">systèmes cohérents</span>.
+            Pas les apparences : les architectures. La logique invisible qui rend quelque chose compréhensible,
+            maintenable, <em>élégant</em>.
+        </p>
+        <div class="easter-egg-hidden" id="egg-1">
+            ⚔️ Chaque pixel a une raison d'être. Chaque ligne de code raconte une histoire. Comme une arme forgée avec soin.
+        </div>
+
+        <p>
+            J'ai validé le Premier Module de Connaissances Générales avec mention en 2023.
+            Aujourd'hui, je me forme à l'algorithmique, à la conception de systèmes, et au développement applicatif.
+        </p>
+    </section>
+
+    <section class="stack" style="margin-top: calc(var(--space) * 2.5);">
+        <article class="module">
+            <div class="module-header">
+                <div class="module-icon">🔍</div>
+                <div>
+                    <h2 class="module-title">Ce qui me guide</h2>
+                    <p class="module-meta">// Fondamentaux</p>
+                </div>
+            </div>
+            <div class="module-content">
+                <p>
+                    J'aime comprendre <span class="easter-egg-trigger" data-egg="2">ce qui se passe derrière l'interface</span> :
+                    la logique, la structure, les choix invisibles qui rendent un système cohérent.
+                </p>
+                <div class="easter-egg-hidden" id="egg-2">
+                    💀 Les vraies briques d'un système : clarté structurelle, responsabilités bien délimitées, interfaces cohérentes. Comme les couches des royaumes de Seigneur des cendres.
+                </div>
+                <p>
+                    Ce n'est pas de la beauté esthétique (même si ça compte). C'est la <strong>beauté de la pensée</strong> :
+                    quand chaque partie sait exactement ce qu'elle doit faire et pourquoi.
+                </p>
+            </div>
+        </article>
+
+        <article class="module">
+            <div class="module-header">
+                <div class="module-icon">⚙️</div>
+                <div>
+                    <h2 class="module-title">Comment je conçois</h2>
+                    <p class="module-meta">// Architecture & UX</p>
+                </div>
+            </div>
+            <div class="module-content">
+                <p>
+                    Mes projets vont du web aux applications interactives. Peu importe le cadre (universitaire ou personnel),
+                    je les aborde comme des <strong>systèmes complets</strong>.
+                </p>
+
+                <div class="system-tree">
+                    <div class="tree-line">Chaque projet:
+                        ├── <span class="tree-highlight">base solide</span>  (architecture claire)
+                        ├── <span class="tree-highlight">règles explicites</span>  (logique compréhensible)
+                        ├── <span class="tree-highlight">UX pensée</span>  (choix délibérés)
+                        └── <span class="tree-highlight">maintenabilité</span>  (pour demain)</div>
+                </div>
+
+                <p>
+                    Je pense <em>système complet</em> : pas seulement le code qui fonctionne, mais le code
+                    qu'une autre personne (ou mon futur moi) pourra comprendre et améliorer.
+                </p>
+            </div>
+        </article>
+
+        <article class="module">
+            <div class="module-header">
+                <div class="module-icon">📚</div>
+                <div>
+                    <h2 class="module-title">Mon approche</h2>
+                    <p class="module-meta">// Apprentissage itératif</p>
+                </div>
+            </div>
+            <div class="module-content">
+                <p>
+                    Je ne termine jamais un projet. Je le termine <em>cette semaine</em>.
+                </p>
+
+                <div class="callout">
+                    <span class="callout-strong">Progression > Perfection</span> :
+                    chaque réalisation est une étape d'apprentissage, jamais un point final. Comme un guerrier qui se forge au combat.
+                </div>
+
+                <p>
+                    Je documente, j'archive, j'expérimente. Je cherche à apprendre plutôt qu'à simplement produire.
+                    Chaque projet trace les <span class="easter-egg-trigger" data-egg="3">objectifs que je poursuis</span>,
+                    dans une logique d'amélioration continue.
+                </p>
+                <div class="easter-egg-hidden" id="egg-3">
+                    🔥 Aujourd'hui : forger des solutions. Demain : inventer de meilleures approches. Toujours : comprendre plus profondément. Comme une ascension jusqu'au trône du futur.
+                </div>
+            </div>
+        </article>
+
+        <article class="module">
+            <div class="module-header">
+                <div class="module-icon">🏗️</div>
+                <div>
+                    <h2 class="module-title">Ce portfolio</h2>
+                    <p class="module-meta">// Métasystème</p>
+                </div>
+            </div>
+            <div class="module-content">
+                <p>
+                    Ce site lui-même est une <strong>application du concept</strong>.
+                    C'est un système à part entière qui archive mes réalisations passées,
+                    expose mes expérimentations en cours, et trace les objectifs que je poursuis.
+                </p>
+
+                <div class="system-tree">
+                    <div class="tree-line">portfolio/
+                        ├── réalisations/  (ce que j'ai livré)
+                        ├── en-cours/  (ce que j'apprends)
+                        ├── objectifs/  (ce que je veux maîtriser)
+                        └── système/  (la cohérence qui les relie)</div>
+                </div>
+
+                <p>
+                    Tout ici doit être compréhensible, navigable, <em>bien pensé</em>.
+                    Pas de surcharge. Pas d'esthétique vide. <strong>Clarté. Substance. Structure.</strong>
+                </p>
+            </div>
+        </article>
+    </section>
+
+    <section style="margin-top: calc(var(--space) * 3); padding: calc(var(--space) * 2); border-radius: var(--radius); border: 1px solid var(--color-border);">
+        <p style="color: var(--color-text-soft); font-size: 0.95rem;">
+            <strong style="color: var(--color-primary);">⚔️ Fragments du système:</strong>
+            Vous avez trouvé 3 <span class="easter-egg-trigger" data-egg="4">secrets</span> cachés sur cette page.
+            Comme des âmes à découvrir dans les profondeurs du code.
+        </p>
+        <div class="easter-egg-hidden" id="egg-4">
+            🔗 Merci d'avoir exploré ce système. Chaque détail raconte une histoire sur la façon dont je conçois.
+            Vous avez atteint une couche plus profonde du système.
+        </div>
+    </section>
+</main>
+
+<footer>
+    <div class="footer-inner">
+        <p>Alexandre Deschanel • 2025 • <code style="font-size: 0.9em;">version 2.0 // système en évolution</code></p>
+    </div>
+</footer>
+
+<script>
+    // Easter eggs interactifs
+    document.querySelectorAll('[data-egg]').forEach(trigger => {
+        trigger.addEventListener('click', function(e) {
+            e.preventDefault();
+            const eggId = this.dataset.egg;
+            const eggElement = document.getElementById(`egg-${eggId}`);
+            if (eggElement) {
+                eggElement.classList.toggle('revealed');
+            }
+        });
+    });
+
+    // Accessibility: keyboard trigger pour les Easter eggs
+    document.querySelectorAll('[data-egg]').forEach(trigger => {
+        trigger.setAttribute('tabindex', '0');
+        trigger.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                this.click();
+            }
+        });
+    });
+
+    // Smooth scroll pour les ancres internes
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+    });
+</script>
+</body>
+</html>

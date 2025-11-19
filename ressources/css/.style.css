@@ -6,3 +6,6 @@
 
 /** icon **/
 @import url("icon/icon.css");
+
+/** application **/
+@import url("applications/app.css");

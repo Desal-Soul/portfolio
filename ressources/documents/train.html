@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trains - Portfolio - Alexandre Deschanel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --gold: #d4af37;
+            --deep-navy: #0f1419;
+            --dark-steel: #1a2a3a;
+            --accent-blue: #2c5aa0;
+            --light-bg: #f5f1e8;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background-color: var(--deep-navy);
+            color: #e0e0e0;
+            line-height: 1.7;
+            scroll-behavior: smooth;
+        }
+
+        /* HEADER / NAV */
+        header {
+            background: linear-gradient(135deg, var(--deep-navy) 0%, var(--dark-steel) 100%);
+            padding: 1.5rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 3px solid var(--gold);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--gold);
+            letter-spacing: 3px;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2.5rem;
+        }
+
+        nav a {
+            color: var(--light-bg);
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: color 0.3s;
+            position: relative;
+        }
+
+        nav a:hover {
+            color: var(--gold);
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--gold);
+            transition: width 0.3s;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        /* HERO SECTION */
+        .hero {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 6rem 2rem;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            color: var(--gold);
+            margin-bottom: 1rem;
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.7);
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            color: var(--light-bg);
+            max-width: 600px;
+            margin: 0 auto 2rem;
+            font-style: italic;
+        }
+
+        .hero .meta {
+            font-size: 0.95rem;
+            color: var(--gold);
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        /* DIVIDER */
+        .divider {
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+            margin: 3rem 0;
+            max-width: 200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* SECTIONS */
+        section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+            border-top: 1px solid rgba(212, 175, 55, 0.3);
+        }
+
+        section h2 {
+            font-size: 2.5rem;
+            color: var(--gold);
+            margin-bottom: 2rem;
+            letter-spacing: 1px;
+        }
+
+        section h3 {
+            font-size: 1.5rem;
+            color: var(--gold);
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        section p {
+            font-size: 1.1rem;
+            color: #d0d0d0;
+            margin-bottom: 1rem;
+            text-align: justify;
+        }
+
+        /* TWO COLUMN LAYOUT */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .col-content {
+            padding: 2rem;
+            background: rgba(212, 175, 55, 0.08);
+            border-left: 4px solid var(--gold);
+            border-radius: 4px;
+        }
+
+        .col-image {
+            overflow: hidden;
+            border-radius: 4px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+        }
+
+        .col-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+
+        .col-image:hover img {
+            transform: scale(1.05);
+        }
+
+        /* IMAGE GRID */
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .image-card {
+            overflow: hidden;
+            border-radius: 4px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+            transition: transform 0.3s;
+        }
+
+        .image-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .image-card img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* BADGES */
+        .badge {
+            display: inline-block;
+            background-color: var(--accent-blue);
+            color: var(--light-bg);
+            padding: 0.5rem 1rem;
+            border-radius: 3px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            margin: 0.3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* BULLET LIST */
+        ul {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        ul li {
+            margin-bottom: 0.8rem;
+            list-style: none;
+            position: relative;
+            padding-left: 1.5rem;
+        }
+
+        ul li::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: var(--gold);
+            font-weight: bold;
+        }
+
+        /* CARDS GRID */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .card {
+            background: rgba(44, 90, 160, 0.15);
+            border: 1px solid var(--accent-blue);
+            padding: 1.5rem;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+
+        .card:hover {
+            background: rgba(44, 90, 160, 0.25);
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(44, 90, 160, 0.3);
+        }
+
+        .card h4 {
+            color: var(--gold);
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .card p {
+            font-size: 0.95rem;
+            color: #c0c0c0;
+        }
+
+        /* FOOTER */
+        footer {
+            background: linear-gradient(135deg, var(--dark-steel) 0%, var(--deep-navy) 100%);
+            color: var(--light-bg);
+            text-align: center;
+            padding: 2rem;
+            border-top: 3px solid var(--gold);
+            margin-top: 4rem;
+            font-size: 0.9rem;
+        }
+
+        footer p {
+            color: var(--light-bg);
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .two-col {
+                grid-template-columns: 1fr;
+            }
+
+            nav ul {
+                gap: 1.5rem;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            section h2 {
+                font-size: 1.8rem;
+            }
+
+            .image-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* HIGHLIGHT */
+        .highlight {
+            color: var(--gold);
+            font-weight: 600;
+        }
+
+        /* CODE BLOCK */
+        .code-block {
+            background: rgba(0, 0, 0, 0.3);
+            border-left: 3px solid var(--gold);
+            padding: 1rem;
+            margin: 1rem 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            color: #a8d8ea;
+            border-radius: 3px;
+            overflow-x: auto;
+        }
+
+        /* HIGHLIGHT BOX */
+        .highlight-box {
+            background: rgba(212, 175, 55, 0.1);
+            border: 2px solid var(--gold);
+            padding: 1.5rem;
+            border-radius: 4px;
+            margin: 1.5rem 0;
+        }
+
+        .highlight-box h4 {
+            color: var(--gold);
+            margin-bottom: 0.8rem;
+        }
+
+        /* IMAGE MODAL */
+        .image-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease;
+        }
+        .image-modal[aria-hidden="false"] {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .image-modal img {
+            max-width: 90vw;
+            max-height: 90vh;
+            box-shadow: 0 0 0 2px rgba(255,255,255,0.2);
+            border-radius: 6px;
+        }
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.6);
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 1.4rem;
+            line-height: 1;
+            cursor: pointer;
+        }
+        .close-btn:hover {
+            background: rgba(0,0,0,0.9);
+        }
+    </style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero" id="presentation">
+    <h1>TRAINS</h1>
+    <p>Adapter un jeu de plateau en application JavaFX interactive</p>
+    <div class="meta">
+        <span>👤 Alexandre Deschanel</span>
+        <span>🎓 BUT Informatique - 1ère année</span>
+        <span>👥 Projet en binôme</span>
+    </div>
+    <div class="divider"></div>
+    <p style="font-size: 1.1rem; margin-top: 2rem; color: #d0d0d0; font-style: normal;">
+        Une traversée ferroviaire entre le monde du jeu de plateau et celui du développement logiciel.<br>
+        <span class="highlight">Recréer l'expérience stratégique du jeu physique en environnement numérique.</span>
+    </p>
+</section>
+
+<!-- INTRODUCTION -->
+<section id="projet">
+    <h2>Le voyage commence</h2>
+
+    <p>
+        « Trains » n'est pas un simple projet académique. C'est une exploration concrète de la manière dont on peut transposer un système ludique complexe — avec ses règles, ses interactions, son ressenti — dans un programme cohérent et fluide. Dès les premières lignes de code, l'ambition fut claire : créer une interface intuitive qui rend justice à l'expérience du jeu physique.
+    </p>
+
+    <div class="two-col">
+        <div class="col-content">
+            <h3>Objectifs</h3>
+            <ul>
+                <li>Adapter le jeu Trains en Java/JavaFX</li>
+                <li>Concevoir une interface fluide et engageante</li>
+                <li>Respecter les mécaniques du jeu original</li>
+                <li>Produire un code structuré et maintenable</li>
+            </ul>
+        </div>
+        <div class="col-content">
+            <h3>Défis à relever</h3>
+            <ul>
+                <li>Synchronisation temps réel</li>
+                <li>Traduction des règles en logique algorithmique</li>
+                <li>Performance et responsivité</li>
+                <li>Collaboration efficace en binôme</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<!-- ARCHITECTURE -->
+<section>
+    <h2>Architecture et conception</h2>
+
+    <p>
+        La fondation du projet repose sur une <span class="highlight">séparation nette</span> entre logique métier et interface graphique. Cette architecture modulaire a permis une évolution fluide et facilité les phases de test.
+    </p>
+
+    <div class="highlight-box">
+        <h4>Design MVC (Model-View-Controller)</h4>
+        <ul>
+            <li><span class="highlight">Model :</span> Gestion des règles, cartes, ressources et plateau</li>
+            <li><span class="highlight">View :</span> Affichage dynamique des états de jeu via JavaFX</li>
+            <li><span class="highlight">Controller :</span> Traduction des actions utilisateur en mutations logiques</li>
+        </ul>
+    </div>
+
+    <p>
+        Mon rôle s'est concentré sur la <span class="highlight">conception de l'interface</span> et de l'expérience utilisateur. Comment chaque clic se traduit-il en action à l'écran ? Comment guider le joueur sans contraindre ? Derrière chaque élément visuel se cache une mécanique pensée pour être logique et naturelle.
+    </p>
+</section>
+
+<!-- INTERFACE & UX -->
+<section>
+    <h2>Interface et expérience utilisateur</h2>
+
+    <p>
+        JavaFX a été le cœur de cette création visuelle. Le défi majeur : rendre l'interface <span class="highlight">fluide</span>, <span class="highlight">réactive</span> et <span class="highlight">engageante</span> malgré la complexité des interactions.
+    </p>
+
+    <h3>Ce qui a été construit</h3>
+    <div class="cards-grid">
+        <div class="card">
+            <h4>Zones de jeu dynamiques</h4>
+            <p>Plateau hexagonal interactif inspiré du jeu original, mise à jour en temps réel.</p>
+        </div>
+        <div class="card">
+            <h4>Cartes animées</h4>
+            <p>Distribution et affichage fluide des cartes, interactions intuitives.</p>
+        </div>
+        <div class="card">
+            <h4>Feedback visuel</h4>
+            <p>Surbrillance des actions possibles, animations de feedback.</p>
+        </div>
+        <div class="card">
+            <h4>Menus contextuels</h4>
+            <p>Navigation intelligente adaptée à chaque phase de jeu.</p>
+        </div>
+    </div>
+
+    <h3>Défis surmontés</h3>
+    <ul>
+        <li><span class="highlight">Synchronisation temps réel :</span> Maintenir cohérence entre état interne et affichage</li>
+        <li><span class="highlight">Gestion d'événements :</span> Complexité des interactions multiples</li>
+        <li><span class="highlight">Performance :</span> Fluidité malgré les mises à jour fréquentes</li>
+        <li><span class="highlight">Adaptation :</span> Responsive design pour différentes résolutions</li>
+    </ul>
+</section>
+
+<!-- CAPTURES D'ÉCRAN -->
+<section id="captures">
+    <h2>Captures du projet en action</h2>
+
+    <div class="image-grid">
+        <div class="image-card">
+            <img src="https://agi-prod-file-upload-public-main-use1.s3.amazonaws.com/fa40656a-caa8-4b41-be5e-915e6920eea2" alt="Menu d'accueil Trains">
+        </div>
+        <div class="image-card">
+            <img src="https://agi-prod-file-upload-public-main-use1.s3.amazonaws.com/185575f7-2257-46e3-bc21-2bab6c4bf65b" alt="Écran final du jeu">
+        </div>
+        <div class="image-card">
+            <img src="https://agi-prod-file-upload-public-main-use1.s3.amazonaws.com/a222c895-a294-487e-8f6e-86a5c0d1a069" alt="Interface de jeu détaillée">
+        </div>
+    </div>
+
+    <p style="text-align: center; color: var(--gold); margin-top: 2rem; font-style: italic;">
+        Des captures montrant le plateau hexagonal, le système de cartes, et l'interface globale du jeu.
+    </p>
+</section>
+
+<!-- MÉCANIQUES -->
+<section>
+    <h2>Implémentation des mécaniques</h2>
+
+    <p>
+        Reproduire les mécaniques du jeu <span class="highlight">Trains</span> nécessitait de traduire des règles souvent implicites en algorithmes précis. Chaque mécanique a été modélisée sous forme de classes interconnectées et de méthodes cohérentes.
+    </p>
+
+    <div class="cards-grid">
+        <div class="card">
+            <h4>Génération de cartes</h4>
+            <p>Distribution équitable et variée des cartes en main à chaque tour, respectant les règles du jeu.</p>
+        </div>
+        <div class="card">
+            <h4>Validation des constructions</h4>
+            <p>Vérification des conditions de pose de voies : ressources suffisantes, position légale, etc.</p>
+        </div>
+        <div class="card">
+            <h4>Effets de cartes</h4>
+            <p>Application dynamique des bonus et pénalités en cascade, gestion des interactions complexes.</p>
+        </div>
+        <div class="card">
+            <h4>Calcul des scores</h4>
+            <p>Mise à jour précise et transparente des résultats, rétroaction immédiate aux joueurs.</p>
+        </div>
+    </div>
+</section>
+
+<!-- STACK TECHNOLOGIQUE -->
+<section id="stack">
+    <h2>Technologies et outils</h2>
+
+    <div class="two-col">
+        <div class="col-content">
+            <h3>Stack technique</h3>
+            <div style="margin: 1rem 0;">
+                <span class="badge">Java 17</span>
+                <span class="badge">JavaFX</span>
+                <span class="badge">Git</span>
+                <span class="badge">IntelliJ IDEA</span>
+            </div>
+            <p>
+                Une architecture modulaire favorisant clarté, maintenance et évolution du code. Java 17 offre une stabilité et une expressivité modernes, tandis que JavaFX permet une création d'interface fluide et réactive.
+            </p>
+        </div>
+        <div class="col-content">
+            <h3>Principes appliqués</h3>
+            <ul>
+                <li>Séparation des responsabilités</li>
+                <li>Code propre et bien documenté</li>
+                <li>Gestion d'événements optimisée</li>
+                <li>Modularité pour la maintenabilité</li>
+                <li>Approche itérative et collaborative</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<!-- DIFFICULTÉS & SOLUTIONS -->
+<section>
+    <h2>Défis et apprentissages</h2>
+
+    <h3>Les obstacles de la route</h3>
+    <ul>
+        <li><span class="highlight">Synchronisation temps réel :</span> Maintenir la cohérence entre l'état interne du jeu et l'affichage en JavaFX. Solution : architecture réactive avec observateurs.</li>
+        <li><span class="highlight">Complexité des interactions :</span> Traduire des règles implicites du jeu physique en code explicite. Solution : documentation précise et tests exhaustifs.</li>
+        <li><span class="highlight">Travail en binôme :</span> Synchroniser deux visions, intégrer les modules. Solution : communication claire et interfaces bien définies.</li>
+        <li><span class="highlight">Optimisation UX :</span> Équilibrer ambition visuelle et performance. Solution : itérations feedback-driven.</li>
+    </ul>
+
+    <div class="divider"></div>
+
+    <h3>Compétences développées</h3>
+    <div class="cards-grid">
+        <div class="card">
+            <h4>Programmation</h4>
+            <p>Conception orientée objet, modélisation de systèmes complexes, gestion d'événements JavaFX.</p>
+        </div>
+        <div class="card">
+            <h4>Design</h4>
+            <p>Principes UX/UI, expérience utilisateur, équilibre entre esthétique et fonctionnalité.</p>
+        </div>
+        <div class="card">
+            <h4>Méthode</h4>
+            <p>Code propre, documentation efficace, collaboration productive, itération continue.</p>
+        </div>
+        <div class="card">
+            <h4>Rigueur</h4>
+            <p>Architecture maintenable, testing systématique, approche pragmatique des compromis.</p>
+        </div>
+    </div>
+</section>
+
+<!-- VISION FUTURE -->
+<section id="apprentissages">
+    <h2>Au-delà du terminal</h2>
+
+    <p>
+        Aujourd'hui, <span class="highlight">Trains</span> représente bien plus qu'un jalon académique. C'est une compréhension concrète de la manière dont <span class="highlight">technique et design dialoguent</span> pour créer une expérience vivante et cohérente.
+    </p>
+
+    <div class="highlight-box">
+        <h4>Ce que ce projet a apporté</h4>
+        <p>
+            Une confiance accrue dans ma capacité à analyser un système complexe, à en modéliser les interactions, et à les traduire en code fonctionnel et élégant. Une appréhension plus profonde des enjeux UX et de l'importance d'une architecture solide.
+        </p>
+    </div>
+
+    <h3>Horizons possibles</h3>
+    <ul>
+        <li>Extension <span class="highlight">multijoueur en ligne</span> — architecture réseau et synchronisation distribuée</li>
+        <li>Animations et immersion amplifiées — effects visuels et sound design</li>
+        <li>Intelligence artificielle de joueur — algorithmes de décision et pathfinding</li>
+        <li>Plateforme web — portage en technologies web modernes (React, Node.js)</li>
+    </ul>
+
+    <p style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid rgba(212, 175, 55, 0.3);">
+        Ce projet m'a confirmé dans mon intérêt pour la <span class="highlight">création d'expériences interactives cohérentes</span>, où technique et design dialoguent pour donner vie à un système vivant et évolutif. C'est un socle fondateur pour ma carrière de développeur.
+    </p>
+</section>
+<div id="image-modal" class="image-modal" aria-hidden="true" role="dialog" aria-label="Affichage plein écran de l'image"> <button class="close-btn" aria-label="Fermer">×</button> <img id="modal-img" src="" alt="Image en plein écran" /> </div>
+<!-- FOOTER -->
+<footer>
+    <p>© 2025 Alexandre Deschanel</p>
+    <p style="margin-top: 0.5rem; font-style: italic;">Passionné par l'expérience utilisateur et la conception de systèmes cohérents</p>
+</footer>
+<script>
+    document.addEventListener('DOMContentLoaded', () => { const modal = document.getElementById('image-modal');
+        const modalImg = document.getElementById('modal-img');
+        const closeBtn = document.querySelector('.image-modal .close-btn');
+        // Attacher les événements click sur les images de la grille
+        const imageCards = document.querySelectorAll('.image-card img');
+        imageCards.forEach(img => {
+            img.style.cursor = 'pointer';
+            img.addEventListener('click', () => {
+                modalImg.src = img.src;
+                modal.setAttribute('aria-hidden', 'false');
+                // Optional: permettre le scroll le temps de l'affichage
+                document.body.style.overflow = 'hidden';
+            });
+        });
+        // Fermer le modal
+        const closeModal = () => {
+            modal.setAttribute('aria-hidden', 'true');
+            modalImg.src = '';
+            document.body.style.overflow = '';
+        };
+        // Clique sur la croix
+        closeBtn.addEventListener('click', closeModal);
+        // Clique sur l'arrière-plan (overlay)
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) { closeModal(); }
+        });
+        // Escape pour fermer
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && modal.getAttribute('aria-hidden') === 'false') { closeModal(); }
+        });
+    });
+</script>
+</body>
+</html>
