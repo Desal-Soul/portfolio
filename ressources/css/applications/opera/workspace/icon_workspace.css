@@ -1,0 +1,13 @@
+.icon_workspace {
+    padding: 0.75vh;
+    max-height: 2.5vh;
+    max-width: 2.5vh;
+    border-radius: 30%;
+    margin: 0.5vh auto;
+}
+.icon_workspace:hover {
+    background-color: rgb(66, 58, 136);
+}
+.icon_workspace.selected {
+    background-color: rgba(48, 114, 255, 0.5);
+}

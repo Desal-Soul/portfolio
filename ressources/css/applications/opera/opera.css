@@ -1,0 +1,13 @@
+@import url("workspace/workspace.css");
+@import url("navigateur/navigateur.css");
+@import url("pages/.page.css");
+
+:root  {
+    --couleur_fond_opera: #0e0e10;
+    --couleur_navigateur: #232f42;
+}
+
+#app_opera {
+    background-color: var(--couleur_fond_opera);
+    flex-direction: row;
+}

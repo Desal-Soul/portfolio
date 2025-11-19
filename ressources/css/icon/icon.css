@@ -3,6 +3,19 @@
     max-height: 2.5vh;
     border-radius: 10%;
 }
+.icon_app.open {
+    background-image: url("../../images/app/fond_icon_open.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+}
 .icon_app:hover {
     background-color: rgba(168, 168, 168, 0.12);
+}
+.icon_app.selected {
+    background-color: rgba(168, 168, 168, 0.12);
+    background-image: url("../../images/app/fond_icon_selected.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
 }

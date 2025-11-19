@@ -1,12 +1,14 @@
 #rechercherTaskBar {
     margin: 0.1% 1%;
-    background-color: #424242;
+    background-color: #464646;
     border-top: rgba(255, 255, 255, 0.24) 0.1vh solid;
+    min-width: min-content;
 }
 
 #rechercherTaskBar input{
     background-color: rgba(0, 0, 0, 0);
     color: white;
+    font-size: 2vh;
 }
 #rechercherTaskBar input::placeholder{
     background-color: rgba(0, 0, 0, 0);
@@ -16,4 +18,11 @@
 #rechercherTaskBar:focus-within {
     background-color: #252525;
     border: rgba(255, 255, 255, 0.24) 0.1vh solid;
+}
+#rechercherTaskBar:focus-within:hover {
+    background-color: #252525;
+}
+
+#rechercherTaskBar:hover {
+    background-color: #4b4b4b;
 }
