@@ -1,5 +1,5 @@
 import {AbstractApplicationAvecLogo} from "../../abstractApplicationAvecLogo.js"
-import {OperaNav} from "./app/.opera.js"
+import {OperaNav} from "./app/opera.js"
 class OperaApplication extends AbstractApplicationAvecLogo {
     constructor() {
         super("opera");
