@@ -1,6 +1,6 @@
 @import url("workspace/workspace.css");
 @import url("navigateur/navigateur.css");
-@import url("pages/.page.css");
+@import url("pages/page.css");
 
 :root  {
     --couleur_fond_opera: #0e0e10;
