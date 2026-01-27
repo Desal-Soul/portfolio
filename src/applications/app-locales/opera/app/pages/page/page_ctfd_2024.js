@@ -1,4 +1,5 @@
+import {Page} from "../page.js";
+
 let contenue = document.createElement("div");
-const nom = "CTFD 2024"
-const tag = ["ctfd", "sae", "projet", "web", "html", "css", "js", "php", "cryptographie"]
-export const ctfd_2024_page_corp = [nom, contenue, tag]
+
+export let page_ctfd_2024 = new Page("ctfd 2024", contenue, [])

@@ -1,11 +1,11 @@
 import Workspace from "../workspace.js";
 
 export let accueil = new Workspace("workspace_accueil");
-import {presentation_page_corp} from "../../pages/page/page_presentation.js";
-accueil._listes_page.insert(presentation_page_corp);
+import {page_presentation} from "../../pages/page/page_presentation.js"
+accueil.insert_page(page_presentation);
+page_presentation._content.id = 'acceuil_'+page_presentation._name
 
-import {cv_page_corp} from "../../pages/page/page_cv.js";
-accueil._listes_page.insert(cv_page_corp);
-
-import {nouvel_onglet_page_corp} from "../../pages/page/nouvel_onglet.js";
-accueil._listes_page.insert(nouvel_onglet_page_corp)
+import {page_cv} from "../../pages/page/page_cv.js"
+accueil.insert_page(page_cv);
+page_cv._content.id = 'acceuil_'+page_cv._name
+accueil._listes_page._actuel = page_cv;

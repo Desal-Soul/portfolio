@@ -1,34 +1,5 @@
-import {AbstractManager} from "../../../../../classes/abstractManager.js";
-import {Page} from "../pages/page.js";
-import {nouvel_onglet_corp} from "../pages/page/nouvel_onglet_corp.js";
-
-class WorkspacesManager extends AbstractManager{
-    constructor() {
-        super();
-        console.log("initialisation des Workspaces")
-        document.getElementById('btn_nouvel_onglet').addEventListener('click', () => {
-            this.ajout_nouvel_onglet();
-        });
-    }
-    toggle(nom) {
-        console.log("workspace toggle")
-        if (nom !== this._actuel._name){
-            this._actuel.fermer_onglets()
-            this.afficher(this._liste.get(nom));
-        }
-    }
-
-    ajout_nouvel_onglet() {
-        console.log(this._actuel._name + " nouvel onglet");
-
-        let contenue = document.createElement("div");
-        contenue.classList.add("nouvel_onglet"); // juste pour ton système de pages
-
-        // Création du shadow root isolé
-        const shadow = contenue.attachShadow({ mode: "open" });
-
-        // HTML + CSS internes (reset local)
-        shadow.innerHTML = `
+// gros template HTML inséré dans ton système d’onglets
+export const nouvel_onglet_corp = `    
             <style>
                  /* Reset local comme un iframe */
                  :host {
@@ -233,43 +204,4 @@ class WorkspacesManager extends AbstractManager{
                     </section>
                 </main>
             </div>
-  `;
-
-        let date = Date.now();
-        contenue.id = this._actuel._name + date + "nouvel_onglet";
-
-        let nouvel_onglet = new class extends Page {
-            onglet_nom() { return "nouvel onglet"; }
-            onglet_id() { return date + " nouvel onglet"; }
-        }(date + " nouvel onglet", contenue, []);
-
-        this._actuel.insert_page(nouvel_onglet);
-        nouvel_onglet.ouvrir();
-        this._actuel._listes_page.bind(nouvel_onglet, nouvel_onglet.get_logo().id);
-        nouvel_onglet.cacher();
-        this._actuel._listes_page.toggle(nouvel_onglet._name);
-
-        // logique de recherche à l'intérieur du shadow
-        const form = shadow.querySelector(".voxtek-search-bar");
-        const input = shadow.querySelector(".voxtek-input");
-        form.addEventListener("submit", (e) => {
-            e.preventDefault();
-            const q = input.value.trim();
-            if (!q) return;
-            window.open(
-                "https://www.google.com/search?q=" + encodeURIComponent(q),
-                "_blank"
-            );
-        });
-    }
-
-    activation_interne(){
-        for (var [key, value] of this._liste) {
-            value._listes_page.activer();
-        }
-    }
-
-
-}
-
-export default WorkspacesManager
+`;

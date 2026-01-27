@@ -1,20 +1,24 @@
 import {AbstractManager} from "../../../../../classes/abstractManager.js";
-import {Page} from "./page.js";
-import {nouvel_onglet_page_corp} from "./page/nouvel_onglet.js";
+import {nouvel_onglet_corp} from "./page/nouvel_onglet_corp.js";
 
 export class PagesManager extends AbstractManager{
-    constructor() { super(); }
-    insert(contenue){
-        const page = new Page(contenue[0],contenue[1],contenue[2]);
-        this._liste.set(page._id(), page);
-        if (this._actuel === null){ this._actuel = page; }
+    constructor() {
+        super();
+        console.log("initialisation des Pages");
+
+    }
+
+    page_new(){
+        this.insert(nouvel_onglet_corp);
     }
 
     afficher(contenue) {
-        if (contenue) console.log("affichage page "+contenue._name);
+        console.log(contenue);
         if (contenue === undefined || contenue === null) {
-            console.warn("Contenue null" )
-        } else if (contenue !== this._actuel) {
+            console.warn("Tentative d'affichage d'un élément inexistant");
+            return;
+        }
+        if (contenue !== this._actuel) {
             this.cacher();
             this._actuel = contenue;
         }
@@ -22,6 +26,7 @@ export class PagesManager extends AbstractManager{
     }
 
     toggle(nom) {
+        console.log("#nom = "+nom)
         this.afficher(this._liste.get(nom))
     }
 
@@ -33,7 +38,7 @@ export class PagesManager extends AbstractManager{
         contenue._logo.getElementsByClassName("fermer")[0].addEventListener("click", (e) => {
             e.stopPropagation(); // Empêche le clic de se propager au logo parent
 
-            console.log("SUPPRESSION " + contenue._id());
+            console.log("SUPPRESSION " + contenue._name);
             let keys = Array.from(this._liste.keys());
 
 
@@ -43,7 +48,7 @@ export class PagesManager extends AbstractManager{
                     num = num - 1;
                 }
                 let new_tag = keys[num];
-                console.log('LOG : ' + this._liste.get(new_tag)._id());
+                console.log('LOG : ' + this._liste.get(new_tag)._name);
                 this.toggle(new_tag);
             }
 
@@ -51,9 +56,7 @@ export class PagesManager extends AbstractManager{
             contenue._logo.remove();
             this._liste.delete(tag);
             if (this._liste.size === 0) {
-                let nouvel_onglet = new Page(nouvel_onglet_page_corp[0], nouvel_onglet_page_corp[1], nouvel_onglet_page_corp[2])
-                this.insert(nouvel_onglet);
-                this.afficher(nouvel_onglet)
+                no
             }
         });
     }

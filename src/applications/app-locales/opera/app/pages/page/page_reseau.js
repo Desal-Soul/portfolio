@@ -1,4 +1,5 @@
+import {Page} from "../page.js";
+
 let contenue = document.createElement("div");
-const nom = "reseau";
-const tag = []
-export const reseau_page_corp = [nom, contenue, tag]
+
+export let page_reseau = new Page("reseau", contenue, [])

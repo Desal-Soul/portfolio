@@ -3,687 +3,1299 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trains - Portfolio - Alexandre Deschanel</title>
+    <title>TRAINS - Projet de Digitalisation</title>
     <style>
+
+        /* Variables CSS */
+        :root {
+            --color-bg-dark: #0a0e14;
+            --color-bg-light: #151b24;
+            --color-surface: #1e2730;
+            --color-accent: #d4a574;
+            --color-accent-hover: #e8bc8a;
+            --color-rail: #4a5568;
+            --color-text-primary: #e8eaed;
+            --color-text-secondary: #b8bcc4;
+            --color-border: #2d3748;
+            --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-fast: all 0.2s ease;
+        }
+
+        /* Reset et Base */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        :root {
-            --gold: #d4af37;
-            --deep-navy: #0f1419;
-            --dark-steel: #1a2a3a;
-            --accent-blue: #2c5aa0;
-            --light-bg: #f5f1e8;
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
         }
 
         body {
-            font-family: 'Georgia', serif;
-            background-color: var(--deep-navy);
-            color: #e0e0e0;
-            line-height: 1.7;
-            scroll-behavior: smooth;
+            font-family: var(--font-main);
+            background-color: var(--color-bg-dark);
+            color: var(--color-text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
         }
 
-        /* HEADER / NAV */
-        header {
-            background: linear-gradient(135deg, var(--deep-navy) 0%, var(--dark-steel) 100%);
-            padding: 1.5rem 0;
-            position: sticky;
+        /* ===================================
+           HERO SECTION
+           =================================== */
+
+        .hero {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--color-bg-dark) 0%, var(--color-bg-light) 100%);
+            overflow: hidden;
+        }
+
+        /* Effet de rails en arrière-plan */
+        .rails-overlay {
+            position: absolute;
             top: 0;
-            z-index: 100;
-            border-bottom: 3px solid var(--gold);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                    repeating-linear-gradient(
+                            90deg,
+                            transparent,
+                            transparent 100px,
+                            var(--color-rail) 100px,
+                            var(--color-rail) 102px
+                    ),
+                    repeating-linear-gradient(
+                            0deg,
+                            transparent,
+                            transparent 80px,
+                            rgba(74, 85, 104, 0.2) 80px,
+                            rgba(74, 85, 104, 0.2) 81px
+                    );
+            opacity: 0.15;
+            pointer-events: none;
         }
 
-        nav {
-            max-width: 1200px;
-            margin: 0 auto;
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            padding: 2rem;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .project-title {
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            letter-spacing: 0.05em;
+            position: relative;
+            display: inline-block;
+        }
+
+        .title-line {
+            position: relative;
+            display: inline-block;
             padding: 0 2rem;
+        }
+
+        /* Effet de rails autour du titre */
+        .title-line::before,
+        .title-line::after {
+            content: '';
+            position: absolute;
+            width: 60px;
+            height: 3px;
+            background: var(--color-accent);
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .title-line::before {
+            left: -80px;
+        }
+
+        .title-line::after {
+            right: -80px;
+        }
+
+        .project-subtitle {
+            font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+            color: var(--color-text-secondary);
+            margin-bottom: 2rem;
+            font-weight: 300;
+        }
+
+        .tech-badges {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 3rem;
+        }
+
+        .badge {
+            background: var(--color-surface);
+            color: var(--color-accent);
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 500;
+            border: 1px solid var(--color-border);
+            transition: var(--transition-fast);
+        }
+
+        .badge:hover {
+            border-color: var(--color-accent);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(212, 165, 116, 0.2);
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: var(--color-accent);
+            color: var(--color-bg-dark);
+            padding: 1rem 2.5rem;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: var(--transition-smooth);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .cta-button:hover::before {
+            left: 100%;
+        }
+
+        .cta-button:hover {
+            background: var(--color-accent-hover);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(212, 165, 116, 0.4);
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateX(-50%) translateY(0);
+            }
+            40% {
+                transform: translateX(-50%) translateY(-10px);
+            }
+            60% {
+                transform: translateX(-50%) translateY(-5px);
+            }
+        }
+
+        .scroll-line {
+            width: 2px;
+            height: 40px;
+            background: linear-gradient(to bottom, var(--color-accent), transparent);
+        }
+
+        /* ===================================
+           NAVIGATION
+           =================================== */
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(10, 14, 20, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            transition: var(--transition-smooth);
+            border-bottom: 1px solid transparent;
+        }
+
+        .navbar.scrolled {
+            border-bottom-color: var(--color-border);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .logo {
-            font-size: 1.8rem;
+        .nav-brand {
+            font-size: 1.5rem;
             font-weight: 700;
-            color: var(--gold);
-            letter-spacing: 3px;
-            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+            letter-spacing: 0.1em;
+            color: var(--color-accent);
         }
 
-        nav ul {
+        .nav-links {
             display: flex;
             list-style: none;
             gap: 2.5rem;
         }
 
-        nav a {
-            color: var(--light-bg);
+        .nav-link {
+            color: var(--color-text-secondary);
             text-decoration: none;
-            font-size: 0.95rem;
-            transition: color 0.3s;
+            font-weight: 500;
             position: relative;
+            transition: var(--transition-fast);
         }
 
-        nav a:hover {
-            color: var(--gold);
-        }
-
-        nav a::after {
+        .nav-link::after {
             content: '';
             position: absolute;
             bottom: -5px;
             left: 0;
             width: 0;
             height: 2px;
-            background: var(--gold);
-            transition: width 0.3s;
+            background: var(--color-accent);
+            transition: width 0.3s ease;
         }
 
-        nav a:hover::after {
+        .nav-link:hover {
+            color: var(--color-accent);
+        }
+
+        .nav-link:hover::after {
             width: 100%;
         }
 
-        /* HERO SECTION */
-        .hero {
-            max-width: 1200px;
-            margin: 0 auto;
+        /* ===================================
+           SECTIONS
+           =================================== */
+
+        .section {
             padding: 6rem 2rem;
-            text-align: center;
+            position: relative;
         }
 
-        .hero h1 {
-            font-size: 3.5rem;
-            color: var(--gold);
-            margin-bottom: 1rem;
-            letter-spacing: 2px;
-            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.7);
+        .section-dark {
+            background-color: var(--color-bg-dark);
         }
 
-        .hero p {
-            font-size: 1.3rem;
-            color: var(--light-bg);
-            max-width: 600px;
-            margin: 0 auto 2rem;
-            font-style: italic;
+        .section-light {
+            background-color: var(--color-bg-light);
         }
 
-        .hero .meta {
-            font-size: 0.95rem;
-            color: var(--gold);
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            flex-wrap: wrap;
-        }
-
-        /* DIVIDER */
-        .divider {
-            height: 3px;
-            background: linear-gradient(90deg, transparent, var(--gold), transparent);
-            margin: 3rem 0;
-            max-width: 200px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        /* SECTIONS */
-        section {
+        .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 4rem 2rem;
-            border-top: 1px solid rgba(212, 175, 55, 0.3);
         }
 
-        section h2 {
-            font-size: 2.5rem;
-            color: var(--gold);
-            margin-bottom: 2rem;
-            letter-spacing: 1px;
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+            animation: fadeIn 0.8s ease-out;
         }
 
-        section h3 {
-            font-size: 1.5rem;
-            color: var(--gold);
-            margin-top: 1.5rem;
-            margin-bottom: 1rem;
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
-        section p {
-            font-size: 1.1rem;
-            color: #d0d0d0;
-            margin-bottom: 1rem;
-            text-align: justify;
-        }
-
-        /* TWO COLUMN LAYOUT */
-        .two-col {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-            margin: 2rem 0;
-        }
-
-        .col-content {
-            padding: 2rem;
-            background: rgba(212, 175, 55, 0.08);
-            border-left: 4px solid var(--gold);
-            border-radius: 4px;
-        }
-
-        .col-image {
-            overflow: hidden;
-            border-radius: 4px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
-        }
-
-        .col-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.3s;
-        }
-
-        .col-image:hover img {
-            transform: scale(1.05);
-        }
-
-        /* IMAGE GRID */
-        .image-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1.5rem;
-            margin: 2rem 0;
-        }
-
-        .image-card {
-            overflow: hidden;
-            border-radius: 4px;
-            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
-            transition: transform 0.3s;
-        }
-
-        .image-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .image-card img {
-            width: 100%;
-            height: 300px;
-            object-fit: cover;
+        .section-number {
             display: block;
-        }
-
-        /* BADGES */
-        .badge {
-            display: inline-block;
-            background-color: var(--accent-blue);
-            color: var(--light-bg);
-            padding: 0.5rem 1rem;
-            border-radius: 3px;
+            color: var(--color-accent);
+            font-size: 1rem;
             font-weight: 600;
-            font-size: 0.85rem;
-            margin: 0.3rem;
             margin-bottom: 0.5rem;
+            letter-spacing: 0.2em;
         }
 
-        /* BULLET LIST */
-        ul {
-            margin-left: 1.5rem;
+        .section-title {
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 700;
             margin-bottom: 1rem;
         }
 
-        ul li {
-            margin-bottom: 0.8rem;
-            list-style: none;
-            position: relative;
-            padding-left: 1.5rem;
+        .title-underline {
+            width: 80px;
+            height: 3px;
+            background: var(--color-accent);
+            margin: 1rem auto 0;
         }
 
-        ul li::before {
+        /* ===================================
+           CONTENT BLOCKS
+           =================================== */
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 3rem;
+        }
+
+        .content-block {
+            background: var(--color-surface);
+            padding: 2.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--color-border);
+            transition: var(--transition-smooth);
+        }
+
+        .content-block:hover {
+            transform: translateY(-5px);
+            border-color: var(--color-accent);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        .block-title {
+            color: var(--color-accent);
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .block-text {
+            color: var(--color-text-secondary);
+            line-height: 1.8;
+        }
+
+        .feature-list {
+            list-style: none;
+        }
+
+        .feature-item {
+            color: var(--color-text-secondary);
+            padding: 0.75rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+            line-height: 1.6;
+        }
+
+        .feature-item::before {
             content: '▸';
             position: absolute;
             left: 0;
-            color: var(--gold);
-            font-weight: bold;
+            color: var(--color-accent);
+            font-size: 1.2rem;
         }
 
-        /* CARDS GRID */
-        .cards-grid {
+        /* ===================================
+           CONTEXT CARDS
+           =================================== */
+
+        .context-content {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin: 2rem 0;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
         }
 
-        .card {
-            background: rgba(44, 90, 160, 0.15);
-            border: 1px solid var(--accent-blue);
-            padding: 1.5rem;
-            border-radius: 4px;
-            transition: all 0.3s;
-        }
-
-        .card:hover {
-            background: rgba(44, 90, 160, 0.25);
-            transform: translateY(-3px);
-            box-shadow: 0 4px 12px rgba(44, 90, 160, 0.3);
-        }
-
-        .card h4 {
-            color: var(--gold);
-            margin-bottom: 1rem;
-            font-size: 1.1rem;
-        }
-
-        .card p {
-            font-size: 0.95rem;
-            color: #c0c0c0;
-        }
-
-        /* FOOTER */
-        footer {
-            background: linear-gradient(135deg, var(--dark-steel) 0%, var(--deep-navy) 100%);
-            color: var(--light-bg);
+        .context-card {
+            background: var(--color-surface);
+            padding: 2.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--color-border);
+            transition: var(--transition-smooth);
             text-align: center;
-            padding: 2rem;
-            border-top: 3px solid var(--gold);
-            margin-top: 4rem;
-            font-size: 0.9rem;
         }
 
-        footer p {
-            color: var(--light-bg);
+        .context-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--color-accent);
+            box-shadow: 0 12px 30px rgba(212, 165, 116, 0.15);
         }
 
-        /* RESPONSIVE */
-        @media (max-width: 768px) {
-            .two-col {
-                grid-template-columns: 1fr;
-            }
-
-            nav ul {
-                gap: 1.5rem;
-            }
-
-            .hero h1 {
-                font-size: 2.5rem;
-            }
-
-            section h2 {
-                font-size: 1.8rem;
-            }
-
-            .image-grid {
-                grid-template-columns: 1fr;
-            }
+        .card-icon {
+            color: var(--color-accent);
+            margin-bottom: 1.5rem;
+            transition: var(--transition-smooth);
         }
 
-        /* HIGHLIGHT */
-        .highlight {
-            color: var(--gold);
+        .context-card:hover .card-icon {
+            transform: scale(1.1) rotateY(360deg);
+            transition: transform 0.6s ease;
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: var(--color-text-primary);
             font-weight: 600;
         }
 
-        /* CODE BLOCK */
-        .code-block {
-            background: rgba(0, 0, 0, 0.3);
-            border-left: 3px solid var(--gold);
-            padding: 1rem;
-            margin: 1rem 0;
-            font-family: 'Courier New', monospace;
-            font-size: 0.9rem;
-            color: #a8d8ea;
-            border-radius: 3px;
-            overflow-x: auto;
+        .card-text {
+            color: var(--color-text-secondary);
+            line-height: 1.7;
         }
 
-        /* HIGHLIGHT BOX */
-        .highlight-box {
-            background: rgba(212, 175, 55, 0.1);
-            border: 2px solid var(--gold);
-            padding: 1.5rem;
-            border-radius: 4px;
-            margin: 1.5rem 0;
+        /* ===================================
+           ROLE SECTION
+           =================================== */
+
+        .role-content {
+            max-width: 900px;
+            margin: 0 auto;
         }
 
-        .highlight-box h4 {
-            color: var(--gold);
-            margin-bottom: 0.8rem;
+        .role-highlight {
+            background: linear-gradient(135deg, var(--color-surface) 0%, rgba(30, 39, 48, 0.8) 100%);
+            padding: 3rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--color-accent);
+            margin-bottom: 3rem;
         }
 
-        /* IMAGE MODAL */
-        .image-modal {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.8);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 200;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.25s ease;
+        .highlight-title {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: var(--color-accent);
         }
-        .image-modal[aria-hidden="false"] {
-            opacity: 1;
-            pointer-events: auto;
+
+        .highlight-text {
+            color: var(--color-text-secondary);
+            font-size: 1.1rem;
+            line-height: 1.8;
         }
-        .image-modal img {
-            max-width: 90vw;
-            max-height: 90vh;
-            box-shadow: 0 0 0 2px rgba(255,255,255,0.2);
-            border-radius: 6px;
+
+        .contributions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
         }
-        .close-btn {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: rgba(0,0,0,0.6);
-            color: #fff;
-            border: none;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
+
+        .contribution-item {
+            background: var(--color-surface);
+            padding: 2rem;
+            border-radius: 8px;
+            border: 1px solid var(--color-border);
+            transition: var(--transition-smooth);
+            text-align: center;
+        }
+
+        .contribution-item:hover {
+            transform: translateY(-5px);
+            border-color: var(--color-accent);
+            box-shadow: 0 8px 24px rgba(212, 165, 116, 0.2);
+        }
+
+        .contribution-percentage {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--color-accent);
+            margin-bottom: 1rem;
+        }
+
+        .contribution-title {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: var(--color-text-primary);
+        }
+
+        .contribution-desc {
+            color: var(--color-text-secondary);
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        /* ===================================
+           FEATURES SECTION
+           =================================== */
+
+        .features-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2.5rem;
+        }
+
+        .feature-block {
+            background: var(--color-surface);
+            padding: 2.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--color-border);
+            transition: var(--transition-smooth);
+            text-align: center;
+        }
+
+        .feature-block:hover {
+            transform: translateY(-8px);
+            border-color: var(--color-accent);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            display: block;
+            transition: var(--transition-smooth);
+        }
+
+        .feature-block:hover .feature-icon {
+            transform: scale(1.2) rotate(5deg);
+        }
+
+        .feature-title {
             font-size: 1.4rem;
-            line-height: 1;
-            cursor: pointer;
+            margin-bottom: 1rem;
+            color: var(--color-text-primary);
+            font-weight: 600;
         }
-        .close-btn:hover {
-            background: rgba(0,0,0,0.9);
+
+        .feature-description {
+            color: var(--color-text-secondary);
+            line-height: 1.7;
+        }
+
+        /* ===================================
+           FOOTER
+           =================================== */
+
+        .footer {
+            background: var(--color-bg-dark);
+            padding: 3rem 2rem;
+            text-align: center;
+            position: relative;
+            border-top: 1px solid var(--color-border);
+        }
+
+        .footer-rails {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: repeating-linear-gradient(
+                    90deg,
+                    var(--color-accent),
+                    var(--color-accent) 20px,
+                    transparent 20px,
+                    transparent 40px
+            );
+        }
+
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .footer-text {
+            font-size: 1.1rem;
+            color: var(--color-text-primary);
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .footer-subtext {
+            color: var(--color-text-secondary);
+            font-size: 0.95rem;
+        }
+
+        /* ===================================
+           RESPONSIVE
+           =================================== */
+
+        @media (max-width: 768px) {
+            .nav-links {
+                gap: 1.5rem;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .section {
+                padding: 4rem 1.5rem;
+            }
+
+            .title-line::before,
+            .title-line::after {
+                display: none;
+            }
+
+            .content-grid,
+            .context-content,
+            .contributions-grid,
+            .features-content {
+                grid-template-columns: 1fr;
+            }
+
+            .role-highlight {
+                padding: 2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nav-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-links {
+                font-size: 0.9rem;
+                gap: 1rem;
+            }
+
+            .tech-badges {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+
+        /* ===================================
+           ANIMATIONS UTILITAIRES
+           =================================== */
+
+        .fade-in {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+
+        .slide-in-left {
+            animation: slideInLeft 0.8s ease-out forwards;
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .slide-in-right {
+            animation: slideInRight 0.8s ease-out forwards;
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
     </style>
 </head>
 <body>
-
-<!-- HERO -->
-<section class="hero" id="presentation">
-    <h1>TRAINS</h1>
-    <p>Adapter un jeu de plateau en application JavaFX interactive</p>
-    <div class="meta">
-        <span>👤 Alexandre Deschanel</span>
-        <span>🎓 BUT Informatique - 1ère année</span>
-        <span>👥 Projet en binôme</span>
-    </div>
-    <div class="divider"></div>
-    <p style="font-size: 1.1rem; margin-top: 2rem; color: #d0d0d0; font-style: normal;">
-        Une traversée ferroviaire entre le monde du jeu de plateau et celui du développement logiciel.<br>
-        <span class="highlight">Recréer l'expérience stratégique du jeu physique en environnement numérique.</span>
-    </p>
-</section>
-
-<!-- INTRODUCTION -->
-<section id="projet">
-    <h2>Le voyage commence</h2>
-
-    <p>
-        « Trains » n'est pas un simple projet académique. C'est une exploration concrète de la manière dont on peut transposer un système ludique complexe — avec ses règles, ses interactions, son ressenti — dans un programme cohérent et fluide. Dès les premières lignes de code, l'ambition fut claire : créer une interface intuitive qui rend justice à l'expérience du jeu physique.
-    </p>
-
-    <div class="two-col">
-        <div class="col-content">
-            <h3>Objectifs</h3>
-            <ul>
-                <li>Adapter le jeu Trains en Java/JavaFX</li>
-                <li>Concevoir une interface fluide et engageante</li>
-                <li>Respecter les mécaniques du jeu original</li>
-                <li>Produire un code structuré et maintenable</li>
-            </ul>
+<!-- Hero Section avec effet de rails -->
+<header class="hero">
+    <div class="rails-overlay"></div>
+    <div class="hero-content">
+        <h1 class="project-title">
+            <span class="title-line">TRAINS</span>
+        </h1>
+        <p class="project-subtitle">Digitalisation d'un jeu de plateau stratégique</p>
+        <div class="tech-badges">
+            <span class="badge">Java</span>
+            <span class="badge">JavaFX</span>
         </div>
-        <div class="col-content">
-            <h3>Défis à relever</h3>
-            <ul>
-                <li>Synchronisation temps réel</li>
-                <li>Traduction des règles en logique algorithmique</li>
-                <li>Performance et responsivité</li>
-                <li>Collaboration efficace en binôme</li>
-            </ul>
-        </div>
+        <a href="#overview" class="cta-button">Explorer le projet</a>
     </div>
-</section>
+    <div class="scroll-indicator">
+        <div class="scroll-line"></div>
+    </div>
+</header>
 
-<!-- ARCHITECTURE -->
-<section>
-    <h2>Architecture et conception</h2>
-
-    <p>
-        La fondation du projet repose sur une <span class="highlight">séparation nette</span> entre logique métier et interface graphique. Cette architecture modulaire a permis une évolution fluide et facilité les phases de test.
-    </p>
-
-    <div class="highlight-box">
-        <h4>Design MVC (Model-View-Controller)</h4>
-        <ul>
-            <li><span class="highlight">Model :</span> Gestion des règles, cartes, ressources et plateau</li>
-            <li><span class="highlight">View :</span> Affichage dynamique des états de jeu via JavaFX</li>
-            <li><span class="highlight">Controller :</span> Traduction des actions utilisateur en mutations logiques</li>
+<!-- Navigation -->
+<nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <div class="nav-brand">TRAINS</div>
+        <ul class="nav-links">
+            <li><a href="#overview" class="nav-link">Présentation</a></li>
+            <li><a href="#context" class="nav-link">Contexte</a></li>
+            <li><a href="#role" class="nav-link">Contribution</a></li>
+            <li><a href="#features" class="nav-link">Réalisations</a></li>
         </ul>
     </div>
+</nav>
 
-    <p>
-        Mon rôle s'est concentré sur la <span class="highlight">conception de l'interface</span> et de l'expérience utilisateur. Comment chaque clic se traduit-il en action à l'écran ? Comment guider le joueur sans contraindre ? Derrière chaque élément visuel se cache une mécanique pensée pour être logique et naturelle.
-    </p>
-</section>
-
-<!-- INTERFACE & UX -->
-<section>
-    <h2>Interface et expérience utilisateur</h2>
-
-    <p>
-        JavaFX a été le cœur de cette création visuelle. Le défi majeur : rendre l'interface <span class="highlight">fluide</span>, <span class="highlight">réactive</span> et <span class="highlight">engageante</span> malgré la complexité des interactions.
-    </p>
-
-    <h3>Ce qui a été construit</h3>
-    <div class="cards-grid">
-        <div class="card">
-            <h4>Zones de jeu dynamiques</h4>
-            <p>Plateau hexagonal interactif inspiré du jeu original, mise à jour en temps réel.</p>
+<!-- Section Présentation -->
+<section id="overview" class="section section-dark">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-number">01</span>
+            <h2 class="section-title">Présentation du Projet</h2>
+            <div class="title-underline"></div>
         </div>
-        <div class="card">
-            <h4>Cartes animées</h4>
-            <p>Distribution et affichage fluide des cartes, interactions intuitives.</p>
-        </div>
-        <div class="card">
-            <h4>Feedback visuel</h4>
-            <p>Surbrillance des actions possibles, animations de feedback.</p>
-        </div>
-        <div class="card">
-            <h4>Menus contextuels</h4>
-            <p>Navigation intelligente adaptée à chaque phase de jeu.</p>
-        </div>
-    </div>
-
-    <h3>Défis surmontés</h3>
-    <ul>
-        <li><span class="highlight">Synchronisation temps réel :</span> Maintenir cohérence entre état interne et affichage</li>
-        <li><span class="highlight">Gestion d'événements :</span> Complexité des interactions multiples</li>
-        <li><span class="highlight">Performance :</span> Fluidité malgré les mises à jour fréquentes</li>
-        <li><span class="highlight">Adaptation :</span> Responsive design pour différentes résolutions</li>
-    </ul>
-</section>
-
-<!-- CAPTURES D'ÉCRAN -->
-<section id="captures">
-    <h2>Captures du projet en action</h2>
-
-    <div class="image-grid">
-        <div class="image-card">
-            <img src="https://agi-prod-file-upload-public-main-use1.s3.amazonaws.com/fa40656a-caa8-4b41-be5e-915e6920eea2" alt="Menu d'accueil Trains">
-        </div>
-        <div class="image-card">
-            <img src="https://agi-prod-file-upload-public-main-use1.s3.amazonaws.com/185575f7-2257-46e3-bc21-2bab6c4bf65b" alt="Écran final du jeu">
-        </div>
-        <div class="image-card">
-            <img src="https://agi-prod-file-upload-public-main-use1.s3.amazonaws.com/a222c895-a294-487e-8f6e-86a5c0d1a069" alt="Interface de jeu détaillée">
-        </div>
-    </div>
-
-    <p style="text-align: center; color: var(--gold); margin-top: 2rem; font-style: italic;">
-        Des captures montrant le plateau hexagonal, le système de cartes, et l'interface globale du jeu.
-    </p>
-</section>
-
-<!-- MÉCANIQUES -->
-<section>
-    <h2>Implémentation des mécaniques</h2>
-
-    <p>
-        Reproduire les mécaniques du jeu <span class="highlight">Trains</span> nécessitait de traduire des règles souvent implicites en algorithmes précis. Chaque mécanique a été modélisée sous forme de classes interconnectées et de méthodes cohérentes.
-    </p>
-
-    <div class="cards-grid">
-        <div class="card">
-            <h4>Génération de cartes</h4>
-            <p>Distribution équitable et variée des cartes en main à chaque tour, respectant les règles du jeu.</p>
-        </div>
-        <div class="card">
-            <h4>Validation des constructions</h4>
-            <p>Vérification des conditions de pose de voies : ressources suffisantes, position légale, etc.</p>
-        </div>
-        <div class="card">
-            <h4>Effets de cartes</h4>
-            <p>Application dynamique des bonus et pénalités en cascade, gestion des interactions complexes.</p>
-        </div>
-        <div class="card">
-            <h4>Calcul des scores</h4>
-            <p>Mise à jour précise et transparente des résultats, rétroaction immédiate aux joueurs.</p>
-        </div>
-    </div>
-</section>
-
-<!-- STACK TECHNOLOGIQUE -->
-<section id="stack">
-    <h2>Technologies et outils</h2>
-
-    <div class="two-col">
-        <div class="col-content">
-            <h3>Stack technique</h3>
-            <div style="margin: 1rem 0;">
-                <span class="badge">Java 17</span>
-                <span class="badge">JavaFX</span>
-                <span class="badge">Git</span>
-                <span class="badge">IntelliJ IDEA</span>
+        <div class="content-grid">
+            <div class="content-block">
+                <h3 class="block-title">Vue d'ensemble</h3>
+                <p class="block-text">
+                    TRAINS est un projet universitaire ambitieux visant à digitaliser intégralement
+                    un jeu de plateau stratégique. Réalisé en binôme, ce projet combine logique de jeu
+                    complexe et interfaces utilisateur sophistiquées pour offrir une expérience fluide
+                    et professionnelle.
+                </p>
             </div>
-            <p>
-                Une architecture modulaire favorisant clarté, maintenance et évolution du code. Java 17 offre une stabilité et une expressivité modernes, tandis que JavaFX permet une création d'interface fluide et réactive.
-            </p>
-        </div>
-        <div class="col-content">
-            <h3>Principes appliqués</h3>
-            <ul>
-                <li>Séparation des responsabilités</li>
-                <li>Code propre et bien documenté</li>
-                <li>Gestion d'événements optimisée</li>
-                <li>Modularité pour la maintenabilité</li>
-                <li>Approche itérative et collaborative</li>
-            </ul>
+            <div class="content-block">
+                <h3 class="block-title">Objectifs</h3>
+                <ul class="feature-list">
+                    <li class="feature-item">Reproduire fidèlement les mécaniques du jeu original</li>
+                    <li class="feature-item">Concevoir une interface intuitive et responsive</li>
+                    <li class="feature-item">Implémenter une logique robuste en architecture MVC</li>
+                    <li class="feature-item">Créer une expérience visuelle immersive</li>
+                </ul>
+            </div>
         </div>
     </div>
 </section>
 
-<!-- DIFFICULTÉS & SOLUTIONS -->
-<section>
-    <h2>Défis et apprentissages</h2>
-
-    <h3>Les obstacles de la route</h3>
-    <ul>
-        <li><span class="highlight">Synchronisation temps réel :</span> Maintenir la cohérence entre l'état interne du jeu et l'affichage en JavaFX. Solution : architecture réactive avec observateurs.</li>
-        <li><span class="highlight">Complexité des interactions :</span> Traduire des règles implicites du jeu physique en code explicite. Solution : documentation précise et tests exhaustifs.</li>
-        <li><span class="highlight">Travail en binôme :</span> Synchroniser deux visions, intégrer les modules. Solution : communication claire et interfaces bien définies.</li>
-        <li><span class="highlight">Optimisation UX :</span> Équilibrer ambition visuelle et performance. Solution : itérations feedback-driven.</li>
-    </ul>
-
-    <div class="divider"></div>
-
-    <h3>Compétences développées</h3>
-    <div class="cards-grid">
-        <div class="card">
-            <h4>Programmation</h4>
-            <p>Conception orientée objet, modélisation de systèmes complexes, gestion d'événements JavaFX.</p>
+<!-- Section Contexte -->
+<section id="context" class="section section-light">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-number">02</span>
+            <h2 class="section-title">Contexte Initial</h2>
+            <div class="title-underline"></div>
         </div>
-        <div class="card">
-            <h4>Design</h4>
-            <p>Principes UX/UI, expérience utilisateur, équilibre entre esthétique et fonctionnalité.</p>
-        </div>
-        <div class="card">
-            <h4>Méthode</h4>
-            <p>Code propre, documentation efficace, collaboration productive, itération continue.</p>
-        </div>
-        <div class="card">
-            <h4>Rigueur</h4>
-            <p>Architecture maintenable, testing systématique, approche pragmatique des compromis.</p>
+        <div class="context-content">
+            <div class="context-card">
+                <div class="card-icon">
+                    <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                        <rect x="5" y="10" width="30" height="20" stroke="currentColor" stroke-width="2"/>
+                        <line x1="5" y1="20" x2="35" y2="20" stroke="currentColor" stroke-width="2"/>
+                        <circle cx="12" cy="15" r="2" fill="currentColor"/>
+                        <circle cx="28" cy="15" r="2" fill="currentColor"/>
+                    </svg>
+                </div>
+                <h4 class="card-title">Assets fournis</h4>
+                <p class="card-text">
+                    Le projet a démarré avec un ensemble d'assets graphiques (cartes, plateaux, éléments UI)
+                    et une base de code minimale définissant les structures de données principales.
+                </p>
+            </div>
+            <div class="context-card">
+                <div class="card-icon">
+                    <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                        <path d="M10 30 L20 10 L30 30 Z" stroke="currentColor" stroke-width="2" fill="none"/>
+                        <line x1="15" y1="23" x2="25" y2="23" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                </div>
+                <h4 class="card-title">Défi technique</h4>
+                <p class="card-text">
+                    Le défi consistait à construire l'ensemble de l'application : architecture logicielle,
+                    gestion des états, interfaces graphiques et interactions utilisateur complexes.
+                </p>
+            </div>
+            <div class="context-card">
+                <div class="card-icon">
+                    <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                        <circle cx="15" cy="20" r="8" stroke="currentColor" stroke-width="2" fill="none"/>
+                        <circle cx="25" cy="20" r="8" stroke="currentColor" stroke-width="2" fill="none"/>
+                    </svg>
+                </div>
+                <h4 class="card-title">Travail collaboratif</h4>
+                <p class="card-text">
+                    Développé en binôme avec une répartition claire des responsabilités :
+                    logique métier partagée, interfaces à dominante personnelle.
+                </p>
+            </div>
         </div>
     </div>
 </section>
 
-<!-- VISION FUTURE -->
-<section id="apprentissages">
-    <h2>Au-delà du terminal</h2>
-
-    <p>
-        Aujourd'hui, <span class="highlight">Trains</span> représente bien plus qu'un jalon académique. C'est une compréhension concrète de la manière dont <span class="highlight">technique et design dialoguent</span> pour créer une expérience vivante et cohérente.
-    </p>
-
-    <div class="highlight-box">
-        <h4>Ce que ce projet a apporté</h4>
-        <p>
-            Une confiance accrue dans ma capacité à analyser un système complexe, à en modéliser les interactions, et à les traduire en code fonctionnel et élégant. Une appréhension plus profonde des enjeux UX et de l'importance d'une architecture solide.
-        </p>
+<!-- Section Rôle personnel -->
+<section id="role" class="section section-dark">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-number">03</span>
+            <h2 class="section-title">Contribution d'Alexandre</h2>
+            <div class="title-underline"></div>
+        </div>
+        <div class="role-content">
+            <div class="role-highlight">
+                <h3 class="highlight-title">Forte implication sur les interfaces</h3>
+                <p class="highlight-text">
+                    Responsable principal de la conception et de l'implémentation des composants visuels,
+                    j'ai assuré la cohérence esthétique et l'ergonomie de l'application en JavaFX.
+                </p>
+            </div>
+            <div class="contributions-grid">
+                <div class="contribution-item">
+                    <div class="contribution-percentage">80%</div>
+                    <h4 class="contribution-title">Zone de jeu</h4>
+                    <p class="contribution-desc">
+                        Conception quasi-intégral de l'interface principale :
+                        plateau interactif, gestion des cartes, animations de jeu et feedback visuel.
+                    </p>
+                </div>
+                <div class="contribution-item">
+                    <div class="contribution-percentage">100%</div>
+                    <h4 class="contribution-title">Tableau de victoire</h4>
+                    <p class="contribution-desc">
+                        Design complet et implémentation du système d'affichage des scores,
+                        statistiques de partie et écran de fin avec récapitulatif détaillé.
+                    </p>
+                </div>
+                <div class="contribution-item">
+                    <div class="contribution-percentage">40%</div>
+                    <h4 class="contribution-title">Composants UI</h4>
+                    <p class="contribution-desc">
+                        Création de composants réutilisables (boutons, menus, overlays)
+                        et mise en place du système de thème visuel global.
+                    </p>
+                </div>
+            </div>
+        </div>
     </div>
-
-    <h3>Horizons possibles</h3>
-    <ul>
-        <li>Extension <span class="highlight">multijoueur en ligne</span> — architecture réseau et synchronisation distribuée</li>
-        <li>Animations et immersion amplifiées — effects visuels et sound design</li>
-        <li>Intelligence artificielle de joueur — algorithmes de décision et pathfinding</li>
-        <li>Plateforme web — portage en technologies web modernes (React, Node.js)</li>
-    </ul>
-
-    <p style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid rgba(212, 175, 55, 0.3);">
-        Ce projet m'a confirmé dans mon intérêt pour la <span class="highlight">création d'expériences interactives cohérentes</span>, où technique et design dialoguent pour donner vie à un système vivant et évolutif. C'est un socle fondateur pour ma carrière de développeur.
-    </p>
 </section>
-<div id="image-modal" class="image-modal" aria-hidden="true" role="dialog" aria-label="Affichage plein écran de l'image"> <button class="close-btn" aria-label="Fermer">×</button> <img id="modal-img" src="" alt="Image en plein écran" /> </div>
-<!-- FOOTER -->
-<footer>
-    <p>© 2025 Alexandre Deschanel</p>
-    <p style="margin-top: 0.5rem; font-style: italic;">Passionné par l'expérience utilisateur et la conception de systèmes cohérents</p>
+
+<!-- Section Réalisations -->
+<section id="features" class="section section-light">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-number">04</span>
+            <h2 class="section-title">Réalisations Clés</h2>
+            <div class="title-underline"></div>
+        </div>
+        <div class="features-content">
+            <div class="feature-block">
+                <div class="feature-icon">⚙️</div>
+                <h3 class="feature-title">Architecture MVC</h3>
+                <p class="feature-description">
+                    Séparation claire entre logique métier, modèle de données et couche de présentation
+                    pour garantir maintenabilité et évolutivité du code.
+                </p>
+            </div>
+            <div class="feature-block">
+                <div class="feature-icon">🎨</div>
+                <h3 class="feature-title">Interface JavaFX avancée</h3>
+                <p class="feature-description">
+                    Utilisation de layouts complexes, CSS personnalisé et animations fluides
+                    pour créer une expérience utilisateur moderne et engageante.
+                </p>
+            </div>
+            <div class="feature-block">
+                <div class="feature-icon">🔄</div>
+                <h3 class="feature-title">Gestion d'état robuste</h3>
+                <p class="feature-description">
+                    Système de gestion des tours, actions joueurs et mises à jour d'interface
+                    synchronisées avec des patterns Observer et Event-driven.
+                </p>
+            </div>
+            <div class="feature-block">
+                <div class="feature-icon">📊</div>
+                <h3 class="feature-title">Système de scoring</h3>
+                <p class="feature-description">
+                    Calcul dynamique des points, tracking des performances et affichage
+                    détaillé des statistiques en fin de partie.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer avec effet rails -->
+<footer class="footer">
+    <div class="footer-rails"></div>
+    <div class="footer-content">
+        <p class="footer-text">TRAINS © 2023-2024 - Projet Universitaire</p>
+        <p class="footer-subtext">Développé par Alexandre Deschanel et son binôme en Java & JavaFX</p>
+    </div>
 </footer>
+
 <script>
-    document.addEventListener('DOMContentLoaded', () => { const modal = document.getElementById('image-modal');
-        const modalImg = document.getElementById('modal-img');
-        const closeBtn = document.querySelector('.image-modal .close-btn');
-        // Attacher les événements click sur les images de la grille
-        const imageCards = document.querySelectorAll('.image-card img');
-        imageCards.forEach(img => {
-            img.style.cursor = 'pointer';
-            img.addEventListener('click', () => {
-                modalImg.src = img.src;
-                modal.setAttribute('aria-hidden', 'false');
-                // Optional: permettre le scroll le temps de l'affichage
-                document.body.style.overflow = 'hidden';
+    // ========================================
+    // TRAINS - JavaScript Vanilla
+    // Interactions et animations
+    // ========================================
+
+    // Attendre le chargement complet du DOM
+    document.addEventListener('DOMContentLoaded', function() {
+
+        // ========================================
+        // NAVIGATION STICKY & SCROLLED STATE
+        // ========================================
+
+        const navbar = document.getElementById('navbar');
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        // Ajouter une classe lors du scroll pour effet visuel
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+
+            // Mettre en surbrillance le lien actif selon la section visible
+            highlightActiveSection();
+        });
+
+        // ========================================
+        // SMOOTH SCROLL AVEC OFFSET POUR LA NAV
+        // ========================================
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+
+                const targetId = this.getAttribute('href');
+                const targetSection = document.querySelector(targetId);
+
+                if (targetSection) {
+                    // Calculer la position avec offset pour la navbar
+                    const navbarHeight = navbar.offsetHeight;
+                    const targetPosition = targetSection.offsetTop - navbarHeight - 20;
+
+                    window.scrollTo({
+                        top: targetPosition,
+                        behavior: 'smooth'
+                    });
+                }
             });
         });
-        // Fermer le modal
-        const closeModal = () => {
-            modal.setAttribute('aria-hidden', 'true');
-            modalImg.src = '';
-            document.body.style.overflow = '';
+
+        // ========================================
+        // HIGHLIGHT SECTION ACTIVE DANS NAV
+        // ========================================
+
+        function highlightActiveSection() {
+            const sections = document.querySelectorAll('.section');
+            const navbarHeight = navbar.offsetHeight;
+
+            let currentSection = '';
+
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop - navbarHeight - 100;
+                const sectionHeight = section.offsetHeight;
+
+                if (window.scrollY >= sectionTop && window.scrollY < sectionTop + sectionHeight) {
+                    currentSection = section.getAttribute('id');
+                }
+            });
+
+            // Retirer la classe active de tous les liens
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                const href = link.getAttribute('href').substring(1);
+
+                if (href === currentSection) {
+                    link.style.color = 'var(--color-accent)';
+                } else {
+                    link.style.color = 'var(--color-text-secondary)';
+                }
+            });
+        }
+
+        // ========================================
+        // ANIMATIONS AU SCROLL (Intersection Observer)
+        // ========================================
+
+        const observerOptions = {
+            threshold: 0.15,
+            rootMargin: '0px 0px -100px 0px'
         };
-        // Clique sur la croix
-        closeBtn.addEventListener('click', closeModal);
-        // Clique sur l'arrière-plan (overlay)
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) { closeModal(); }
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('fade-in');
+                    // Ne plus observer une fois l'animation déclenchée
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        // Observer tous les éléments qui doivent s'animer
+        const animatedElements = document.querySelectorAll(
+            '.content-block, .context-card, .contribution-item, .feature-block, .role-highlight'
+        );
+
+        animatedElements.forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+            observer.observe(el);
         });
-        // Escape pour fermer
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && modal.getAttribute('aria-hidden') === 'false') { closeModal(); }
+
+        // ========================================
+        // INTERACTION HOVER SUR LES CARTES
+        // ========================================
+
+        const cards = document.querySelectorAll('.context-card, .content-block, .feature-block, .contribution-item');
+
+        cards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                // Effet de "tilt" subtil au survol
+                this.style.transition = 'transform 0.3s ease';
+            });
+
+            card.addEventListener('mousemove', function(e) {
+                // Calculer la position de la souris relative à la carte
+                const rect = this.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+
+                // Calculer l'angle de rotation (effet parallax léger)
+                const rotateX = (y - centerY) / 30;
+                const rotateY = (centerX - x) / 30;
+
+                this.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-5px)`;
+            });
+
+            card.addEventListener('mouseleave', function() {
+                // Retour à l'état normal
+                this.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateY(0)';
+            });
         });
+
+        // ========================================
+        // EFFET PARALLAX LÉGER SUR LE HERO
+        // ========================================
+
+        const hero = document.querySelector('.hero');
+        const heroContent = document.querySelector('.hero-content');
+
+        window.addEventListener('scroll', function() {
+            const scrolled = window.scrollY;
+
+            // Déplacement parallax du contenu hero
+            if (scrolled < window.innerHeight) {
+                heroContent.style.transform = `translateY(${scrolled * 0.5}px)`;
+                heroContent.style.opacity = 1 - (scrolled / window.innerHeight) * 0.8;
+            }
+        });
+
+        // ========================================
+        // ANIMATION DES POURCENTAGES (Contribution)
+        // ========================================
+
+        const percentageElements = document.querySelectorAll('.contribution-percentage');
+
+        const percentageObserver = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const target = entry.target;
+                    const finalValue = parseInt(target.textContent);
+
+                    // Animation de compteur
+                    animateCounter(target, 0, finalValue, 1500);
+
+                    percentageObserver.unobserve(target);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        percentageElements.forEach(el => {
+            percentageObserver.observe(el);
+        });
+
+        // Fonction utilitaire pour animer un compteur
+        function animateCounter(element, start, end, duration) {
+            const range = end - start;
+            const increment = range / (duration / 16); // 60 FPS
+            let current = start;
+
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= end) {
+                    current = end;
+                    clearInterval(timer);
+                }
+                element.textContent = Math.floor(current) + '%';
+            }, 16);
+        }
+
+        // ========================================
+        // EFFET DE "SHIMMER" SUR LE BOUTON CTA
+        // ========================================
+
+        const ctaButton = document.querySelector('.cta-button');
+
+        if (ctaButton) {
+            ctaButton.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-3px) scale(1.02)';
+            });
+
+            ctaButton.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        }
+
+        // ========================================
+        // EASTER EGG : EFFET RAILS AU CLIC
+        // ========================================
+
+        let clickCount = 0;
+        const navBrand = document.querySelector('.nav-brand');
+
+        navBrand.addEventListener('click', function() {
+            clickCount++;
+
+            if (clickCount >= 5) {
+                // Effet visuel "rails" animé sur toute la page
+                createRailsEffect();
+                clickCount = 0;
+            }
+        });
+
+        function createRailsEffect() {
+            const overlay = document.createElement('div');
+            overlay.style.position = 'fixed';
+            overlay.style.top = '0';
+            overlay.style.left = '0';
+            overlay.style.width = '100%';
+            overlay.style.height = '100%';
+            overlay.style.background = `repeating-linear-gradient(
+            90deg,
+            transparent,
+            transparent 50px,
+            var(--color-accent) 50px,
+            var(--color-accent) 52px
+        )`;
+            overlay.style.opacity = '0';
+            overlay.style.pointerEvents = 'none';
+            overlay.style.zIndex = '9999';
+            overlay.style.transition = 'opacity 0.5s ease';
+
+            document.body.appendChild(overlay);
+
+            // Fade in
+            setTimeout(() => {
+                overlay.style.opacity = '0.3';
+            }, 10);
+
+            // Fade out et suppression
+            setTimeout(() => {
+                overlay.style.opacity = '0';
+                setTimeout(() => {
+                    document.body.removeChild(overlay);
+                }, 500);
+            }, 1500);
+        }
+
+        // ========================================
+        // AMÉLIORATION DE L'ACCESSIBILITÉ
+        // ========================================
+
+        // Gestion du focus clavier
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Tab') {
+                document.body.classList.add('keyboard-nav');
+            }
+        });
+
+        document.addEventListener('mousedown', function() {
+            document.body.classList.remove('keyboard-nav');
+        });
+
+        // Ajouter des styles pour la navigation au clavier
+        const style = document.createElement('style');
+        style.textContent = `
+        body:not(.keyboard-nav) *:focus {
+            outline: none;
+        }
+
+        body.keyboard-nav *:focus {
+            outline: 2px solid var(--color-accent);
+            outline-offset: 4px;
+        }
+    `;
+        document.head.appendChild(style);
+
+        // ========================================
+        // PERFORMANCE : DEBOUNCE SCROLL
+        // ========================================
+
+        let scrollTimeout;
+        let lastScrollY = window.scrollY;
+
+        window.addEventListener('scroll', function() {
+            // Détection de la direction du scroll
+            const currentScrollY = window.scrollY;
+
+            if (currentScrollY > lastScrollY && currentScrollY > 100) {
+                // Scroll vers le bas - on peut cacher la nav si souhaité
+                // navbar.style.transform = 'translateY(-100%)';
+            } else {
+                // Scroll vers le haut
+                navbar.style.transform = 'translateY(0)';
+            }
+
+            lastScrollY = currentScrollY;
+
+            // Debounce pour optimiser les performances
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(function() {
+                // Actions après arrêt du scroll
+            }, 150);
+        });
+
+        // ========================================
+        // INITIALISATION COMPLÈTE
+        // ========================================
+
+        console.log('%c🚂 TRAINS Project Page Loaded', 'color: #d4a574; font-size: 16px; font-weight: bold;');
+        console.log('%cDéveloppé avec HTML, CSS et JavaScript Vanilla', 'color: #b8bcc4; font-size: 12px;');
+
+        // Déclencher l'animation initiale
+        setTimeout(() => {
+            highlightActiveSection();
+        }, 100);
     });
+
+    // ========================================
+    // UTILITAIRES GLOBAUX
+    // ========================================
+
+    // Fonction de debounce réutilisable
+    function debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
+
+    // Fonction de throttle réutilisable
+    function throttle(func, limit) {
+        let inThrottle;
+        return function(...args) {
+            if (!inThrottle) {
+                func.apply(this, args);
+                inThrottle = true;
+                setTimeout(() => inThrottle = false, limit);
+            }
+        };
+    }
 </script>
 </body>
 </html>

@@ -3,19 +3,17 @@ export class Page {
     _content;
     _tag;
     _logo;
-    date;
 
     constructor(name, content, tag) {
         this._name = name;
         this._content = content;
         this._tag = tag;
-        this.date = Date.now();
     }
     onglet_nom(){
         return this._name;
     }
-    _id(){
-        return this.date + " " + this._name;
+    onglet_id(){
+        return "logo_"+this._name;
     }
 
     init_onglet(){
@@ -23,7 +21,7 @@ export class Page {
         this._logo = document.createElement("div");
         this._logo.classList.add("onglet");
         this._logo.classList.add("selected");
-        this._logo.id = this._id();
+        this._logo.id = this.onglet_id();
         let lien_image = "<img src='ressources/images/opera/pages/logo_" + this._name + ".png' onerror=\"this.onerror=null; this.src='ressources/images/opera/pages/inconnue.png'\">";
         this._logo.innerHTML =
             lien_image+
@@ -35,6 +33,7 @@ export class Page {
 
     ouvrir(){
         let page = document.getElementById("page");
+        console.log("contenue : "+this._content)
         page.append(this._content);
         this.init_onglet()
     }
