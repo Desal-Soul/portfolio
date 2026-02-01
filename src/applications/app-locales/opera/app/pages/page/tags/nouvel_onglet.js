@@ -231,7 +231,7 @@ shadow.innerHTML = `
             margin-bottom: 5px;
         }
 
-        .voxtek-result-tag {
+        .voxtek-result-score {
             color: rgba(255, 255, 255, 0.5);
             font-size: 12px;
             font-family: monospace;
@@ -282,10 +282,12 @@ const input = shadow.querySelector(".voxtek-input");
 const resultsContainer = shadow.querySelector(".voxtek-results");
 const shortcuts = shadow.querySelector(".voxtek-shortcuts");
 
+// Fonction pour effectuer la recherche et afficher les résultats
 function effectuerRecherche(query) {
     const q = query.trim();
 
     if (!q) {
+        // Si la recherche est vide, masquer les résultats et afficher les raccourcis
         resultsContainer.classList.remove("visible");
         resultsContainer.innerHTML = "";
         shortcuts.style.display = "flex";
@@ -314,25 +316,15 @@ function afficherResultats(resultats) {
         item.classList.add("voxtek-result-item");
 
         const nom = resultat.nom || resultat[0] || `Page ${index + 1}`;
-
-        let tag;
-        if (resultat[2] != []){
-            tag = "Tag"
-            if (resultat[2] < 0) tag = tag + "s";
-            tag = tag + " : "
-            resultat[2].forEach((res) => {
-                tag = tag + res + ", "
-            });
-            tag = tag.substring(0,tag.length-2);
-        } else tag = "Aucun tag trouvé";
+        const score = resultat.score !== undefined ? resultat.score.toFixed(2) : "N/A";
 
         item.innerHTML = `
             <div class="voxtek-result-title">${nom}</div>
-            <div class="voxtek-result-score">${tag}</div>
+            <div class="voxtek-result-score">Score: ${score}</div>
         `;
 
         item.addEventListener("click", () => {
-            console.log("Clic sur résultat:", resultat);
+            console.log("Ouvrir la page:", resultat);
             ouvrirPageDepuisResultat(resultat);
         });
 
@@ -343,8 +335,7 @@ function afficherResultats(resultats) {
 }
 
 function ouvrirPageDepuisResultat(resultat) {
-    // Utiliser stopImmediatePropagation pour éviter les duplications
-    const event = new CustomEvent("ouvrir-page-rechercheouvrir-page-recherche", {
+    const event = new CustomEvent("ouvrir-page-recherche", {
         bubbles: true,
         composed: true,
         detail: {
@@ -352,15 +343,16 @@ function ouvrirPageDepuisResultat(resultat) {
         }
     });
 
-    // Dispatch directement sur document pour éviter les multiples listeners
-    document.dispatchEvent(event);
-    console.log("Event dispatché:", resultat);
+    contenue.dispatchEvent(event);
+    console.log("Event dispatché pour ouvrir:", resultat);
 }
 
+// Recherche en temps réel à chaque caractère tapé
 input.addEventListener("input", (e) => {
     effectuerRecherche(e.target.value);
 });
 
+// Soumission du formulaire avec la touche Entrée
 form.addEventListener("submit", (e) => {
     e.preventDefault();
     effectuerRecherche(input.value);

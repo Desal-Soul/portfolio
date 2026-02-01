@@ -31,6 +31,9 @@
     transition: background-color 0.2s ease;
     position: relative;
 }
+.onglet img {
+    border-radius: 15%;
+}
 
 .onglet:hover {
     background-color: #303046;

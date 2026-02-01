@@ -1,5 +1,5 @@
-import {Page} from "../page.js";
+import {dolibarr, stage} from "./tags/liste_de_tag.js";
 
 let contenue = document.createElement("div");
-
-export let page_cfpo = new Page("stage", contenue, [])
+let tag = dolibarr.concat(stage.concat(["2025"]));
+export let page_cfpo = ["stage cfpo", contenue, tag]

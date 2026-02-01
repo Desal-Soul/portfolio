@@ -1,4 +1,5 @@
 import {PagesManager} from "../pages/pagesManager.js";
+import {Page} from "../pages/page.js";
 
 class Workspace {
     _listes_page;
@@ -10,7 +11,10 @@ class Workspace {
         console.log("initialisation du workspace : "+name)
     }
 
-    insert_page(page) { this._listes_page.insert(page) }
+    insert_page(page) {
+        let temp = new Page(page[0], page[1].cloneNode(true), page[2])
+        this._listes_page.insert(temp)
+    }
 
     ouvrir(){
         let workspaces = document.getElementById("workspaces");

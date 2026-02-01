@@ -3,17 +3,19 @@ export class Page {
     _content;
     _tag;
     _logo;
+    _date;
 
     constructor(name, content, tag) {
         this._name = name;
         this._content = content;
         this._tag = tag;
+        this._date = Date.now()
     }
     onglet_nom(){
         return this._name;
     }
     onglet_id(){
-        return "logo_"+this._name;
+        return this._date+"_"+this._name;
     }
 
     init_onglet(){
@@ -21,24 +23,21 @@ export class Page {
         this._logo = document.createElement("div");
         this._logo.classList.add("onglet");
         this._logo.classList.add("selected");
-        this._logo.id = this.onglet_id();
-        let lien_image = "<img src='ressources/images/opera/pages/logo_" + this._name + ".png' onerror=\"this.onerror=null; this.src='ressources/images/opera/pages/inconnue.png'\">";
-        this._logo.innerHTML =
-            lien_image+
-            "<p class='name'>"+ this.onglet_nom() +"</p>"+
-            "<p class='fermer'>⨉</p>"
+        this._logo.id = "onglet_"+this.onglet_id();
+        let lien_image = "<img src='ressources/images/opera/pages/logo_" + this._name.toLowerCase().replace(/ /g, '_') + ".png' onerror=\"this.onerror=null; this.src='ressources/images/opera/pages/inconnue.png'\">";
+        this._logo.innerHTML = lien_image + "<p class='name'>"+ this.onglet_nom() + "</p>" + "<p class='fermer'>⨉</p>"
         onglets.append(this._logo);
-
     }
 
     ouvrir(){
         let page = document.getElementById("page");
-        console.log("contenue : "+this._content)
+        console.log("ouverture page" + this._name)
         page.append(this._content);
+        this._content.id = "contenu_"+this.onglet_id();
         this.init_onglet()
     }
     fermer(){
-        console.log("Fermeture de l'onglets")
+        console.log("fermeture page " + this._name)
         this.cacher();
         if (!this._logo.classList.contains("hidden")) {this._logo.classList.add("hidden")}
     }

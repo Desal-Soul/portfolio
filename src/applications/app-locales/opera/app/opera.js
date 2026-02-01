@@ -16,7 +16,6 @@ export class OperaNav {
 
     int_workspaces() {
         this._gestionnaire_workspace.insert(accueil);
-        this._gestionnaire_workspace.insert(java);
         this._gestionnaire_workspace.insert(web);
         this._gestionnaire_workspace.insert(python);
         this._gestionnaire_workspace.insert(reseau);
@@ -26,7 +25,6 @@ export class OperaNav {
 
         this._gestionnaire_workspace.activer();
         this._gestionnaire_workspace.activation_interne();
-        java.fermer_onglets();
         web.fermer_onglets();
         python.fermer_onglets();
         reseau.fermer_onglets();

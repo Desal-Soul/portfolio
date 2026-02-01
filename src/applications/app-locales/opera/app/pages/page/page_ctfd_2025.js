@@ -1,5 +1,5 @@
-import {Page} from "../page";
+import {ctfd} from "./tags/liste_de_tag.js";
 
 let contenue = document.createElement("div");
 
-export let page_ctfd_2025 = new Page("ctfd_2025", contenue, [])
+export let page_ctfd_2025 = ["Last Hour", contenue, ctfd.concat("2025/2026")]
