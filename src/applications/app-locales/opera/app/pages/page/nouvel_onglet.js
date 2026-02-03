@@ -344,7 +344,7 @@ function afficherResultats(resultats) {
 
 function ouvrirPageDepuisResultat(resultat) {
     // Utiliser stopImmediatePropagation pour éviter les duplications
-    const event = new CustomEvent("ouvrir-page-rechercheouvrir-page-recherche", {
+    const event = new CustomEvent("ouvrir-page-recherche", {
         bubbles: true,
         composed: true,
         detail: {
