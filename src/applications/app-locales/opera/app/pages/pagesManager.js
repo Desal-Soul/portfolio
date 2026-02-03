@@ -5,7 +5,6 @@ import {Page} from "./page.js";
 export class PagesManager extends AbstractManager {
     constructor() {
         super();
-        console.log("initialisation des Pages");
         this._enTraitementOuverture = false;
         this.initRechercheListener();
     }
@@ -18,12 +17,10 @@ export class PagesManager extends AbstractManager {
             document.addEventListener("ouvrir-page-recherche", (e) => {
                 // Empêcher les appels multiples avec un flag
                 if (this._enTraitementOuverture) {
-                    console.warn("Ouverture déjà en cours, ignoré");
                     return;
                 }
 
                 this._enTraitementOuverture = true;
-                console.log("Event ouvrir-page-recherche reçu:", e.detail);
 
                 // Utiliser setTimeout pour éviter les conflits de timing
                 setTimeout(() => {
@@ -32,20 +29,15 @@ export class PagesManager extends AbstractManager {
                 }, 10);
             });
 
-            console.log("✅ Listener de recherche initialisé");
         }
     }
 
     remplacerOngletParPage(pageData) {
-        console.log("Remplacement de l'onglet actuel par:", pageData);
-
         if (this._actuel && this._actuel._name === "nouvel onglet") {
             const nom = pageData.nom || pageData[0];
             let contenu = pageData.contenue || pageData[1];
             const tags = pageData.tag || pageData[2] || [];
             contenu = contenu.cloneNode(true);
-            console.log("Suppression de l'onglet 'nouvel onglet'");
-
             // Retirer la classe selected avant de supprimer
             if (this._actuel._logo) {
                 this._actuel._logo.classList.remove("selected");
@@ -64,18 +56,13 @@ export class PagesManager extends AbstractManager {
             this._liste.delete(ongletActuelId);
 
             // Créer la nouvelle page
-            console.log("Création de la nouvelle page:", nom);
             const nouvellePage = new Page(nom, contenu, tags);
             this.insert(nouvellePage);
             this._actuel = nouvellePage;
             nouvellePage.ouvrir();
             this.bind(nouvellePage, nouvellePage.onglet_id());
             nouvellePage.afficher();
-
-            console.log("✅ Onglet remplacé avec succès par:", nom);
         } else {
-            console.warn("L'onglet actuel n'est pas 'nouvel onglet', ouverture d'un nouvel onglet");
-
             const nom = pageData.nom || pageData[0];
             let contenu = pageData.contenue || pageData[1];
             const tags = pageData.tag || pageData[2] || [];
@@ -109,47 +96,30 @@ export class PagesManager extends AbstractManager {
     }
 
     afficher(contenue) {
-        console.log("afficher contenue = " + contenue);
-        if (contenue === undefined || contenue === null) {
-            console.warn("Tentative d'affichage d'un élément inexistant");
-            return;
-        }
+        if (contenue === undefined || contenue === null) {return;}
         if (contenue !== this._actuel) {
             this.cacher();
             this._actuel = contenue;
-        }
-        this._actuel.afficher();
+        } this._actuel.afficher();
     }
 
     toggle(nom) { this.afficher(this._liste.get(nom)); }
 
-    bind(contenue, tag) {
-        contenue.get_logo().addEventListener('click', (event) => {
-            this.toggle(tag);
-        });
+    bind(contenue, tag) { contenue.get_logo().addEventListener('click', (event) => { this.toggle(tag); });
 
         contenue._logo.getElementsByClassName("fermer")[0].addEventListener("click", (e) => {
             e.stopPropagation();
-            console.log("SUPPRESSION " + contenue._name);
-
             let keys = Array.from(this._liste.keys());
             if (contenue === this._actuel && keys.length > 1) {
-                console.warn("changement de page fermeture")
                 let num = keys.indexOf(tag);
-                if (num !== 0) {
-                    num = num - 1;
-                }
+                if (num !== 0) { num = num - 1; }
                 let new_tag = keys[num];
-                console.log('LOG : ' + this._liste.get(new_tag)._name);
                 this.toggle(new_tag);
             }
             document.getElementById("onglet_"+contenue.onglet_id()).remove()
             document.getElementById("contenu_"+contenue.onglet_id()).remove()
             this._liste.delete(tag);
-            console.warn("ta")
-            if (this._liste.size === 0) {
-                this.page_new();
-            }
+            if (this._liste.size === 0) { this.page_new(); }
         });
     }
 

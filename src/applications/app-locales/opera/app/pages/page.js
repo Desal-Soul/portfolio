@@ -31,13 +31,11 @@ export class Page {
 
     ouvrir(){
         let page = document.getElementById("page");
-        console.log("ouverture page" + this._name)
         page.append(this._content);
         this._content.id = "contenu_"+this.onglet_id();
         this.init_onglet()
     }
     fermer(){
-        console.log("fermeture page " + this._name)
         this.cacher();
         if (!this._logo.classList.contains("hidden")) {this._logo.classList.add("hidden")}
     }

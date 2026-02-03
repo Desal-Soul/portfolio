@@ -22,7 +22,7 @@ export class AbstractApplicationAvecLogo extends AbstractApplication {
 
     get_logo () { return this._logo; }
 
-    _affichage_console_reussite() {console.log("+ Creation de l'application avec logo "+this._name)}
+    _affichage_console_reussite() {/*console.log("+ Creation de l'application avec logo "+this._name)*/}
     afficher_logo () {
         if (!this._logo.classList.contains("selected")) {this._logo.classList.add("selected");}
         if (this._logo.classList.contains("hidden")) {this._logo.classList.remove("hidden");}

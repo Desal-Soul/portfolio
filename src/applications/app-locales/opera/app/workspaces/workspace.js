@@ -8,7 +8,6 @@ class Workspace {
     constructor(name) {
         this._listes_page = new PagesManager();
         this._name = name;
-        console.log("initialisation du workspace : "+name)
     }
 
     insert_page(page) {
@@ -25,7 +24,6 @@ class Workspace {
         this._logo.classList.add("icon_workspace");
     }
     afficher(){
-        console.log('afficher '+this._name);
         if (!this._logo.classList.contains("selected")) {this._logo.classList.add("selected");}
         this._listes_page.reouvrir()
         this._listes_page.afficher(this._listes_page._actuel);

@@ -12,7 +12,7 @@ export class AbstractApplication {
 
     }
 
-    _affichage_console_reussite(){console.log(" + Creation de l'application "+this._name)}
+    _affichage_console_reussite(){/*console.log(" + Creation de l'application "+this._name)*/}
 
     init() {
         /** INITIALISATION DE L'APPLICATION SUR L'ÉCRAN**/
@@ -36,24 +36,20 @@ export class AbstractApplication {
     }
 
     ouvrir() {
-        console.log("Ouverture de "+this._name);
         this.afficher();
     }
 
     afficher() {
-        console.log("affichage de "+this._name);
         if (!this._container.classList.contains("selected")) {this._container.classList.add("selected");}
         if (this._container.classList.contains("hidden")) {this._container.classList.remove("hidden");}
     }
 
     cacher() {
-        console.log("Masquage de "+this._name);
         if (this._container.classList.contains("selected")) {this._container.classList.remove("selected");}
         if (!this._container.classList.contains("hidden")) {this._container.classList.add("hidden");}
     }
 
     fermer() {
-        console.log("Fermeture de "+this._name);
         this.cacher();
     }
 }

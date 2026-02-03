@@ -292,10 +292,7 @@ function effectuerRecherche(query) {
         return;
     }
 
-    console.log("RECHERCHE: " + q);
     const resultats = rechercheAvecScore(liste_des_pages, q);
-    console.log(resultats);
-
     afficherResultats(resultats);
 }
 
@@ -330,15 +327,9 @@ function afficherResultats(resultats) {
             <div class="voxtek-result-title">${nom}</div>
             <div class="voxtek-result-score">${tag}</div>
         `;
-
-        item.addEventListener("click", () => {
-            console.log("Clic sur résultat:", resultat);
-            ouvrirPageDepuisResultat(resultat);
-        });
-
+        item.addEventListener("click", () => { ouvrirPageDepuisResultat(resultat); });
         resultsContainer.appendChild(item);
     });
-
     resultsContainer.classList.add("visible");
 }
 
@@ -354,12 +345,9 @@ function ouvrirPageDepuisResultat(resultat) {
 
     // Dispatch directement sur document pour éviter les multiples listeners
     document.dispatchEvent(event);
-    console.log("Event dispatché:", resultat);
 }
 
-input.addEventListener("input", (e) => {
-    effectuerRecherche(e.target.value);
-});
+input.addEventListener("input", (e) => { effectuerRecherche(e.target.value); });
 
 form.addEventListener("submit", (e) => {
     e.preventDefault();
