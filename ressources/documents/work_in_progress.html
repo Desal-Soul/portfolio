@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Work in Progress</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial Black', Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f5d742 0%, #e8c32e 100%);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .container {
+            text-align: center;
+            padding: 20px;
+            max-width: 800px;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+        }
+
+        .warning-stripes {
+            position: absolute;
+            width: 100%;
+            height: 60px;
+            background: repeating-linear-gradient(
+                -45deg,
+                #000,
+                #000 30px,
+                #f5d742 30px,
+                #f5d742 60px
+            );
+            left: 0;
+            overflow: hidden;
+        }
+
+        .warning-stripes.top {
+            top: 0;
+        }
+
+        .warning-stripes.bottom {
+            bottom: 0;
+        }
+
+        /* Corner triangles to fill gaps */
+        .corner {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            overflow: hidden;
+        }
+
+        .corner::before {
+            content: '';
+            position: absolute;
+            width: 85px;
+            height: 85px;
+
+        }
+
+        .corner.top-left {
+            top: 0;
+            left: 0;
+        }
+
+        .corner.top-left::before {
+            top: 0;
+            left: 0;
+            transform-origin: top left;
+        }
+
+        .corner.top-right {
+            top: 0;
+            right: 0;
+        }
+
+        .corner.top-right::before {
+            top: 0;
+            right: 0;
+            transform-origin: top right;
+        }
+
+        .corner.bottom-left {
+            bottom: 0;
+            left: 0;
+        }
+
+        .corner.bottom-left::before {
+            bottom: 0;
+            left: 0;
+            transform-origin: bottom left;
+        }
+
+        .corner.bottom-right {
+            bottom: 0;
+            right: 0;
+        }
+
+        .corner.bottom-right::before {
+            bottom: 0;
+            right: 0;
+            transform-origin: bottom right;
+        }
+
+        .warning-icon {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 30px;
+            position: relative;
+        }
+
+        .triangle {
+            width: 0;
+            height: 0;
+            border-left: 60px solid transparent;
+            border-right: 60px solid transparent;
+            border-bottom: 104px solid #000;
+            position: relative;
+        }
+
+        .triangle::before {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-left: 52px solid transparent;
+            border-right: 52px solid transparent;
+            border-bottom: 90px solid #f5d742;
+            top: 8px;
+            left: -52px;
+        }
+
+        .triangle::after {
+            content: '!';
+            position: absolute;
+            font-size: 60px;
+            font-weight: bold;
+            color: #000;
+            top: 20px;
+            left: -15px;
+        }
+
+        h1 {
+            font-size: 3.5em;
+            color: #000;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-shadow: 3px 3px 0px rgba(0,0,0,0.2);
+        }
+
+        p {
+            font-size: 1.2em;
+            color: #333;
+            margin-bottom: 15px;
+            font-family: Arial, sans-serif;
+        }
+
+        .message {
+            background: rgba(0,0,0,0.1);
+            padding: 30px;
+            border-radius: 10px;
+            margin-top: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2em;
+            }
+
+            .warning-icon {
+                width: 80px;
+                height: 80px;
+            }
+
+            .triangle {
+                border-left: 40px solid transparent;
+                border-right: 40px solid transparent;
+                border-bottom: 69px solid #000;
+            }
+
+            .triangle::before {
+                border-left: 35px solid transparent;
+                border-right: 35px solid transparent;
+                border-bottom: 60px solid #f5d742;
+                left: -35px;
+            }
+
+            .triangle::after {
+                font-size: 40px;
+                top: 15px;
+                left: -10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="warning-stripes top"></div>
+    <div class="warning-stripes bottom"></div>
+
+    <div class="corner top-left"></div>
+    <div class="corner top-right"></div>
+    <div class="corner bottom-left"></div>
+    <div class="corner bottom-right"></div>
+
+    <div class="container">
+        <div class="warning-icon">
+            <div class="triangle"></div>
+        </div>
+
+        <h1>Work in Progress</h1>
+
+        <div class="message">
+            <p>Cette page du site est actuellement en construction.</p>
+            <p>Nous travaillons dur pour vous offrir une expérience exceptionnelle.</p>
+            <p>Merci de votre patience !</p>
+        </div>
+    </div>
+</body>
+</html>
