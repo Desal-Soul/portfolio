@@ -19,3 +19,10 @@
     background-position: center;
     background-size: cover;
 }
+.icon_app.open.selected {
+    background-color: rgba(168, 168, 168, 0.12);
+    background-image: url("../../images/app/fond_icon_selected.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+ }

@@ -263,7 +263,7 @@ shadow.innerHTML = `
                         <div class="voxtek-hex-icon"><span>in</span></div>
                         <span class="voxtek-label">LINKEDIN</span>
                     </a>
-                    <a href="https://discord.gg/7n895Akn" class="voxtek-shortcut-item" target="_blank">
+                    <a href="https://discord.com/users/484845929447292980" class="voxtek-shortcut-item" target="_blank">
                         <div class="voxtek-hex-icon"><span>🎧</span></div>
                         <span class="voxtek-label">DISCORD</span>
                     </a>

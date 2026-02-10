@@ -1,0 +1,8 @@
+#app_demarrer_bot {
+    background-color: rgba(0, 0, 0, 0.75);
+    border-radius: 0 0 1% 1% / 0 0 10% 10%;
+    border: rgba(255, 255, 255, 0.35) 0.1vh solid;
+    border-top: 0;
+    backdrop-filter: blur(2rem);
+    -webkit-backdrop-filter: blur(2rem);
+}

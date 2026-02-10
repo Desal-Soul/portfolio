@@ -1,0 +1,10 @@
+#app_demarrer_mid {
+    background-color: rgba(25, 25, 25, 0.8);
+    border: rgba(255, 255, 255, 0.30) 0.1vh solid;
+    /**border-top: rgba(0, 0, 0, 0.9)  0.1vh solid;
+    border-bottom: rgba(0, 0, 0, 0.9) 0.1vh solid;**/
+    border-bottom: 0;
+    border-top: 0;
+    backdrop-filter: blur(2rem);
+    -webkit-backdrop-filter: blur(2rem);
+}

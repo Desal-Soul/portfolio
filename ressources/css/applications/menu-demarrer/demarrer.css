@@ -1,0 +1,22 @@
+@import url("top.css");
+@import url("mid.css");
+@import url("bot.css");
+:root {
+    --demarrer-taille:85vh;
+    --demarrer-top-bot:10vh;
+}
+
+#app_demarrer {
+    margin-top: 8vh;
+    margin-left: 1vh;
+    width: 42vw;
+    height: var(--demarrer-taille);
+    flex-direction: column;
+
+}
+#app_demarrer_top, #app_demarrer_bot {
+    height: var(--demarrer-top-bot);
+}
+#app_demarrer_mid {
+    height: calc(var(--demarrer-taille) - var(--demarrer-top-bot));
+}

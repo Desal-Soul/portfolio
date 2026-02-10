@@ -35,6 +35,7 @@ export class AbstractApplicationAvecLogo extends AbstractApplication {
 
     ouvrir() {
         this.afficher_logo();
+        if (!this._logo.classList.contains("open")) {this._logo.classList.add("open");}
         super.ouvrir();
     }
 
@@ -45,10 +46,12 @@ export class AbstractApplicationAvecLogo extends AbstractApplication {
     cacher() {
         super.cacher();
         if (this._logo.classList.contains("selected")) {this._logo.classList.remove("selected");}
+        if (!this._logo.classList.contains("open")) {this._logo.classList.add("open");}
     }
 
     fermer() {
         this.cacher_logo();
+        if (this._logo.classList.contains("open")) {this._logo.classList.remove("open");}
         super.fermer();
     }
 
