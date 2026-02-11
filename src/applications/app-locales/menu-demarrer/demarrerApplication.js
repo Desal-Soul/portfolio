@@ -21,7 +21,6 @@ class demarrerApplication extends AbstractApplication {
     }
 
     init() {
-        console.log("app demmarer start")
         let doc = super.init();
         doc.innerHTML = "" +
             "<div id='app_demarrer_top'></div>" +
