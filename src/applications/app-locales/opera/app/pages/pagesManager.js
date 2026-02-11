@@ -5,31 +5,15 @@ import {Page} from "./page.js";
 export class PagesManager extends AbstractManager {
     constructor() {
         super();
-        this._enTraitementOuverture = false;
         this.initRechercheListener();
     }
 
     initRechercheListener() {
-        // Utiliser once: false mais avec un flag pour éviter les duplications
-        if (!window._pagesManagerListenerInitialized) {
-            window._pagesManagerListenerInitialized = true;
-
-            document.addEventListener("ouvrir-page-recherche", (e) => {
-                // Empêcher les appels multiples avec un flag
-                if (this._enTraitementOuverture) {
-                    return;
-                }
-
-                this._enTraitementOuverture = true;
-
-                // Utiliser setTimeout pour éviter les conflits de timing
-                setTimeout(() => {
-                    this.remplacerOngletParPage(e.detail.pageData);
-                    this._enTraitementOuverture = false;
-                }, 10);
-            });
-
-        }
+        document.addEventListener("ouvrir-page-recherche", (e) => {
+            if (this._actuel != null && !this._actuel._content.classList.contains('hidden')&& this._actuel._content.classList.contains('nouvel_onglet') ){
+                this.remplacerOngletParPage(e.detail.pageData);
+            }
+        });
     }
 
     remplacerOngletParPage(pageData) {
