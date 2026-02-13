@@ -1,4 +1,4 @@
-import {web_avancer} from "./tags/liste_de_tag.js";
+import {mvc} from "./tags/liste_de_tag.js";
 
 let contenue = document.createElement("div");
 contenue.innerHTML =
@@ -6,4 +6,4 @@ contenue.innerHTML =
     "</iframe>"
 
 
-export let page_metall_und_pulver = ["Metall und Pulver", contenue, web_avancer.concat("site marchand", "BUT", "2025")]
+export let page_metall_und_pulver = ["Metall und Pulver", contenue, mvc.concat("site marchand", "BUT", "2025", "js", "javascript")]
