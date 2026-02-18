@@ -13,7 +13,10 @@ class OperaApplication extends AbstractApplicationAvecLogo {
             "   <img src='ressources/images/opera/opera.png' class='icon_workspace'>" +
             "</div>"+
             "<div id='navigateur' class='collum_box'>"+
-                "<div id='onglets'><div id='onglets_liste'></div><div id='btn_nouvel_onglet'>+</div></div>"+
+                "<div id='onglets'>" +
+                    "<div id='groupe_onglets'><div id='onglets_liste'></div><div id='btn_nouvel_onglet'>+</div></div>" +
+                    "<div id='btn_cacher'>_</div><div id='btn_fermer'>╳</div>" +
+                "</div>"+
                 "<div id='bar_opera'></div>"+
                 "<div id='page'></div>"+
             "</div>"
