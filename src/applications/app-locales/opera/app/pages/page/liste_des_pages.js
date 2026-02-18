@@ -11,6 +11,7 @@ import {page_no_game_no_life} from "./page_no_game_no_life.js";
 import {page_metall_und_pulver} from "./page_metall_und_pulver.js";
 import {page_code_game_jam_2026} from "./page_code_game_jam_2026.js";
 import {page_global_game_jam_2026} from "./page_global_game_jam_2026.js";
+import {page_portfolio_apprentissage} from "./page_portfolio_apprentissage.js";
 
 export let liste_des_pages = [
     page_presentation, page_cv,
@@ -26,4 +27,6 @@ export let liste_des_pages = [
     page_train,
 
     page_cfpo,
+
+    page_portfolio_apprentissage
 ]
