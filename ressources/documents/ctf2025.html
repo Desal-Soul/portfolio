@@ -1,0 +1,1739 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Last Hour — CTF Platform</title>
+    <style>
+        /* ============================================================
+           VARIABLES & RESET
+        ============================================================ */
+        :root {
+            --noir:        #0a0908;
+            --anthracite:  #161412;
+            --coal:        #1f1c19;
+            --smoke:       #2e2924;
+            --ash:         #4a4440;
+            --dust: #8f8277;
+            --mist:        #9a8f85;
+            --cream:       #d4c9bb;
+            --amber:       #c8862a;
+            --gold:        #e8a83a;
+            --copper:      #b3622a;
+            --glow:        rgba(200, 134, 42, 0.15);
+            --glow-soft:   rgba(200, 134, 42, 0.06);
+
+            --serif:       'Georgia', 'Times New Roman', serif;
+            --sans:        'Trebuchet MS', 'Gill Sans', sans-serif;
+            --mono:        'Courier New', Courier, monospace;
+
+            --transition:  0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            --transition-fast: 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--noir);
+            color: var(--cream);
+            font-family: var(--sans);
+            font-size: 16px;
+            line-height: 1.7;
+            overflow-x: hidden;
+            cursor: default;
+        }
+
+        /* ============================================================
+           GRAIN OVERLAY
+        ============================================================ */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.35;
+        }
+
+        /* ============================================================
+           TYPOGRAPHY
+        ============================================================ */
+        h1, h2, h3, h4 {
+            font-family: var(--serif);
+            font-weight: normal;
+            letter-spacing: 0.02em;
+            line-height: 1.2;
+        }
+
+        h1 { font-size: clamp(2.8rem, 8vw, 6rem); }
+        h2 { font-size: clamp(1.6rem, 4vw, 2.4rem); }
+        h3 { font-size: clamp(1.1rem, 2.5vw, 1.4rem); }
+
+        p {
+            color: var(--mist);
+            max-width: 64ch;
+        }
+
+        a {
+            color: var(--amber);
+            text-decoration: none;
+            transition: color var(--transition-fast);
+        }
+        a:hover { color: var(--gold); }
+
+        /* ============================================================
+           UTILITIES
+        ============================================================ */
+        .container {
+            width: 90%;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .label {
+            font-family: var(--mono);
+            font-size: 0.7rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--amber);
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+
+        .divider {
+            width: 60px;
+            height: 1px;
+            background: linear-gradient(90deg, var(--amber), transparent);
+            margin: 1.5rem 0;
+        }
+
+        .amber { color: var(--amber); }
+        .gold  { color: var(--gold); }
+
+        /* Fade-in on scroll */
+        .reveal {
+            opacity: 0;
+            transform: translateY(28px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ============================================================
+           NAV
+        ============================================================ */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 1.2rem 0;
+            background: linear-gradient(180deg, rgba(10,9,8,0.95) 0%, transparent 100%);
+            backdrop-filter: blur(4px);
+            border-bottom: 1px solid rgba(200,134,42,0.08);
+        }
+
+        nav .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-brand {
+            font-family: var(--serif);
+            font-size: 1.05rem;
+            color: var(--cream);
+            letter-spacing: 0.06em;
+        }
+        .nav-brand span { color: var(--amber); }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            font-family: var(--mono);
+            font-size: 0.72rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--dust);
+            transition: color var(--transition-fast);
+        }
+        .nav-links a:hover { color: var(--amber); }
+
+        @media (max-width: 640px) {
+            .nav-links { display: none; }
+        }
+
+        /* ============================================================
+           HERO
+        ============================================================ */
+        #hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            padding: 8rem 0 4rem;
+        }
+
+        /* Atmospheric background layers */
+        #hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                    radial-gradient(ellipse 80% 60% at 20% 50%, rgba(200,134,42,0.07) 0%, transparent 60%),
+                    radial-gradient(ellipse 60% 80% at 80% 30%, rgba(179,98,42,0.05) 0%, transparent 60%),
+                    radial-gradient(ellipse 100% 100% at 50% 100%, rgba(10,9,8,0.8) 0%, transparent 50%);
+        }
+
+        /* Thin diagonal lines — vintage paper texture */
+        #hero::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: repeating-linear-gradient(
+                    -45deg,
+                    transparent,
+                    transparent 60px,
+                    rgba(200,134,42,0.012) 60px,
+                    rgba(200,134,42,0.012) 61px
+            );
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-eyebrow {
+            font-family: var(--mono);
+            font-size: 0.72rem;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--amber);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .hero-eyebrow::before {
+            content: '';
+            display: inline-block;
+            width: 40px;
+            height: 1px;
+            background: var(--amber);
+        }
+
+        .hero-title {
+            line-height: 1;
+            margin-bottom: 1rem;
+        }
+
+        .hero-title .line-1 {
+            display: block;
+            color: var(--cream);
+        }
+
+        .hero-title .line-2 {
+            display: block;
+            color: transparent;
+            -webkit-text-stroke: 1px rgba(200,134,42,0.5);
+            font-style: italic;
+        }
+
+        .hero-subtitle {
+            font-family: var(--mono);
+            font-size: 0.85rem;
+            color: var(--dust);
+            letter-spacing: 0.12em;
+            margin-bottom: 2.5rem;
+            max-width: 500px;
+        }
+
+        .hero-desc {
+            max-width: 520px;
+            color: var(--mist);
+            margin-bottom: 3rem;
+            font-size: 1.05rem;
+        }
+
+        .hero-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 0.85rem 2rem;
+            border: 1px solid rgba(200,134,42,0.4);
+            color: var(--amber);
+            font-family: var(--mono);
+            font-size: 0.75rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            transition: all var(--transition-fast);
+            position: relative;
+            overflow: hidden;
+        }
+        .hero-cta::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--amber);
+            transform: translateX(-100%);
+            transition: transform var(--transition-fast);
+            z-index: -1;
+        }
+        .hero-cta:hover {
+            color: var(--noir);
+            border-color: var(--amber);
+        }
+        .hero-cta:hover::before {
+            transform: translateX(0);
+        }
+
+        .hero-meta {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            align-items: flex-end;
+        }
+
+        .hero-stat {
+            text-align: right;
+        }
+        .hero-stat-number {
+            font-family: var(--serif);
+            font-size: 2.2rem;
+            color: var(--amber);
+            line-height: 1;
+        }
+        .hero-stat-label {
+            font-family: var(--mono);
+            font-size: 0.65rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--dust);
+        }
+
+        @media (max-width: 768px) {
+            .hero-meta { display: none; }
+        }
+
+        /* Scrolling ticker at bottom of hero */
+        .ticker-wrap {
+            position: absolute;
+            bottom: 2rem;
+            left: 0;
+            right: 0;
+            overflow: hidden;
+            border-top: 1px solid rgba(200,134,42,0.1);
+            border-bottom: 1px solid rgba(200,134,42,0.1);
+            padding: 0.6rem 0;
+        }
+
+        .ticker {
+            display: flex;
+            gap: 4rem;
+            animation: ticker 20s linear infinite;
+            white-space: nowrap;
+        }
+
+        .ticker-item {
+            font-family: var(--mono);
+            font-size: 0.65rem;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: var(--ash);
+            flex-shrink: 0;
+        }
+        .ticker-item span { color: var(--amber); margin-right: 0.5rem; }
+
+        @keyframes ticker {
+            0%   { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* ============================================================
+           SECTIONS — COMMON
+        ============================================================ */
+        section {
+            padding: 7rem 0;
+            position: relative;
+        }
+
+        section + section {
+            border-top: 1px solid rgba(200,134,42,0.07);
+        }
+
+        .section-header {
+            margin-bottom: 4rem;
+        }
+
+        /* ============================================================
+           SECTION: PRÉSENTATION
+        ============================================================ */
+        #about .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: start;
+        }
+
+        .about-text h2 {
+            margin-bottom: 1rem;
+        }
+
+        .about-text p {
+            margin-bottom: 1.2rem;
+        }
+
+        .about-link-card {
+            margin-top: 2rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.5rem;
+            background: var(--coal);
+            border: 1px solid rgba(200,134,42,0.2);
+            transition: border-color var(--transition-fast), background var(--transition-fast);
+        }
+        .about-link-card:hover {
+            border-color: rgba(200,134,42,0.5);
+            background: var(--smoke);
+        }
+        .about-link-card .link-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--glow);
+            border: 1px solid rgba(200,134,42,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+        .about-link-card .link-text {
+            display: flex;
+            flex-direction: column;
+        }
+        .about-link-card .link-title {
+            font-family: var(--mono);
+            font-size: 0.7rem;
+            letter-spacing: 0.15em;
+            color: var(--dust);
+            text-transform: uppercase;
+        }
+        .about-link-card .link-url {
+            color: var(--amber);
+            font-size: 0.9rem;
+        }
+
+        .about-highlights {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .highlight-item {
+            padding: 1.4rem;
+            background: var(--anthracite);
+            border-left: 2px solid var(--amber);
+            position: relative;
+        }
+        .highlight-item::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, var(--glow-soft), transparent);
+        }
+        .highlight-item h4 {
+            font-family: var(--mono);
+            font-size: 0.75rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--amber);
+            margin-bottom: 0.3rem;
+        }
+        .highlight-item p {
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        @media (max-width: 768px) {
+            #about .about-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+        }
+
+        /* ============================================================
+           SECTION: STACK TECHNIQUE
+        ============================================================ */
+        #stack {
+            background: var(--anthracite);
+        }
+
+        .stack-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1px;
+            background: rgba(200,134,42,0.08);
+            border: 1px solid rgba(200,134,42,0.08);
+        }
+
+        .stack-item {
+            padding: 1.8rem 1.5rem;
+            background: var(--anthracite);
+            transition: background var(--transition-fast);
+            position: relative;
+            overflow: hidden;
+        }
+        .stack-item::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--amber);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform var(--transition-fast);
+        }
+        .stack-item:hover {
+            background: var(--coal);
+        }
+        .stack-item:hover::after {
+            transform: scaleX(1);
+        }
+
+        .stack-category {
+            font-family: var(--mono);
+            font-size: 0.62rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--ash);
+            margin-bottom: 0.5rem;
+        }
+
+        .stack-name {
+            font-family: var(--serif);
+            font-size: 1.15rem;
+            color: var(--cream);
+        }
+
+        /* ============================================================
+           SECTION: CONTRIBUTIONS
+        ============================================================ */
+        .contributions-tabs {
+            display: flex;
+            gap: 0;
+            margin-bottom: 3rem;
+            border-bottom: 1px solid rgba(200,134,42,0.15);
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            padding: 0.8rem 1.6rem;
+            background: none;
+            border: none;
+            border-bottom: 2px solid transparent;
+            color: var(--dust);
+            font-family: var(--mono);
+            font-size: 0.72rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            white-space: nowrap;
+            margin-bottom: -1px;
+        }
+        .tab-btn:hover { color: var(--cream); }
+        .tab-btn.active {
+            color: var(--amber);
+            border-bottom-color: var(--amber);
+        }
+
+        .tab-panel {
+            display: none;
+        }
+        .tab-panel.active {
+            display: block;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .contrib-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: start;
+        }
+
+        .contrib-desc p { margin-bottom: 1rem; }
+        .contrib-desc h3 { margin-bottom: 0.8rem; color: var(--cream); }
+
+        .contrib-items {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .contrib-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 1rem 1.2rem;
+            background: var(--coal);
+            border: 1px solid rgba(200,134,42,0.08);
+            transition: border-color var(--transition-fast);
+        }
+        .contrib-item:hover {
+            border-color: rgba(200,134,42,0.25);
+        }
+        .contrib-item .ci-num {
+            font-family: var(--mono);
+            font-size: 0.7rem;
+            color: var(--amber);
+            padding-top: 0.2rem;
+            flex-shrink: 0;
+        }
+        .contrib-item .ci-text {
+            font-size: 0.9rem;
+            color: var(--mist);
+            line-height: 1.5;
+        }
+        .contrib-item .ci-text strong {
+            color: var(--cream);
+            font-weight: normal;
+        }
+
+        @media (max-width: 768px) {
+            .contrib-layout { grid-template-columns: 1fr; }
+        }
+
+        /* ============================================================
+           SECTION: DÉFIS
+        ============================================================ */
+        #challenges {
+            background: var(--noir);
+        }
+
+        .challenges-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        .challenge-card {
+            padding: 2.5rem 2rem;
+            background: var(--anthracite);
+            border: 1px solid rgba(200,134,42,0.1);
+            position: relative;
+            overflow: hidden;
+            transition: transform var(--transition-fast), border-color var(--transition-fast);
+        }
+        .challenge-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--amber), var(--copper));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.5s ease;
+        }
+        .challenge-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(200,134,42,0.3);
+        }
+        .challenge-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .card-number {
+            font-family: var(--serif);
+            font-size: 4rem;
+            color: rgba(200,134,42,0.08);
+            line-height: 1;
+            position: absolute;
+            top: 1rem;
+            right: 1.5rem;
+            font-style: italic;
+        }
+
+        .card-category {
+            font-family: var(--mono);
+            font-size: 0.65rem;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: var(--amber);
+            margin-bottom: 0.8rem;
+        }
+
+        .card-title {
+            font-family: var(--serif);
+            font-size: 1.3rem;
+            color: var(--cream);
+            margin-bottom: 1rem;
+        }
+
+        .card-desc {
+            font-size: 0.88rem;
+            color: var(--mist);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            max-width: 100%;
+        }
+
+        .card-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .tag {
+            font-family: var(--mono);
+            font-size: 0.62rem;
+            letter-spacing: 0.1em;
+            padding: 0.25rem 0.6rem;
+            background: rgba(200,134,42,0.08);
+            border: 1px solid rgba(200,134,42,0.2);
+            color: var(--amber);
+            text-transform: uppercase;
+        }
+
+        @media (max-width: 640px) {
+            .challenges-grid { grid-template-columns: 1fr; }
+        }
+
+        /* ============================================================
+           SECTION: INFRASTRUCTURE
+        ============================================================ */
+        #infra {
+            background: var(--anthracite);
+        }
+
+        .infra-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 4rem;
+            align-items: start;
+        }
+
+        .infra-steps {
+            counter-reset: step;
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .infra-step {
+            counter-increment: step;
+            display: flex;
+            gap: 1.5rem;
+            padding-bottom: 2.5rem;
+            position: relative;
+        }
+        .infra-step::after {
+            content: '';
+            position: absolute;
+            left: 18px;
+            top: 36px;
+            bottom: 0;
+            width: 1px;
+            background: linear-gradient(180deg, rgba(200,134,42,0.3), transparent);
+        }
+        .infra-step:last-child::after { display: none; }
+        .infra-step:last-child { padding-bottom: 0; }
+
+        .step-num {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 1px solid rgba(200,134,42,0.4);
+            background: var(--coal);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--mono);
+            font-size: 0.7rem;
+            color: var(--amber);
+            flex-shrink: 0;
+        }
+
+        .step-content h4 {
+            font-family: var(--sans);
+            font-size: 0.95rem;
+            color: var(--cream);
+            margin-bottom: 0.3rem;
+            font-weight: bold;
+        }
+        .step-content p {
+            font-size: 0.87rem;
+            margin: 0;
+        }
+
+        .infra-visual {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .infra-box {
+            padding: 1.2rem 1.5rem;
+            background: var(--coal);
+            border: 1px solid rgba(200,134,42,0.1);
+            position: relative;
+        }
+
+        .infra-box-label {
+            font-family: var(--mono);
+            font-size: 0.62rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--dust);
+            margin-bottom: 0.4rem;
+        }
+
+        .infra-box-value {
+            font-family: var(--mono);
+            font-size: 0.85rem;
+            color: var(--amber);
+        }
+
+        .infra-box .status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #4caf50;
+            position: absolute;
+            top: 1.2rem;
+            right: 1.5rem;
+            box-shadow: 0 0 6px rgba(76,175,80,0.6);
+            animation: pulse-dot 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; }
+            50%       { opacity: 0.4; }
+        }
+
+        @media (max-width: 768px) {
+            .infra-grid { grid-template-columns: 1fr; }
+        }
+
+        /* ============================================================
+           SECTION: SCRUM
+        ============================================================ */
+        #scrum {
+            background: var(--noir);
+        }
+
+        .scrum-header-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            margin-bottom: 4rem;
+            align-items: end;
+        }
+
+        .scrum-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.2rem;
+        }
+
+        .scrum-card {
+            padding: 1.8rem 1.5rem;
+            background: var(--anthracite);
+            border-top: 2px solid var(--amber);
+            transition: background var(--transition-fast);
+        }
+        .scrum-card:hover { background: var(--coal); }
+
+        .scrum-card-icon {
+            font-size: 1.6rem;
+            margin-bottom: 0.8rem;
+            display: block;
+        }
+
+        .scrum-card h4 {
+            font-family: var(--sans);
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: var(--cream);
+            margin-bottom: 0.5rem;
+        }
+
+        .scrum-card p {
+            font-size: 0.82rem;
+            max-width: 100%;
+            margin: 0;
+        }
+
+        .scrum-quote {
+            margin-top: 3rem;
+            padding: 2rem 2.5rem;
+            background: var(--coal);
+            border-left: 3px solid var(--amber);
+            position: relative;
+        }
+        .scrum-quote::before {
+            content: '"';
+            font-family: var(--serif);
+            font-size: 6rem;
+            color: rgba(200,134,42,0.1);
+            position: absolute;
+            top: -1rem;
+            left: 1.5rem;
+            line-height: 1;
+        }
+        .scrum-quote p {
+            font-family: var(--serif);
+            font-style: italic;
+            font-size: 1.05rem;
+            color: var(--cream);
+            max-width: 100%;
+        }
+        .scrum-quote cite {
+            display: block;
+            font-family: var(--mono);
+            font-size: 0.7rem;
+            color: var(--amber);
+            letter-spacing: 0.15em;
+            margin-top: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .scrum-header-row { grid-template-columns: 1fr; }
+            .scrum-cards { grid-template-columns: 1fr; }
+        }
+
+        /* ============================================================
+           SECTION: CTA / CONCLUSION
+        ============================================================ */
+        #cta {
+            background: var(--anthracite);
+            text-align: center;
+        }
+
+        .cta-inner {
+            position: relative;
+            padding: 5rem 0;
+        }
+
+        .cta-inner::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse 70% 70% at 50% 50%, rgba(200,134,42,0.06) 0%, transparent 70%);
+        }
+
+        .cta-inner h2 {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .cta-inner p {
+            margin: 0 auto 2.5rem;
+            max-width: 48ch;
+            text-align: center;
+            position: relative;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            position: relative;
+        }
+
+        .btn-primary {
+            padding: 0.9rem 2.2rem;
+            background: var(--amber);
+            color: var(--noir);
+            font-family: var(--mono);
+            font-size: 0.75rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            transition: background var(--transition-fast), transform var(--transition-fast);
+        }
+        .btn-primary:hover {
+            background: var(--gold);
+            color: var(--noir);
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            padding: 0.9rem 2.2rem;
+            background: transparent;
+            border: 1px solid rgba(200,134,42,0.4);
+            color: var(--amber);
+            font-family: var(--mono);
+            font-size: 0.75rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            transition: all var(--transition-fast);
+        }
+        .btn-outline:hover {
+            border-color: var(--amber);
+            background: var(--glow);
+            transform: translateY(-2px);
+        }
+
+        /* ============================================================
+           FOOTER
+        ============================================================ */
+        footer {
+            padding: 2rem 0;
+            background: var(--noir);
+            border-top: 1px solid rgba(200,134,42,0.08);
+        }
+
+        footer .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        footer p {
+            font-family: var(--mono);
+            font-size: 0.65rem;
+            letter-spacing: 0.1em;
+            color: var(--ash);
+            margin: 0;
+            max-width: 100%;
+        }
+
+        /* ============================================================
+           SCROLL PROGRESS
+        ============================================================ */
+        #progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--copper), var(--amber), var(--gold));
+            width: 0%;
+            z-index: 9998;
+            transition: width 0.1s linear;
+        }
+
+        /* ============================================================
+           CUSTOM SCROLLBAR
+        ============================================================ */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--noir); }
+        ::-webkit-scrollbar-thumb {
+            background: var(--ash);
+            border-radius: 0;
+        }
+        ::-webkit-scrollbar-thumb:hover { background: var(--amber); }
+
+
+        .demo-container {
+            display: flex;
+            width: 100%;
+            height: 95vh;
+        }
+        .hidden {
+            display: none;
+            visibility: hidden;
+        }
+
+        .demo-container iframe {
+            display: flex;
+            zoom: 0.7;
+            width : 300%;
+            height: 100%;
+            border: 1px solid rgba(204, 204, 204, 0.54);
+            background: #fff;
+            margin: auto;
+        }
+        .demo-container button {
+            display: block;
+            position: absolute;
+            align-self: center;
+            margin: auto;
+            width: 8vw;
+            height: 6vh;
+            left: 46vw;
+            border-radius: 3vh;
+            background-color: rgba(0, 0, 0, 0.75);
+            border-bottom-color: rgba(255, 255, 255, 0.75);
+            color: white;
+        }
+        .demo-container button:hover {
+            background-color: rgba(255, 255, 255, 0.44);
+            border-bottom-color: rgb(255, 255, 255);
+        }
+    </style>
+</head>
+<body>
+
+<!-- Scroll progress indicator -->
+<div id="progress-bar"></div>
+
+<!-- ============================================================
+     NAVIGATION
+============================================================ -->
+<nav>
+    <div class="container">
+        <span class="nav-brand">The <span>Last Hour</span></span>
+        <ul class="nav-links">
+            <li><a href="#about">Projet</a></li>
+            <li><a href="#stack">Stack</a></li>
+            <li><a href="#contributions">Rôle</a></li>
+            <li><a href="#challenges">Défis</a></li>
+            <li><a href="#infra">Infra</a></li>
+            <li><a href="#scrum">Scrum</a></li>
+            <li><a href="#cta">Contact</a></li>
+        </ul>
+    </div>
+</nav>
+
+<!-- ============================================================
+     HERO
+============================================================ -->
+<section id="hero">
+    <div class="container">
+        <div class="hero-content">
+            <div class="hero-eyebrow">Plateforme CTF — CTFd</div>
+            <h1 class="hero-title">
+                <span class="line-1">The Last</span>
+                <span class="line-2">Hour</span>
+            </h1>
+            <p class="hero-subtitle">[ Sécurité · Infrastructure · Gestion de projet ]</p>
+            <p class="hero-desc">
+                Une plateforme de Capture The Flag pensée, construite et orchestrée de bout en bout.
+                Des défis qui testent les limites, une infrastructure qui tient la pression,
+                une équipe menée avec méthode.
+            </p>
+        </div>
+
+        <!-- Stats flottants -->
+        <div class="hero-meta">
+            <div class="hero-stat">
+                <div class="hero-stat-number">4</div>
+                <div class="hero-stat-label">Catégories<br>de défis</div>
+            </div>
+            <div class="hero-stat">
+                <div class="hero-stat-number">VPS</div>
+                <div class="hero-stat-label">Déploiement<br>distant</div>
+            </div>
+            <div class="hero-stat">
+                <div class="hero-stat-number">Scrum</div>
+                <div class="hero-stat-label">Méthodologie<br>agile</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ticker -->
+    <div class="ticker-wrap">
+        <div class="ticker">
+            <span class="ticker-item"><span>◆</span> CTFd Platform</span>
+            <span class="ticker-item"><span>◆</span> Kali Linux</span>
+            <span class="ticker-item"><span>◆</span> John the Ripper</span>
+            <span class="ticker-item"><span>◆</span> Vue.js</span>
+            <span class="ticker-item"><span>◆</span> Mistral 7B</span>
+            <span class="ticker-item"><span>◆</span> VPS Deployment</span>
+            <span class="ticker-item"><span>◆</span> Cryptographie</span>
+            <span class="ticker-item"><span>◆</span> Scrum Master</span>
+            <!-- dupliqué pour loop -->
+            <span class="ticker-item"><span>◆</span> CTFd Platform</span>
+            <span class="ticker-item"><span>◆</span> Kali Linux</span>
+            <span class="ticker-item"><span>◆</span> John the Ripper</span>
+            <span class="ticker-item"><span>◆</span> Vue.js</span>
+            <span class="ticker-item"><span>◆</span> Mistral 7B</span>
+            <span class="ticker-item"><span>◆</span> VPS Deployment</span>
+            <span class="ticker-item"><span>◆</span> Cryptographie</span>
+            <span class="ticker-item"><span>◆</span> Scrum Master</span>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================================
+     PRÉSENTATION
+============================================================ -->
+<section id="about">
+    <div class="container">
+        <div class="about-grid">
+            <div class="about-text reveal">
+                <span class="label">// 01 — Présentation</span>
+                <h2>Un CTF pensé<br>comme un <em>dossier</em>.</h2>
+                <div class="divider"></div>
+                <p>
+                    <strong style="color:var(--cream);">The Last Hour</strong> est une compétition
+                    de cybersécurité de type CTF (Capture The Flag) déployée sur infrastructure
+                    distante. Elle s'articule autour de la plateforme <strong style="color:var(--cream);">CTFd</strong>
+                    et propose aux participants une expérience immersive mêlant sécurité système,
+                    cryptographie, exploitation web et défis orientés Intelligence Artificielle.
+                </p>
+                <p>
+                    Le projet couvre un spectre complet : de la conception des scénarios de défis
+                    à l'administration du serveur, en passant par la sécurisation de l'infrastructure
+                    et la coordination d'équipe en méthodologie Scrum.
+                </p>
+            </div>
+
+            <div class="about-highlights reveal">
+                <div class="highlight-item">
+                    <h4>Création de défis</h4>
+                    <p>Conception et implémentation de challenges originaux couvrant 4 domaines techniques.</p>
+                </div>
+                <div class="highlight-item">
+                    <h4>Infrastructure</h4>
+                    <p>Déploiement et sécurisation complète sur VPS distant. Configuration serveur de A à Z.</p>
+                </div>
+                <div class="highlight-item">
+                    <h4>Documentation</h4>
+                    <p>Documentation technique détaillée et documentation projet rigoureuse.</p>
+                </div>
+                <div class="highlight-item">
+                    <h4>Gestion de projet</h4>
+                    <p>Scrum Master — organisation des sprints, gestion d'équipe, suivi des tâches.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================================
+     STACK TECHNIQUE
+============================================================ -->
+<section id="stack">
+    <div class="container">
+        <div class="section-header reveal">
+            <span class="label">// 02 — Stack technique</span>
+            <h2>Les outils du crime.</h2>
+            <div class="divider"></div>
+        </div>
+        <div class="stack-grid reveal">
+            <div class="stack-item">
+                <div class="stack-category">Plateforme</div>
+                <div class="stack-name">CTFd</div>
+            </div>
+            <div class="stack-item">
+                <div class="stack-category">Système</div>
+                <div class="stack-name">Kali Linux</div>
+            </div>
+            <div class="stack-item">
+                <div class="stack-category">Cracking</div>
+                <div class="stack-name">John the Ripper</div>
+            </div>
+            <div class="stack-item">
+                <div class="stack-category">Frontend</div>
+                <div class="stack-name">Vue.js</div>
+            </div>
+            <div class="stack-item">
+                <div class="stack-category">Intelligence Artificielle</div>
+                <div class="stack-name">Mistral 7B</div>
+            </div>
+            <div class="stack-item">
+                <div class="stack-category">Serveur</div>
+                <div class="stack-name">VPS Distant</div>
+            </div>
+            <div class="stack-item">
+                <div class="stack-category">Cryptographie</div>
+                <div class="stack-name">Algorithms custom</div>
+            </div>
+            <div class="stack-item">
+                <div class="stack-category">Méthodo</div>
+                <div class="stack-name">Scrum / Agile</div>
+            </div>
+            <div class="stack-item">
+                <div class="stack-category">Documentation</div>
+                <div class="stack-name">Markdown / Confluence</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================================
+     CONTRIBUTIONS
+============================================================ -->
+<section id="contributions">
+    <div class="container">
+        <div class="section-header reveal">
+            <span class="label">// 03 — Mon rôle</span>
+            <h2>Mes contributions<br>détaillées.</h2>
+            <div class="divider"></div>
+        </div>
+
+        <div class="contributions-tabs reveal">
+            <button class="tab-btn active" data-tab="challenges-tab">Défis CTF</button>
+            <button class="tab-btn" data-tab="infra-tab">Infrastructure</button>
+            <button class="tab-btn" data-tab="doc-tab">Documentation</button>
+            <button class="tab-btn" data-tab="scrum-tab">Scrum Master</button>
+        </div>
+
+        <!-- Tab: Défis -->
+        <div class="tab-panel active" id="challenges-tab">
+            <div class="contrib-layout">
+                <div class="contrib-desc">
+                    <h3>Création & design des défis</h3>
+                    <p>Conception de défis originaux couvrant quatre domaines techniques. Chaque challenge a été pensé pour offrir une progression pédagogique tout en maintenant une tension scénaristique.</p>
+                    <p>Des vulnérabilités système aux failles web Vue.js, en passant par les puzzles cryptographiques et les prompt injections contre un modèle Mistral, chaque défi teste une compétence précise.</p>
+                </div>
+                <div class="contrib-items">
+                    <div class="contrib-item">
+                        <span class="ci-num">01</span>
+                        <span class="ci-text"><strong>Défis Système</strong> — Exploitation sous Kali Linux, crack de mots de passe avec John the Ripper, élévation de privilèges.</span>
+                    </div>
+                    <div class="contrib-item">
+                        <span class="ci-num">02</span>
+                        <span class="ci-text"><strong>Défis Cryptographiques</strong> — Conception d'algorithmes de chiffrement personnalisés et de puzzles de déchiffrement.</span>
+                    </div>
+                    <div class="contrib-item">
+                        <span class="ci-num">03</span>
+                        <span class="ci-text"><strong>Défis Web</strong> — Vulnérabilités applicatives dans une app Vue.js : injection, IDOR, logique métier.</span>
+                    </div>
+                    <div class="contrib-item">
+                        <span class="ci-num">04</span>
+                        <span class="ci-text"><strong>Défis IA</strong> — Intégration de Mistral:7B comme surface d'attaque. Prompt injection, jailbreak, extraction d'informations.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Infrastructure -->
+        <div class="tab-panel" id="infra-tab">
+            <div class="contrib-layout">
+                <div class="contrib-desc">
+                    <h3>Déploiement & sécurisation</h3>
+                    <p>Prise en charge complète de l'infrastructure : du provisionnement du VPS jusqu'au durcissement de la configuration serveur.</p>
+                    <p>L'objectif était de rendre la plateforme robuste, disponible pendant toute la durée du CTF et protégée contre les tentatives d'attaque des participants eux-mêmes.</p>
+                </div>
+                <div class="contrib-items">
+                    <div class="contrib-item">
+                        <span class="ci-num">01</span>
+                        <span class="ci-text"><strong>Provisionnement VPS</strong> — Configuration initiale, accès SSH, mise à jour système.</span>
+                    </div>
+                    <div class="contrib-item">
+                        <span class="ci-num">02</span>
+                        <span class="ci-text"><strong>Déploiement CTFd</strong> — Installation, configuration et personnalisation de la plateforme.</span>
+                    </div>
+                    <div class="contrib-item">
+                        <span class="ci-num">03</span>
+                        <span class="ci-text"><strong>Sécurisation serveur</strong> — Hardening SSH, configuration firewall, isolation des services.</span>
+                    </div>
+                    <div class="contrib-item">
+                        <span class="ci-num">04</span>
+                        <span class="ci-text"><strong>Monitoring</strong> — Mise en place d'une surveillance de la disponibilité et des performances.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Documentation -->
+        <div class="tab-panel" id="doc-tab">
+            <div class="contrib-layout">
+                <div class="contrib-desc">
+                    <h3>Documentation technique & projet</h3>
+                    <p>Rédaction d'une documentation exhaustive : guides d'installation, writeups techniques, documentation des défis et traçabilité des décisions d'architecture.</p>
+                    <p>La documentation projet couvre l'ensemble du cycle Scrum : stories, backlogs, comptes-rendus de sprint et rétrospectives.</p>
+                </div>
+                <div class="contrib-items">
+                    <div class="contrib-item">
+                        <span class="ci-num">01</span>
+                        <span class="ci-text"><strong>Documentation technique</strong> — Architecture, procédures d'installation, guides de configuration.</span>
+                    </div>
+                    <div class="contrib-item">
+                        <span class="ci-num">02</span>
+                        <span class="ci-text"><strong>Documentation des défis</strong> — Énoncés, hints, solutions et contexte narratif.</span>
+                    </div>
+                    <div class="contrib-item">
+                        <span class="ci-num">03</span>
+                        <span class="ci-text"><strong>Documentation Scrum</strong> — Backlogs, sprints, user stories, définition of done.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Scrum -->
+        <div class="tab-panel" id="scrum-tab">
+            <div class="contrib-layout">
+                <div class="contrib-desc">
+                    <h3>Scrum Master</h3>
+                    <p>Animation des cérémonies Scrum, organisation des sprints et coordination des membres de l'équipe. Maintien de la vélocité et résolution des blocages.</p>
+                    <p>Ma responsabilité : que chacun sache ce qu'il fait, pourquoi il le fait, et que rien ne reste bloqué plus de 24h.</p>
+                </div>
+                <div class="contrib-items">
+                    <div class="contrib-item">
+                        <span class="ci-num">01</span>
+                        <span class="ci-text"><strong>Organisation des sprints</strong> — Planning, daily standup, sprint review et rétrospective.</span>
+                    </div>
+                    <div class="contrib-item">
+                        <span class="ci-num">02</span>
+                        <span class="ci-text"><strong>Gestion du backlog</strong> — Priorisation des user stories, estimation des story points.</span>
+                    </div>
+                    <div class="contrib-item">
+                        <span class="ci-num">03</span>
+                        <span class="ci-text"><strong>Gestion d'équipe</strong> — Résolution des impediments, facilitation de la communication.</span>
+                    </div>
+                    <div class="contrib-item">
+                        <span class="ci-num">04</span>
+                        <span class="ci-text"><strong>Suivi des tâches</strong> — Reporting, métriques d'avancement, burn-down chart.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- ============================================================
+     FOCUS DÉFIS
+============================================================ -->
+<section id="challenges">
+    <div class="container">
+        <div class="section-header reveal">
+            <span class="label">// 04 — Catégories de défis</span>
+            <h2>Quatre disciplines.<br>Une seule règle : trouver le flag.</h2>
+            <div class="divider"></div>
+        </div>
+
+        <div class="challenges-grid">
+            <!-- Système -->
+            <div class="challenge-card reveal">
+                <span class="card-number">I</span>
+                <div class="card-category">Système</div>
+                <div class="card-title">Linux & Privilege Escalation</div>
+                <p class="card-desc">
+                    Défis ancrés dans l'environnement Kali Linux. Les participants doivent explorer des systèmes de fichiers mal configurés, craquer des hashs avec John the Ripper et escalader leurs privilèges jusqu'à root.
+                </p>
+                <div class="card-tags">
+                    <span class="tag">Kali Linux</span>
+                    <span class="tag">John the Ripper</span>
+                    <span class="tag">PrivEsc</span>
+                    <span class="tag">Bash</span>
+                </div>
+            </div>
+
+            <!-- Crypto -->
+            <div class="challenge-card reveal">
+                <span class="card-number">II</span>
+                <div class="card-category">Cryptographie</div>
+                <div class="card-title">Chiffrement & Décodage</div>
+                <p class="card-desc">
+                    Puzzles cryptographiques originaux : algorithmes de substitution maison, encodages imbriqués, chiffres historiques revisités. Chaque défi cache un secret qu'il faut extraire par la raison pure.
+                </p>
+                <div class="card-tags">
+                    <span class="tag">Cryptanalyse</span>
+                    <span class="tag">Encodage</span>
+                    <span class="tag">Algorithmique</span>
+                </div>
+            </div>
+
+            <!-- Web -->
+            <div class="challenge-card reveal">
+                <span class="card-number">III</span>
+                <div class="card-category">Web</div>
+                <div class="card-title">Exploitation Vue.js</div>
+                <p class="card-desc">
+                    Application Vue.js intentionnellement vulnérable. Injection de requêtes, contrôle d'accès cassé, logique métier contournable. Les défis web testent la compréhension des mécanismes frontend modernes.
+                </p>
+                <div class="card-tags">
+                    <span class="tag">Vue.js</span>
+                    <span class="tag">IDOR</span>
+                    <span class="tag">XSS</span>
+                    <span class="tag">Auth bypass</span>
+                </div>
+            </div>
+
+            <!-- IA -->
+            <div class="challenge-card reveal">
+                <span class="card-number">IV</span>
+                <div class="card-category">Intelligence Artificielle</div>
+                <div class="card-title">Mistral:7B comme surface d'attaque</div>
+                <p class="card-desc">
+                    Un LLM (Mistral:7B) est intégré dans le défi. Les participants doivent manipuler le modèle via prompt injection, contourner ses gardes-fous et lui soutirer une information qu'il est censé protéger.
+                </p>
+                <div class="card-tags">
+                    <span class="tag">Mistral 7B</span>
+                    <span class="tag">Prompt Injection</span>
+                    <span class="tag">Jailbreak</span>
+                    <span class="tag">LLM Security</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================================
+     INFRASTRUCTURE
+============================================================ -->
+<section id="infra">
+    <div class="container">
+        <div class="section-header reveal">
+            <span class="label">// 05 — Déploiement & Sécurisation</span>
+            <h2>L'infrastructure<br>qui tient la nuit.</h2>
+            <div class="divider"></div>
+        </div>
+
+        <div class="infra-grid reveal">
+            <div class="infra-steps">
+                <div class="infra-step">
+                    <div class="step-num">01</div>
+                    <div class="step-content">
+                        <h4>Provisionnement du VPS</h4>
+                        <p>Choix et configuration initiale d'un serveur distant. Mise en place de l'accès SSH avec authentification par clé, mise à jour complète du système.</p>
+                    </div>
+                </div>
+                <div class="infra-step">
+                    <div class="step-num">02</div>
+                    <div class="step-content">
+                        <h4>Déploiement de CTFd</h4>
+                        <p>Installation et configuration de la plateforme CTFd. Personnalisation du thème, configuration de la base de données, paramétrage des règles de compétition.</p>
+                    </div>
+                </div>
+                <div class="infra-step">
+                    <div class="step-num">03</div>
+                    <div class="step-content">
+                        <h4>Sécurisation serveur</h4>
+                        <p>Durcissement SSH (désactivation root, fail2ban), configuration du pare-feu (UFW/iptables), isolation des services par utilisateurs dédiés.</p>
+                    </div>
+                </div>
+                <div class="infra-step">
+                    <div class="step-num">04</div>
+                    <div class="step-content">
+                        <h4>Déploiement des défis</h4>
+                        <p>Containerisation ou isolation des challenges pour éviter les contaminations entre participants. Gestion des flags dynamiques.</p>
+                    </div>
+                </div>
+                <div class="infra-step">
+                    <div class="step-num">05</div>
+                    <div class="step-content">
+                        <h4>Monitoring & disponibilité</h4>
+                        <p>Surveillance de la disponibilité de la plateforme tout au long de la compétition. Intervention rapide en cas d'incident.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="infra-visual">
+                <div class="infra-box">
+                    <div class="status-dot"></div>
+                    <div class="infra-box-label">Statut plateforme</div>
+                    <div class="infra-box-value">● En ligne</div>
+                </div>
+                <div class="infra-box">
+                    <div class="infra-box-label">Adresse serveur</div>
+                    <div class="infra-box-value">https://ctf.demo.baptiste.bradelet.fr/</div>
+                </div>
+                <div class="infra-box">
+                    <div class="infra-box-label">Plateforme</div>
+                    <div class="infra-box-value">CTFd</div>
+                </div>
+                <div class="infra-box">
+                    <div class="infra-box-label">Type de serveur</div>
+                    <div class="infra-box-value">VPS Distant</div>
+                </div>
+                <div class="infra-box">
+                    <div class="infra-box-label">Sécurité</div>
+                    <div class="infra-box-value">SSH + Firewall + Hardening</div>
+                </div>
+                <div class="infra-box">
+                    <div class="infra-box-label">Documentation</div>
+                    <div class="infra-box-value">Complète & à jour</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================================
+     GESTION DE PROJET / SCRUM
+============================================================ -->
+<section id="scrum">
+    <div class="container">
+        <div class="scrum-header-row reveal">
+            <div>
+                <span class="label">// 06 — Gestion de projet</span>
+                <h2>Scrum Master.<br>Tenir le cap dans l'obscurité.</h2>
+                <div class="divider"></div>
+                <p>La méthode Scrum impose une discipline de fer : chaque sprint est un engagement, chaque obstacle est à résoudre avant le lendemain. En tant que Scrum Master, mon rôle était de transformer l'ambition collective en livraisons concrètes.</p>
+            </div>
+            <div>
+                <p style="margin-bottom:1.5rem;">Organisation rigoureuse des cérémonies, maintien de la vélocité de l'équipe et documentation systématique à chaque étape du projet.</p>
+                <div class="divider" style="background:linear-gradient(90deg,var(--copper),transparent);"></div>
+            </div>
+        </div>
+
+        <div class="scrum-cards reveal">
+            <div class="scrum-card">
+                <span class="scrum-card-icon">◈</span>
+                <h4>Organisation des sprints</h4>
+                <p>Planification, daily standups, sprint reviews et rétrospectives structurées pour maintenir le rythme d'équipe.</p>
+            </div>
+            <div class="scrum-card">
+                <span class="scrum-card-icon">◉</span>
+                <h4>Gestion du backlog</h4>
+                <p>Priorisation continue des user stories, estimation en story points et définition de done claire pour chaque tâche.</p>
+            </div>
+            <div class="scrum-card">
+                <span class="scrum-card-icon">◎</span>
+                <h4>Suivi & reporting</h4>
+                <p>Burn-down charts, métriques de vélocité et comptes-rendus de sprint. Transparence totale sur l'avancement.</p>
+            </div>
+        </div>
+
+        <div class="scrum-quote reveal">
+            <p>Un bon Scrum Master ne court pas après le code — il s'assure que l'équipe n'a plus d'excuses pour ne pas livrer.</p>
+            <cite>— Principe de facilitation Scrum</cite>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================================
+     CTA / CONCLUSION
+============================================================ -->
+<section id="cta">
+    <div class="container">
+        <div class="cta-inner reveal">
+            <span class="label">// Conclusion</span>
+            <h2>Le flag n'attend pas.</h2>
+            <p>The Last Hour est plus qu'un CTF — c'est la preuve qu'une vision technique, une infrastructure solide et une équipe bien orchestrée peuvent créer quelque chose de mémorable.</p>
+            <div class="cta-buttons">
+                <a href="#demo" rel="noopener" class="btn-primary">
+                    Accéder à la plateforme
+                </a>
+        </div>
+    </div>
+</section>
+<section id="demo">
+    <div class="demo-container">
+        <button id="btn-ctf2025">LANCER DEMO</button>
+        <iframe id="demo-iframe" src="screensaverdemo.html"></iframe>
+    </div>
+
+    <script>
+        const iframe = document.getElementById("demo-iframe");
+        const btnCTF = document.getElementById("btn-ctf2025");
+
+        btnCTF.addEventListener("click", () => {
+            iframe.src = "https://ctf.demo.baptiste.bradelet.fr/";
+            btnCTF.classList.add("hidden")
+        });
+    </script>
+</section>
+
+<!-- ============================================================
+     FOOTER
+============================================================ -->
+<footer>
+    <div class="container">
+        <p>© 2025 — The Last Hour CTF Platform. Tous droits réservés.</p>
+        <p style="text-align:right;">Construit avec rigueur & passion.</p>
+    </div>
+</footer>
+
+<!-- ============================================================
+     JAVASCRIPT
+============================================================ -->
+<script>
+    /* -------------------------------------------------------
+       Scroll progress bar
+    ------------------------------------------------------- */
+    const progressBar = document.getElementById('progress-bar');
+    window.addEventListener('scroll', () => {
+        const scrollTop    = document.documentElement.scrollTop;
+        const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const progress     = (scrollTop / scrollHeight) * 100;
+        progressBar.style.width = progress + '%';
+    }, { passive: true });
+
+    /* -------------------------------------------------------
+       Reveal on scroll (IntersectionObserver)
+    ------------------------------------------------------- */
+    const revealEls = document.querySelectorAll('.reveal');
+    const observer  = new IntersectionObserver((entries) => {
+        entries.forEach((entry, i) => {
+            if (entry.isIntersecting) {
+                // Stagger sibling reveals slightly
+                setTimeout(() => {
+                    entry.target.classList.add('visible');
+                }, 80 * (Array.from(revealEls).indexOf(entry.target) % 4));
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
+
+    revealEls.forEach(el => observer.observe(el));
+
+    /* -------------------------------------------------------
+       Contribution tabs
+    ------------------------------------------------------- */
+    const tabBtns   = document.querySelectorAll('.tab-btn');
+    const tabPanels = document.querySelectorAll('.tab-panel');
+
+    tabBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const targetId = btn.dataset.tab;
+
+            // Update buttons
+            tabBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            // Update panels
+            tabPanels.forEach(panel => panel.classList.remove('active'));
+            document.getElementById(targetId).classList.add('active');
+        });
+    });
+
+    /* -------------------------------------------------------
+       Subtle parallax on hero title
+    ------------------------------------------------------- */
+    const heroContent = document.querySelector('.hero-content');
+    if (heroContent) {
+        window.addEventListener('scroll', () => {
+            const y = window.scrollY;
+            if (y < window.innerHeight) {
+                heroContent.style.transform = `translateY(${y * 0.18}px)`;
+                heroContent.style.opacity   = 1 - (y / (window.innerHeight * 0.7));
+            }
+        }, { passive: true });
+    }
+
+    /* -------------------------------------------------------
+       Nav: subtle border on scroll
+    ------------------------------------------------------- */
+    const nav = document.querySelector('nav');
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 50) {
+            nav.style.borderBottomColor = 'rgba(200,134,42,0.18)';
+            nav.style.backdropFilter    = 'blur(12px)';
+        } else {
+            nav.style.borderBottomColor = 'rgba(200,134,42,0.08)';
+            nav.style.backdropFilter    = 'blur(4px)';
+        }
+    }, { passive: true });
+</script>
+
+</body>
+</html>

@@ -4,56 +4,174 @@
         <meta charset="UTF-8">
         <title>Title</title>
     </head>
+    <style>
+        :root {
+            --fond : #413652;
+
+            --competence1: #986f9c;
+            --competence2: #c090a7;
+            --competence3: #c9d4b8;
+            --competence4: #90c0a0;
+            --competence5: #6f919c;
+            --competence6: #575f7e;
+        }
+
+        * {
+            padding: 0;
+            margin: 0;
+        }
+
+        html {
+            background-color: var(--fond);
+            overflow-y: scroll;
+            scrollbar-color: var(--competence3) var(--fond);
+            scrollbar-width: thin;
+            padding: 2vh;
+        }
+
+        #competence1 { background-color: var(--competence1); color: var()}
+        #competence2 { background-color: var(--competence2); color: var()}
+        #competence3 { background-color: var(--competence3); color: var()}
+        #competence4 { background-color: var(--competence4); color: var()}
+        #competence5 { background-color: var(--competence5); color: var()}
+        #competence6 { background-color: var(--competence6); color: var()}
+
+        .hidden { display: none}
+
+
+        div.competence {
+            padding: 3vh 4vh;
+            border-radius: 2% / 6%;
+            margin: 2vh;
+        }
+
+        .niveau h3 {
+            padding-left: 2vh ;
+            padding-top: 1vh;
+        }
+        .niveau h4 {
+            padding-left: 4vh ;
+            padding-top: 1vh;
+        }
+        .niveau p {
+             padding-left: 7vh ;
+        }
+        span{
+            display: inline-block;
+            transform: rotate(-90deg);
+        }
+        h4.open span{
+            transform: rotate(0deg);
+        }
+
+    </style>
     <body>
-        <h2>Compétence 1 : Réaliser un développement d’application</h2>
-        <h3>Niveau 2 : Partir des exigences et aller jusqu’à une application complète</h3>
-        <h4>AC 1: Élaborer et implémenter les spécifications fonctionnelles et non fonctionnelles à partir des exigences</h4>
-        <h4>AC 2: Appliquer des principes d’accessibilité et d’ergonomie</h4>
-        <h4>AC 3: Adopter de bonnes pratiques de conception et de programmation</h4>
-        <h4>AC 4: Vérifier et valider la qualité de l’application par les tests</h4>
+        <div id='competence1' class='competence'>
+            <h2>Compétence 1: Optimiser des applications</h2>
+            <div class='niveau'>
+                <h3>Niveau 2: Sélectionner les algorithmes adéquats pour répondre à un problème donné</h3>
+            </div>
+        </div>
 
-        <br>
+        <div id='competence2' class='competence'>
+                <h2>Compétence 2: Optimiser des applications</h2>
+                <div class='niveau'>
+                    <h3>Niveau 2: Sélectionner les algorithmes adéquats pour répondre à un problème donné</h3>
+                    <h4 id='span-c2n2a1' onclick="toggle_visibility('span-c2n2a1')"><span>▼</span>AC 1: Choisir des structures de données complexes adaptées au problème</h4>
+                    <div id='c2n2a1' class='ac hidden'>
+                        <p>Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.</p>
+                    </div>
 
-        <h2>Compétence 2 : Optimiser des applications</h2>
-        <h3>Niveau 2 : Sélectionner les algorithmes adéquats pour répondre à un problème donné</h3>
-        <h4>AC 1: Choisir des structures de données complexes adaptées au problème</h4>
-        <h4>AC 2: Utiliser des techniques algorithmiques adaptées pour des problèmes complexes</h4>
-        <h4> AC 3: Comprendre les enjeux et moyens de sécurisation des données et du code</h4>
-        <h4>AC 4: Évaluer l’impact environnemental et sociétal des solutions proposées</h4>
+                    <h4 id='span-c2n2a2' onclick="toggle_visibility('span-c2n2a2')"><span>▼</span>AC 2: Utiliser des techniques algorithmiques adaptées pour des problèmes complexes</h4>
+                    <div id='c2n2a2' class='ac hidden'>
+                        <p>Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.</p>
+                    </div>
 
-        <br>
+                    <h4 id='span-c2n2a3' onclick="toggle_visibility('span-c2n2a3')"><span>▼</span>AC 3: Comprendre les enjeux et moyens de sécurisation des données et du code</h4>
+                    <div id='c2n2a3' class='ac hidden'>
+                        <p>Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.</p>
+                    </div>
 
-        <h2>Compétence 3 : Administrer des systèmes informatiques communicants complexes</h2>
-        <h3>Niveau 2 : Déployer des services dans une architecture réseau</h3>
-        <h4>AC 1: Concevoir et développer des applications communicantes</h4>
-        <h4>AC 2: Utiliser des serveurs et des services réseaux virtualisés</h4>
-        <h4>AC 3: Sécuriser les services et données d’un système</h4>
+                    <h4 id='span-c2n2a4' onclick="toggle_visibility('span-c2n2a4')"><span>▼</span>AC 4: Évaluer l’impact environnemental et sociétal des solutions proposées</h4>
+                    <div id='c2n2a4' class='ac hidden'>
+                        <p>Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.</p>
+                        <p>Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.</p>
+                    </div>
 
-        <br>
+                </div>
+            </div>
+        <div id='competence3' class='competence'>
+            <h2>Compétence 3: Administrer des systèmes informatiques communicants complexes</h2>
+            <div class='niveau'>
+                <h3>Niveau 2: Déployer des services dans une architecture réseau</h3>
+                <h4 id='span-c3n2a1' onclick="toggle_visibility('span-c3n2a1')"><span>▼</span>AC 1: Concevoir et développer des applications communicantes</h4>
+                <div id='c3n2a1' class='ac hidden'>
+                    <p>Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.</p>
+                </div>
 
-        <h2>Compétence 4 : Gérer des données de l’information</h2>
-        <h3>Niveau 2 : Optimiser une base de données, interagir avec une application et mettre en œuvre la sécurité</h3>
-        <h4>AC 1: Optimiser les modèles de données de l’entreprise</h4>
-        <h4>AC 2: Assurer la confidentialité des données</h4>
-        <h4>AC 3: Organiser la restitution de données à travers la programmation et la visualisation</h4>
-        <h4>AC 4: Manipuler des données hétérogènes</h4>
+                <h4 id='span-c3n2a2' onclick="toggle_visibility('span-c3n2a2')"><span>▼</span>AC 2: Utiliser des serveurs et des services réseaux virtualisés</h4>
+                <div id='c3n2a2' class='ac hidden'>
+                    <p>Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.</p>
+                </div>
 
-        <br>
+                <h4 id='span-c3n2a3' onclick="toggle_visibility('span-c3n2a3')"><span>▼</span>AC 3: Sécuriser les services et données d’un système</h4>
+                <div id='c3n2a3' class='ac hidden'>
+                    <p>Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.</p>
+                </div>
 
-        <h2>Compétence 5 : Conduire un projet</h2>
-        <h3>Niveau 2 : Appliquer une démarche de suivi de projet en fonction des besoins métiers des clients et des utilisateurs</h3>
-        <h4>AC 1: Identifier les processus présents dans une organisation en vue d’améliorer les systèmes d’information</h4>
-        <h4>AC 2: Formaliser les besoins du client et de l’utilisateur</h4>
-        <h4>AC 3: Identifier les critères de faisabilité d’un projet informatique</h4>
-        <h4>AC 4: Définir et mettre en œuvre une démarche de suivi de projet</h4>
+            </div>
+        </div>
+        <div id='competence4' class='competence'>
+            <h2>Compétence 4: Gérer des données de l’information</h2>
+            <div class='niveau'>
+                <h3>Niveau 2: Optimiser une base de données, interagir avec une application et mettre en œuvre la sécurité</h3>
+                <h4 id='span-c4n2a1' onclick="toggle_visibility('span-c4n2a1')"><span>▼</span>AC 1: Optimiser les modèles de données de l’entreprise</h4>
+                <div id='c4n2a1' class='ac hidden'>
+                    <p>Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.</p>
+                </div>
 
-        <br>
+                <h4 id='span-c4n2a2' onclick="toggle_visibility('span-c4n2a2')"><span>▼</span>AC 2: Assurer la confidentialité des données</h4>
+                <div id='c4n2a2' class='ac hidden'>
+                    <p>Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.</p>
+                </div>
 
-        <h2>Compétence 6 : Collaborer au sein d’une équipe informatique</h2>
-        <h3>Niveau 2 : Situer son rôle et ses missions au sein d’une équipe informatique</h3>
-        <h4>AC 1: Comprendre la diversité, la structure et la dimension de l’informatique dans une organisation</h4>
-        <h4>AC 2: Appliquer une démarche pour intégrer une équipe informatique au sein d’une organisation</h4>
-        <h4>AC 3: Mobiliser les compétences interpersonnelles pour intégrer une équipe informatique</h4>
-        <h4>AC 4: Rendre compte de son activité professionnelle</h4>
+                <h4 id='span-c4n2a3' onclick="toggle_visibility('span-c4n2a3')"><span>▼</span>AC 3: Organiser la restitution de données à travers la programmation et la visualisation</h4>
+                <div id='c4n2a3' class='ac hidden'>
+                    <p>Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.</p>
+                </div>
+
+                <h4 id='span-c4n2a4' onclick="toggle_visibility('span-c4n2a4')"><span>▼</span>AC 4: Manipuler des données hétérogènes</h4>
+                <div id='c4n2a4' class='ac hidden'>
+                    <p>Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.</p>
+                </div>
+
+            </div>
+        </div>
+
+        <div id='competence5' class='competence'>
+            <h2>Compétence 5: Optimiser des applications</h2>
+            <div class='niveau'>
+                <h3>Niveau 2: Sélectionner les algorithmes adéquats pour répondre à un problème donné</h3>
+            </div>
+        </div>
+        <div id='competence6' class='competence'>
+            <h2>Compétence 6: Optimiser des applications</h2>
+            <div class='niveau'>
+                <h3>Niveau 2: Sélectionner les algorithmes adéquats pour répondre à un problème donné</h3>
+            </div>
+        </div>
     </body>
+    <script>
+        function toggle_visibility(id){
+            if (document.getElementById(id).classList.contains('open')){
+                document.getElementById(id).classList.remove('open');
+                document.getElementById(id.slice(5)).classList.add('hidden');
+
+            } else {
+                document.getElementById(id).classList.add('open');
+                document.getElementById(id.slice(5)).classList.remove('hidden');
+            }
+
+        }
+    </script>
 </html>
