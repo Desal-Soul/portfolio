@@ -1,0 +1,1688 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CTF+Z — Portfolio</title>
+    <style>
+        /* =========================================================
+           VARIABLES & RESET
+        ========================================================= */
+        :root {
+            --bg:        #080c10;
+            --surface:   #0d1318;
+            --surface2:  #111922;
+            --border:    #1e2d3d;
+            --accent:    #00d4ff;
+            --accent2:   #00ff88;
+            --accent3:   #ff6b35;
+            --text:      #c8d8e8;
+            --text-dim:  #5a7a9a;
+            --text-head: #e8f4ff;
+            --font-head: 'Courier New', Courier, monospace;
+            --font-body: Georgia, 'Times New Roman', serif;
+            --radius:    6px;
+            --glow:      0 0 24px rgba(0,212,255,.18);
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--font-body);
+            font-size: 1rem;
+            line-height: 1.75;
+            overflow-x: hidden;
+        }
+
+        /* =========================================================
+           NOISE OVERLAY
+        ========================================================= */
+        body::before {
+            content: '';
+            position: fixed; inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+            opacity: .025;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        /* =========================================================
+           UTILITIES
+        ========================================================= */
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 2rem; }
+
+        .tag {
+            display: inline-block;
+            font-family: var(--font-head);
+            font-size: .68rem;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            padding: .25rem .7rem;
+            border: 1px solid var(--border);
+            border-radius: 2px;
+            color: var(--accent);
+            background: rgba(0,212,255,.06);
+        }
+
+        .tag.green  { color: var(--accent2); background: rgba(0,255,136,.06); border-color: rgba(0,255,136,.25); }
+        .tag.orange { color: var(--accent3); background: rgba(255,107,53,.06); border-color: rgba(255,107,53,.25); }
+
+        .section-label {
+            font-family: var(--font-head);
+            font-size: .7rem;
+            letter-spacing: .2em;
+            text-transform: uppercase;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: .75rem;
+            margin-bottom: 1.5rem;
+        }
+        .section-label::before {
+            content: '';
+            display: block;
+            width: 32px; height: 1px;
+            background: var(--accent);
+        }
+
+        h2 {
+            font-family: var(--font-head);
+            font-size: clamp(1.6rem, 3vw, 2.4rem);
+            color: var(--text-head);
+            font-weight: 700;
+            letter-spacing: -.02em;
+            margin-bottom: 1rem;
+        }
+
+        h3 {
+            font-family: var(--font-head);
+            font-size: 1.15rem;
+            color: var(--text-head);
+            margin-bottom: .5rem;
+        }
+
+        p { color: var(--text); }
+
+        section { padding: 6rem 0; }
+
+        hr.divider {
+            border: none;
+            border-top: 1px solid var(--border);
+            margin: 0;
+        }
+
+        /* =========================================================
+           NAVIGATION
+        ========================================================= */
+        nav {
+            position: fixed; top: 0; left: 0; right: 0;
+            z-index: 900;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.1rem 2.5rem;
+            background: rgba(8,12,16,.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav-brand {
+            font-family: var(--font-head);
+            font-size: 1rem;
+            color: var(--text-head);
+            letter-spacing: .08em;
+        }
+        .nav-brand span { color: var(--accent); }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+        .nav-links a {
+            font-family: var(--font-head);
+            font-size: .72rem;
+            letter-spacing: .14em;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            text-decoration: none;
+            transition: color .2s;
+        }
+        .nav-links a:hover { color: var(--accent); }
+
+        /* =========================================================
+           HERO
+        ========================================================= */
+        #hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            padding: 8rem 0 6rem;
+        }
+
+        /* Grid background */
+        #hero::before {
+            content: '';
+            position: absolute; inset: 0;
+            background-image:
+                    linear-gradient(rgba(0,212,255,.04) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(0,212,255,.04) 1px, transparent 1px);
+            background-size: 48px 48px;
+            mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, black 40%, transparent 100%);
+        }
+
+        /* Glow orbs */
+        #hero::after {
+            content: '';
+            position: absolute;
+            width: 700px; height: 700px;
+            background: radial-gradient(ellipse, rgba(0,212,255,.07) 0%, transparent 70%);
+            top: -200px; right: -200px;
+            pointer-events: none;
+        }
+
+        .hero-inner {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .hero-title {
+            font-family: var(--font-head);
+            font-size: clamp(3.5rem, 9vw, 7rem);
+            color: var(--text-head);
+            font-weight: 700;
+            letter-spacing: -.04em;
+            line-height: 1;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-title .accent { color: var(--accent); }
+
+        .hero-subtitle {
+            font-size: 1.15rem;
+            color: var(--text-dim);
+            max-width: 540px;
+            margin-bottom: 3rem;
+            line-height: 1.8;
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            gap: .2rem;
+        }
+        .stat-value {
+            font-family: var(--font-head);
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent);
+            letter-spacing: -.04em;
+        }
+        .stat-label {
+            font-family: var(--font-head);
+            font-size: .65rem;
+            letter-spacing: .14em;
+            text-transform: uppercase;
+            color: var(--text-dim);
+        }
+
+        /* Scroll indicator */
+        .scroll-hint {
+            position: absolute;
+            bottom: 2.5rem; left: 50%;
+            transform: translateX(-50%);
+            display: flex; flex-direction: column; align-items: center;
+            gap: .5rem;
+            font-family: var(--font-head);
+            font-size: .6rem;
+            letter-spacing: .18em;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            animation: scrollBounce 2s ease-in-out infinite;
+        }
+        .scroll-hint::after {
+            content: '';
+            display: block;
+            width: 1px; height: 40px;
+            background: linear-gradient(to bottom, var(--text-dim), transparent);
+        }
+        @keyframes scrollBounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50%       { transform: translateX(-50%) translateY(6px); }
+        }
+
+        /* =========================================================
+           CARDS & GRID
+        ========================================================= */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 2rem;
+            transition: border-color .25s, box-shadow .25s;
+        }
+        .card:hover {
+            border-color: rgba(0,212,255,.3);
+            box-shadow: var(--glow);
+        }
+
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; }
+
+        /* =========================================================
+           CLIENT SECTION
+        ========================================================= */
+        #client .client-layout {
+            display: grid;
+            grid-template-columns: 1fr 1.6fr;
+            gap: 4rem;
+            align-items: start;
+        }
+
+        .client-badge {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .client-name {
+            font-family: var(--font-head);
+            font-size: 1.5rem;
+            color: var(--text-head);
+        }
+        .client-detail {
+            font-family: var(--font-head);
+            font-size: .78rem;
+            color: var(--text-dim);
+            display: flex;
+            gap: .5rem;
+        }
+        .client-detail span { color: var(--text); }
+
+        /* =========================================================
+           NEEDS SECTION
+        ========================================================= */
+        .needs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .need-item {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.25rem 1.5rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            transition: border-color .2s;
+        }
+        .need-item:hover { border-color: rgba(0,212,255,.25); }
+
+        .need-icon {
+            font-size: 1.2rem;
+            flex-shrink: 0;
+            margin-top: .1rem;
+        }
+        .need-text {
+            font-size: .9rem;
+            color: var(--text);
+        }
+
+        /* =========================================================
+           SOLUTION SECTION
+        ========================================================= */
+        .solution-compare {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .compare-panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 2rem;
+        }
+        .compare-panel.chosen {
+            border-color: rgba(0,212,255,.35);
+            background: rgba(0,212,255,.03);
+        }
+        .compare-title {
+            font-family: var(--font-head);
+            font-size: .85rem;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            margin-bottom: .75rem;
+        }
+
+        .feature-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: .5rem;
+        }
+        .feature-list li {
+            font-size: .9rem;
+            display: flex;
+            gap: .75rem;
+            align-items: flex-start;
+        }
+        .feature-list li::before {
+            content: '—';
+            color: var(--accent);
+            flex-shrink: 0;
+            margin-top: .05rem;
+        }
+
+        /* =========================================================
+           NATIVE FEATURES
+        ========================================================= */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .feature-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: border-color .25s, transform .25s;
+        }
+        .feature-card:hover { border-color: rgba(0,212,255,.3); transform: translateY(-2px); }
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent), transparent);
+            opacity: 0;
+            transition: opacity .25s;
+        }
+        .feature-card:hover::before { opacity: 1; }
+
+        .feature-card-icon {
+            font-size: 1.6rem;
+            margin-bottom: .75rem;
+        }
+
+        /* =========================================================
+           ROLE & CONTRIBUTIONS
+        ========================================================= */
+        .role-layout {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 4rem;
+            align-items: start;
+        }
+
+        .contribution-list {
+            display: flex;
+            flex-direction: column;
+            gap: .75rem;
+        }
+
+        .contribution-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.25rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            font-size: .9rem;
+            transition: border-color .2s;
+        }
+        .contribution-item:hover { border-color: rgba(0,212,255,.25); }
+        .contribution-item .badge {
+            font-family: var(--font-head);
+            font-size: .65rem;
+            padding: .2rem .5rem;
+            border-radius: 2px;
+            background: rgba(0,212,255,.1);
+            color: var(--accent);
+            flex-shrink: 0;
+            letter-spacing: .06em;
+        }
+
+        .numbers-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .number-card {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            text-align: center;
+        }
+        .number-card .num {
+            font-family: var(--font-head);
+            font-size: 2.5rem;
+            color: var(--accent2);
+            display: block;
+            font-weight: 700;
+        }
+        .number-card .num-label {
+            font-family: var(--font-head);
+            font-size: .68rem;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            color: var(--text-dim);
+        }
+
+        /* =========================================================
+           FOCUS DÉFI
+        ========================================================= */
+        #focus {
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+
+        #focus::before {
+            content: 'MISSION INZIPSSIBLE';
+            position: absolute;
+            font-family: var(--font-head);
+            font-size: clamp(4rem, 10vw, 9rem);
+            font-weight: 700;
+            color: rgba(0,212,255,.025);
+            letter-spacing: .05em;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            white-space: nowrap;
+            pointer-events: none;
+            user-select: none;
+        }
+
+        .focus-layout {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 4rem;
+            align-items: start;
+        }
+
+        .challenge-header {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .challenge-name {
+            font-family: var(--font-head);
+            font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+            color: var(--text-head);
+            font-weight: 700;
+            letter-spacing: -.03em;
+        }
+
+        .challenge-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .5rem;
+        }
+
+        .steps-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .step {
+            display: flex;
+            gap: 1.25rem;
+            align-items: flex-start;
+        }
+        .step-num {
+            font-family: var(--font-head);
+            font-size: .7rem;
+            color: var(--accent);
+            background: rgba(0,212,255,.08);
+            border: 1px solid rgba(0,212,255,.2);
+            border-radius: 2px;
+            padding: .2rem .5rem;
+            flex-shrink: 0;
+            margin-top: .2rem;
+            letter-spacing: .06em;
+        }
+        .step-content h4 {
+            font-family: var(--font-head);
+            font-size: .85rem;
+            color: var(--text-head);
+            margin-bottom: .2rem;
+        }
+        .step-content p { font-size: .875rem; color: var(--text-dim); }
+
+        .code-block {
+            background: #04080c;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.25rem 1.5rem;
+            font-family: var(--font-head);
+            font-size: .82rem;
+            color: var(--accent2);
+            margin-top: 1rem;
+            line-height: 1.7;
+            overflow-x: auto;
+        }
+        .code-block .comment { color: var(--text-dim); }
+
+        /* =========================================================
+           CARROUSELS
+        ========================================================= */
+        .carousel-wrapper {
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: var(--surface2);
+            margin-top: 2rem;
+        }
+
+        .carousel-track {
+            display: flex;
+            transition: transform .45s cubic-bezier(.4,0,.2,1);
+            will-change: transform;
+        }
+
+        .carousel-slide {
+            min-width: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Slide image placeholder */
+        .slide-visual {
+            width: 100%;
+            aspect-ratio: 16/9;
+            position: relative;
+            overflow: hidden;
+            background: #04080c;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Each slide gets a unique terminal/UI mockup */
+        .slide-visual img {
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+        .dot { width: 10px; height: 10px; border-radius: 50%; }
+        .dot.r { background: #ff5f57; }
+        .dot.y { background: #febc2e; }
+        .dot.g { background: #28c840; }
+
+        .mockup-url {
+            margin-left: .5rem;
+            color: var(--text-dim);
+            font-size: .75em;
+            background: rgba(255,255,255,.04);
+            padding: .2rem .8rem;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .mockup-body {
+            padding: 1.25rem 1.5rem;
+            color: var(--text);
+        }
+
+        /* CTFd-like challenge list */
+        .ctf-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        .ctf-title { color: var(--accent); font-size: 1.1em; font-weight: 700; }
+        .ctf-subtitle { color: var(--text-dim); font-size: .75em; }
+
+        .ctf-categories {
+            display: flex;
+            gap: .4rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+        .cat-btn {
+            padding: .2rem .7rem;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            font-size: .75em;
+            cursor: pointer;
+            color: var(--text-dim);
+        }
+        .cat-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(0,212,255,.08); }
+
+        .ctf-challenges {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: .5rem;
+        }
+        .ctf-chall {
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: .6rem .75rem;
+            background: var(--surface2);
+        }
+        .ctf-chall.solved { border-color: rgba(0,255,136,.3); background: rgba(0,255,136,.03); }
+        .ctf-chall-name { color: var(--text-head); font-size: .8em; margin-bottom: .2rem; }
+        .ctf-chall-pts { color: var(--accent2); font-size: .72em; }
+        .ctf-chall-cat { color: var(--text-dim); font-size: .68em; }
+
+        /* Scoreboard mockup */
+        .score-table { width: 100%; border-collapse: collapse; font-size: .8em; }
+        .score-table th {
+            color: var(--text-dim);
+            font-weight: 400;
+            padding: .4rem .75rem;
+            border-bottom: 1px solid var(--border);
+            text-align: left;
+        }
+        .score-table td {
+            padding: .45rem .75rem;
+            border-bottom: 1px solid rgba(30,45,61,.5);
+        }
+        .score-table tr:nth-child(1) td:first-child { color: #ffd700; }
+        .score-table tr:nth-child(2) td:first-child { color: #c0c0c0; }
+        .score-table tr:nth-child(3) td:first-child { color: #cd7f32; }
+        .rank { color: var(--text-dim); }
+        .team-name { color: var(--text-head); }
+        .team-pts { color: var(--accent2); font-weight: 700; }
+
+        /* Hint mockup */
+        .hint-box {
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: .75rem 1rem;
+            margin-top: .5rem;
+        }
+        .hint-locked { opacity: .4; display: flex; align-items: center; gap: .5rem; }
+        .hint-unlocked { display: flex; align-items: flex-start; gap: .5rem; }
+        .hint-unlocked .icon { color: var(--accent2); }
+
+        /* Admin mockups */
+        .admin-sidebar {
+            display: flex;
+            gap: 1.5rem;
+        }
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: .25rem;
+            min-width: 140px;
+            flex-shrink: 0;
+        }
+        .sidebar-item {
+            padding: .4rem .75rem;
+            border-radius: 3px;
+            font-size: .75em;
+            color: var(--text-dim);
+            cursor: pointer;
+        }
+        .sidebar-item.active {
+            background: rgba(0,212,255,.1);
+            color: var(--accent);
+            border-left: 2px solid var(--accent);
+        }
+
+        .admin-content { flex: 1; }
+
+        .admin-table { width: 100%; border-collapse: collapse; font-size: .78em; }
+        .admin-table th {
+            color: var(--text-dim);
+            font-weight: 400;
+            padding: .35rem .75rem;
+            border-bottom: 1px solid var(--border);
+            text-align: left;
+        }
+        .admin-table td {
+            padding: .4rem .75rem;
+            border-bottom: 1px solid rgba(30,45,61,.4);
+            color: var(--text);
+        }
+        .status-active { color: var(--accent2); }
+        .status-inactive { color: var(--text-dim); }
+
+        /* Form elements */
+        .mock-form { display: flex; flex-direction: column; gap: .6rem; }
+        .mock-label { color: var(--text-dim); font-size: .72em; }
+        .mock-input {
+            background: rgba(0,0,0,.3);
+            border: 1px solid var(--border);
+            border-radius: 3px;
+            padding: .4rem .7rem;
+            color: var(--text);
+            font-size: .78em;
+            font-family: inherit;
+        }
+        .mock-select {
+            background: rgba(0,0,0,.3);
+            border: 1px solid var(--border);
+            border-radius: 3px;
+            padding: .3rem .5rem;
+            color: var(--text-dim);
+            font-size: .75em;
+            font-family: inherit;
+        }
+        .mock-btn {
+            align-self: flex-end;
+            background: rgba(0,212,255,.12);
+            border: 1px solid rgba(0,212,255,.35);
+            color: var(--accent);
+            padding: .35rem 1rem;
+            border-radius: 3px;
+            font-size: .75em;
+            cursor: pointer;
+        }
+
+        /* Slide caption */
+        .slide-caption {
+            padding: 1.25rem 1.75rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid var(--border);
+        }
+
+        .slide-caption-text h4 {
+            font-family: var(--font-head);
+            font-size: .9rem;
+            color: var(--text-head);
+            margin-bottom: .15rem;
+        }
+        .slide-caption-text p { font-size: .82rem; color: var(--text-dim); }
+
+        .slide-counter {
+            font-family: var(--font-head);
+            font-size: .72rem;
+            color: var(--text-dim);
+            white-space: nowrap;
+        }
+
+        /* Carousel Controls */
+        .carousel-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+        }
+
+        .carousel-btn {
+            width: 44px; height: 44px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            color: var(--text-dim);
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: border-color .2s, color .2s, background .2s;
+        }
+        .carousel-btn:hover {
+            border-color: rgba(0,212,255,.4);
+            color: var(--accent);
+            background: rgba(0,212,255,.05);
+        }
+
+        .carousel-dots {
+            display: flex;
+            gap: .5rem;
+        }
+        .carousel-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: var(--border);
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            transition: background .2s, transform .2s;
+        }
+        .carousel-dot.active {
+            background: var(--accent);
+            transform: scale(1.3);
+        }
+
+        /* =========================================================
+           CONCLUSION
+        ========================================================= */
+        #conclusion {
+            text-align: center;
+            padding: 7rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #conclusion::before {
+            content: '';
+            position: absolute; inset: 0;
+            background: radial-gradient(ellipse 60% 50% at 50% 50%, rgba(0,212,255,.05) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .conclusion-inner {
+            position: relative; z-index: 2;
+        }
+
+        .impact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin: 3rem 0;
+        }
+
+        .impact-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 2rem 1.5rem;
+            text-align: center;
+            transition: border-color .25s;
+        }
+        .impact-card:hover { border-color: rgba(0,255,136,.3); }
+        .impact-value {
+            font-family: var(--font-head);
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--accent2);
+            display: block;
+            margin-bottom: .25rem;
+        }
+        .impact-label {
+            font-family: var(--font-head);
+            font-size: .7rem;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            color: var(--text-dim);
+        }
+
+        .conclusion-note {
+            max-width: 620px;
+            margin: 0 auto;
+            font-size: 1.05rem;
+            color: var(--text-dim);
+            line-height: 1.85;
+        }
+
+        /* =========================================================
+           FOOTER
+        ========================================================= */
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: var(--font-head);
+            font-size: .68rem;
+            letter-spacing: .1em;
+            color: var(--text-dim);
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        /* =========================================================
+           ANIMATIONS
+        ========================================================= */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity .6s ease, transform .6s ease;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* =========================================================
+           RESPONSIVE
+        ========================================================= */
+        @media (max-width: 900px) {
+            #client .client-layout,
+            .solution-compare,
+            .role-layout,
+            .focus-layout { grid-template-columns: 1fr; gap: 2rem; }
+
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+
+            .ctf-challenges { grid-template-columns: repeat(2, 1fr); }
+
+            .hero-stats { gap: 2rem; }
+
+            nav { padding: 1rem 1.5rem; }
+            .nav-links { display: none; }
+        }
+
+        @media (max-width: 600px) {
+            section { padding: 4rem 0; }
+            .hero-title { font-size: 3.2rem; }
+            .admin-sidebar { flex-direction: column; }
+            .sidebar-nav { flex-direction: row; flex-wrap: wrap; min-width: unset; }
+            .ctf-challenges { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ===================== NAV ===================== -->
+<nav>
+    <div class="nav-brand"><span>CTF</span>+Z</div>
+    <ul class="nav-links">
+        <li><a href="#client">Projet</a></li>
+        <li><a href="#besoins">Besoins</a></li>
+        <li><a href="#solution">Solution</a></li>
+        <li><a href="#role">Mon rôle</a></li>
+        <li><a href="#focus">Focus défi</a></li>
+        <li><a href="#user-carousel">Captures</a></li>
+    </ul>
+</nav>
+
+<!-- ===================== HERO ===================== -->
+<section id="hero">
+    <div class="container hero-inner">
+
+        <div class="hero-meta">
+            <span class="tag">CTF · Jeopardy</span>
+            <span class="tag green">CTFd</span>
+            <span class="tag orange">Association Yggame</span>
+        </div>
+
+        <h1 class="hero-title">CTF<span class="accent">+Z</span></h1>
+
+        <p class="hero-subtitle">
+            Une plateforme de Capture The Flag pédagogique et compétitive,
+            conçue pour accueillir jusqu'à 300 participants et répondre
+            aux exigences techniques et organisationnelles de l'association Yggame.
+        </p>
+
+        <div class="hero-stats">
+            <div class="stat-item">
+                <span class="stat-value">15</span>
+                <span class="stat-label">défis totaux</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-value">11</span>
+                <span class="stat-label">imaginés par moi</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-value">10</span>
+                <span class="stat-label">réalisés par moi</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-value">300</span>
+                <span class="stat-label">participants max</span>
+            </div>
+        </div>
+
+    </div>
+    <div class="scroll-hint">scroll</div>
+</section>
+
+<hr class="divider" />
+
+<!-- ===================== CLIENT ===================== -->
+<section id="client">
+    <div class="container">
+        <div class="section-label">Présentation</div>
+        <div class="client-layout">
+
+            <div>
+                <div class="client-badge">
+                    <div class="client-name">Yggame</div>
+                    <div class="client-detail">Type · <span>Association</span></div>
+                    <div class="client-detail">Projet · <span>CTF+Z</span></div>
+                    <div class="client-detail">Format · <span>Jeopardy</span></div>
+                    <div class="client-detail">Plateforme · <span>CTFd</span></div>
+                </div>
+            </div>
+
+            <div class="fade-in">
+                <h2>Un CTF à la fois ludique et pédagogique</h2>
+                <p style="margin-bottom:1.25rem">
+                    CTF+Z est né d'une commande claire de l'association Yggame : créer un événement
+                    Capture The Flag capable de <strong style="color:var(--text-head)">divertir et former simultanément</strong>,
+                    tout en gérant rigoureusement participants, équipes et scores.
+                </p>
+                <p style="margin-bottom:1.25rem">
+                    Le projet couvre l'intégralité du cycle de vie d'un CTF : analyse du besoin client,
+                    sélection d'une solution existante adaptable, configuration technique, conception
+                    des défis et documentation administrateur.
+                </p>
+                <p>
+                    CTFd a été retenu après une analyse comparative, pour sa robustesse native,
+                    sa gestion intégrée des équipes, des indices et du scoreboard — tout en restant
+                    configurable pour les besoins spécifiques d'Yggame.
+                </p>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<hr class="divider" />
+
+<!-- ===================== BESOINS ===================== -->
+<section id="besoins">
+    <div class="container">
+        <div class="section-label">Analyse</div>
+        <h2 class="fade-in">Demandes &amp; contraintes client</h2>
+        <p class="fade-in" style="max-width:620px; margin-bottom:0">
+            L'association Yggame a formulé des exigences fonctionnelles précises,
+            couvrant aussi bien l'expérience participant que l'administration de la plateforme.
+        </p>
+
+        <div class="needs-grid">
+            <div class="need-item fade-in">
+                <div class="need-icon">🎯</div>
+                <div class="need-text">Divertir tout en enseignant la cybersécurité</div>
+            </div>
+            <div class="need-item fade-in">
+                <div class="need-icon">👥</div>
+                <div class="need-text">Gestion des équipes et des comptes participants</div>
+            </div>
+            <div class="need-item fade-in">
+                <div class="need-icon">📊</div>
+                <div class="need-text">Scoreboard inter-joueur et inter-équipe en temps réel</div>
+            </div>
+            <div class="need-item fade-in">
+                <div class="need-icon">🗂️</div>
+                <div class="need-text">Défis variés par domaine et par difficulté</div>
+            </div>
+            <div class="need-item fade-in">
+                <div class="need-icon">💡</div>
+                <div class="need-text">Système d'indices progressifs</div>
+            </div>
+            <div class="need-item fade-in">
+                <div class="need-icon">🔒</div>
+                <div class="need-text">Accès restreint pour les visiteurs (scoreboard uniquement)</div>
+            </div>
+            <div class="need-item fade-in">
+                <div class="need-icon">📋</div>
+                <div class="need-text">Documentation administrateur pour la résolution des défis</div>
+            </div>
+            <div class="need-item fade-in">
+                <div class="need-icon">⚡</div>
+                <div class="need-text">Stabilité garantie pour 50 à 300 participants simultanés</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<hr class="divider" />
+
+<!-- ===================== SOLUTION ===================== -->
+<section id="solution">
+    <div class="container">
+        <div class="section-label">Choix technique</div>
+        <h2 class="fade-in">Analyse &amp; sélection de CTFd</h2>
+        <p class="fade-in" style="max-width:640px">
+            Après étude des alternatives disponibles, CTFd s'est imposé comme la solution
+            la plus adaptée : open source, maintenus, extensible et couvrant nativement
+            l'ensemble des besoins fonctionnels identifiés.
+        </p>
+
+        <div class="solution-compare fade-in">
+            <div class="compare-panel">
+                <div class="compare-title">Alternatives étudiées</div>
+                <ul class="feature-list">
+                    <li>Plateforme custom from scratch</li>
+                    <li>Frameworks CTF génériques moins maintenus</li>
+                    <li>Solutions SaaS propriétaires (dépendance externe)</li>
+                    <li>HackTheBox / TryHackMe (non adaptable)</li>
+                </ul>
+            </div>
+
+            <div class="compare-panel chosen">
+                <div class="compare-title" style="color:var(--accent)">✓ CTFd — Solution retenue</div>
+                <ul class="feature-list">
+                    <li>Gestion native équipes &amp; joueurs</li>
+                    <li>Scoreboard dynamique intégré</li>
+                    <li>Système d'indices configurable</li>
+                    <li>Contrôle des accès et rôles</li>
+                    <li>Scalabilité documentée</li>
+                    <li>Interface administration complète</li>
+                    <li>Open source, extensible</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<hr class="divider" />
+
+<!-- ===================== FONCTIONNALITÉS ===================== -->
+<section id="fonctionnalites" style="padding-top:0">
+    <div class="container">
+        <div class="section-label">CTFd</div>
+        <h2 class="fade-in">Fonctionnalités natives exploitées</h2>
+
+        <div class="features-grid">
+            <div class="feature-card fade-in">
+                <div class="feature-card-icon">🏆</div>
+                <h3>Scoreboard</h3>
+                <p style="font-size:.875rem">Classements en temps réel, visualisation graphique des progressions, tri équipe/joueur.</p>
+            </div>
+            <div class="feature-card fade-in">
+                <div class="feature-card-icon">🗂️</div>
+                <h3>Défis par catégories</h3>
+                <p style="font-size:.875rem">Organisation par domaine (Crypto, Web, Forensic, System…) et valeur en points variable.</p>
+            </div>
+            <div class="feature-card fade-in">
+                <div class="feature-card-icon">💡</div>
+                <h3>Indices progressifs</h3>
+                <p style="font-size:.875rem">Système de coût en points par indice débloqué, encourageant la progression autonome.</p>
+            </div>
+            <div class="feature-card fade-in">
+                <div class="feature-card-icon">👥</div>
+                <h3>Gestion d'équipes</h3>
+                <p style="font-size:.875rem">Création, invitation, gestion des membres, scores agrégés par équipe.</p>
+            </div>
+            <div class="feature-card fade-in">
+                <div class="feature-card-icon">🔑</div>
+                <h3>Contrôle d'accès</h3>
+                <p style="font-size:.875rem">Visiteurs limités au scoreboard, participants authentifiés, rôle administrateur.</p>
+            </div>
+            <div class="feature-card fade-in">
+                <div class="feature-card-icon">⚙️</div>
+                <h3>Administration</h3>
+                <p style="font-size:.875rem">Interface dédiée : création de défis, gestion des flags, import/export, notifications.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<hr class="divider" />
+
+<!-- ===================== RÔLE ===================== -->
+<section id="role">
+    <div class="container">
+        <div class="section-label">Implication</div>
+        <div class="role-layout">
+
+            <div>
+                <h2 class="fade-in">Mon rôle &amp; mes contributions</h2>
+                <p class="fade-in" style="margin-bottom:2rem">
+                    Ma mission principale s'est concentrée sur la conception et la production
+                    des défis — du concept à la réalisation technique, en passant par le nommage
+                    et la documentation.
+                </p>
+
+                <div class="contribution-list">
+                    <div class="contribution-item fade-in">
+                        <span class="badge">Conception</span>
+                        Définition des concepts pédagogiques pour chaque défi
+                    </div>
+                    <div class="contribution-item fade-in">
+                        <span class="badge">Nommage</span>
+                        Création des noms immersifs et thématiques (ex: Mission Inzipssible)
+                    </div>
+                    <div class="contribution-item fade-in">
+                        <span class="badge">Réalisation</span>
+                        Production technique des fichiers, scripts et environnements de défi
+                    </div>
+                    <div class="contribution-item fade-in">
+                        <span class="badge">Gestion</span>
+                        Coordination des défis, cohérence globale et courbe de difficulté
+                    </div>
+                    <div class="contribution-item fade-in">
+                        <span class="badge">Docs</span>
+                        Rédaction de la documentation administrateur (guides de résolution)
+                    </div>
+                </div>
+            </div>
+
+            <div class="fade-in">
+                <div class="numbers-grid">
+                    <div class="number-card">
+                        <span class="num">15</span>
+                        <span class="num-label">défis au total</span>
+                    </div>
+                    <div class="number-card">
+                        <span class="num">11</span>
+                        <span class="num-label">imaginés par moi</span>
+                    </div>
+                    <div class="number-card">
+                        <span class="num">10</span>
+                        <span class="num-label">réalisés par moi</span>
+                    </div>
+                    <div class="number-card">
+                        <span class="num">10</span>
+                        <span class="num-label">guides techniques</span>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-top:1rem">
+                    <h3 style="margin-bottom:.5rem; font-size:.95rem">Domaines couverts</h3>
+                    <div style="display:flex; flex-wrap:wrap; gap:.5rem; margin-top:.75rem">
+                        <span class="tag">Cryptographie</span>
+                        <span class="tag green">Forensic</span>
+                        <span class="tag orange">Système</span>
+                        <span class="tag">Web</span>
+                        <span class="tag green">OSINT</span>
+                        <span class="tag orange">Password Cracking</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<hr class="divider" />
+
+<!-- ===================== FOCUS DÉFI ===================== -->
+<section id="focus">
+    <div class="container">
+        <div class="section-label">Focus défi</div>
+        <div class="focus-layout">
+
+            <div class="challenge-header fade-in">
+                <div class="challenge-meta">
+                    <span class="tag orange">Système</span>
+                    <span class="tag">Password Cracking</span>
+                </div>
+                <h2 class="challenge-name">Mission Inzipssible</h2>
+                <p style="font-size:.9rem; color:var(--text-dim); font-style:italic">
+                    Référence à la saga Mission Impossible
+                </p>
+                <p style="margin-top:1rem">
+                    Le participant doit réussir à décompresser un archive ZIP
+                    protégée par mot de passe — sans le connaître.
+                    Un défi mêlant manipulation système, outil de cracking et méthode.
+                </p>
+
+                <div class="code-block">
+                    <span class="comment"># Objectif du participant</span>
+                    $ unzip secret.zip
+                    <span class="comment">Archive: secret.zip</span>
+                    <span class="comment">[secret.zip] flag.txt password:</span>
+                    <span style="color:var(--accent3)">error: incorrect password</span>
+
+                    <span class="comment"># Solution : John the Ripper</span>
+                    $ zip2john secret.zip > hash.txt
+                    $ john hash.txt --wordlist=rockyou.txt
+                    <span style="color:var(--accent2)">Using default input encoding: UTF-8</span>
+                    <span style="color:var(--accent2)">Loaded 1 password hash (PKZIP)</span>
+                    <span style="color:var(--accent2)">p4ssw0rd         (secret.zip/flag.txt)</span>
+                </div>
+            </div>
+
+            <div class="fade-in">
+                <h3 style="margin-bottom:1.25rem">Démarche pédagogique</h3>
+                <div class="steps-list">
+                    <div class="step">
+                        <span class="step-num">01</span>
+                        <div class="step-content">
+                            <h4>Guide VM Kali Linux</h4>
+                            <p>Installation et configuration d'un environnement Kali Linux sur machine virtuelle — accessible aux débutants.</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <span class="step-num">02</span>
+                        <div class="step-content">
+                            <h4>Extraction du hash</h4>
+                            <p>Utilisation de <code style="color:var(--accent)">zip2john</code> pour extraire le hash du fichier protégé et le préparer au cracking.</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <span class="step-num">03</span>
+                        <div class="step-content">
+                            <h4>Cracking avec John the Ripper</h4>
+                            <p>Attaque par dictionnaire sur le hash extrait, avec wordlist standard, pour retrouver le mot de passe.</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <span class="step-num">04</span>
+                        <div class="step-content">
+                            <h4>Notice en deux parties</h4>
+                            <p>Documentation divisée : une partie technique (installation), une partie méthodologique (procédure de cracking).</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<hr class="divider" />
+
+<!-- ===================== CARROUSEL UTILISATEUR ===================== -->
+<section id="user-carousel">
+    <div class="container">
+        <div class="section-label">Interface</div>
+        <h2 class="fade-in">Partie Utilisateur</h2>
+        <p class="fade-in" style="max-width:600px">
+            Vue de la plateforme depuis le point de vue d'un participant :
+            navigation entre défis, scoreboard, indices et validation des flags.
+        </p>
+
+        <!-- CARROUSEL 1 : UTILISATEUR -->
+        <div class="carousel-wrapper fade-in" id="user-carousel-wrapper">
+            <div class="carousel-track" id="user-track">
+                <div class="carousel-slide">
+                    <div class="slide-visual">
+                        <img src="../images/opera/pages/ctfz.png">
+                    </div>
+                </div>
+                <div class="carousel-slide">
+                    <div class="slide-visual">
+                        <img src="../images/opera/pages/ctfzequipe.png">
+                    </div>
+                </div>
+                <div class="carousel-slide">
+                    <div class="slide-visual">
+                        <img src="../images/opera/pages/ctfzregle.png">
+                    </div>
+                </div>
+
+            </div><!-- /track -->
+        </div><!-- /wrapper -->
+
+        <div class="carousel-controls">
+            <button class="carousel-btn" id="user-prev" aria-label="Précédent">&#8592;</button>
+            <div class="carousel-dots" id="user-dots"></div>
+            <button class="carousel-btn" id="user-next" aria-label="Suivant">&#8594;</button>
+        </div>
+
+    </div>
+</section>
+
+<hr class="divider" />
+
+<!-- ===================== CARROUSEL ADMIN ===================== -->
+<section id="admin-carousel">
+    <div class="container">
+        <div class="section-label">Administration</div>
+        <h2 class="fade-in">Partie Administration</h2>
+        <p class="fade-in" style="max-width:600px">
+            Interface dédiée aux organisateurs : création et gestion des défis,
+            comptes participants, flags et configuration de la plateforme.
+        </p>
+
+        <!-- CARROUSEL 2 : ADMIN -->
+        <div class="carousel-wrapper fade-in" id="admin-carousel-wrapper">
+            <div class="carousel-track" id="admin-track">
+
+                <!-- SLIDE A1 : Dashboard admin -->
+                <div class="carousel-slide">
+                    <div class="slide-visual">
+                        <img src="../images/opera/pages/ctfzstat.png">
+                    </div>
+                    <div class="slide-caption">
+                        <div class="slide-caption-text">
+                            <h4>Dashboard administrateur</h4>
+                            <p>Vue globale : statistiques temps réel, soumissions en direct</p>
+                        </div>
+                        <span class="slide-counter" id="admin-counter">1 / 5</span>
+                    </div>
+                </div>
+
+                <!-- SLIDE A2 : Gestion défis -->
+                <div class="carousel-slide">
+                    <div class="slide-visual">
+                        <img src="../images/opera/pages/ctfzdefis.png">
+                    </div>
+                    <div class="slide-caption">
+                        <div class="slide-caption-text">
+                            <h4>Gestion des défis</h4>
+                            <p>Liste complète, visibilité, nombre de résolutions en temps réel</p>
+                        </div>
+                        <span class="slide-counter">2 / 5</span>
+                    </div>
+                </div>
+
+                <!-- SLIDE A3 : Création défi -->
+                <div class="carousel-slide">
+                    <div class="slide-visual">
+                        <img src="../images/opera/pages/ctfzzip.png">
+                    </div>
+                    <div class="slide-caption">
+                        <div class="slide-caption-text">
+                            <h4>Création d'un défi</h4>
+                            <p>Formulaire de création : nom, catégorie, valeur, énoncé, flag, visibilité</p>
+                        </div>
+                        <span class="slide-counter">3 / 5</span>
+                    </div>
+                </div>
+
+                <!-- SLIDE A4 : Gestion joueurs -->
+                <div class="carousel-slide">
+                    <div class="slide-visual">
+                        <img src="../images/opera/pages/ctfzuser.png">
+                    </div>
+                    <div class="slide-caption">
+                        <div class="slide-caption-text">
+                            <h4>Gestion des comptes</h4>
+                            <p>Administration des participants : rôles, statuts, scores</p>
+                        </div>
+                        <span class="slide-counter">4 / 5</span>
+                    </div>
+                </div>
+
+                <!-- SLIDE A5 : Gestion équipe -->
+                <div class="carousel-slide">
+                    <div class="slide-visual">
+                        <img src="../images/opera/pages/ctfzscore.png">
+                    </div>
+                    <div class="slide-caption">
+                        <div class="slide-caption-text">
+                            <h4>Gestion des équipes</h4>
+                            <p>Administration des équipes : équipes, statuts, scores</p>
+                        </div>
+                        <span class="slide-counter">5 / 5</span>
+                    </div>
+                </div>
+
+            </div><!-- /track -->
+        </div><!-- /wrapper -->
+
+        <div class="carousel-controls">
+            <button class="carousel-btn" id="admin-prev" aria-label="Précédent">&#8592;</button>
+            <div class="carousel-dots" id="admin-dots"></div>
+            <button class="carousel-btn" id="admin-next" aria-label="Suivant">&#8594;</button>
+        </div>
+
+    </div>
+</section>
+
+<hr class="divider" />
+
+<!-- ===================== CONCLUSION ===================== -->
+<section id="conclusion">
+    <div class="container conclusion-inner">
+        <div class="section-label" style="justify-content:center">Impact</div>
+        <h2 style="margin-bottom:1rem">Ce que CTF+Z démontre</h2>
+
+        <div class="impact-grid">
+            <div class="impact-card fade-in">
+                <span class="impact-value">Analyse</span>
+                <span class="impact-label">Compréhension des besoins client et reformulation technique</span>
+            </div>
+            <div class="impact-card fade-in">
+                <span class="impact-value">Choix</span>
+                <span class="impact-label">Sélection d'une solution existante et évaluation critique</span>
+            </div>
+            <div class="impact-card fade-in">
+                <span class="impact-value">Production</span>
+                <span class="impact-label">Conception et réalisation de 10 défis techniques complets</span>
+            </div>
+            <div class="impact-card fade-in">
+                <span class="impact-value">Docs</span>
+                <span class="impact-label">Documentation pédagogique et guides de résolution administrateur</span>
+            </div>
+        </div>
+
+        <p class="conclusion-note fade-in">
+            CTF+Z illustre une approche d'ingénierie projet complète : analyser, choisir,
+            adapter, produire, documenter. La conception des défis pédagogiques — notamment
+            <em>Mission Inzipssible</em> — montre une capacité à transformer un concept
+            technique en expérience d'apprentissage engageante.
+        </p>
+
+    </div>
+</section>
+
+<!-- ===================== FOOTER ===================== -->
+<footer>
+    <span>CTF+Z · Association Yggame · Plateforme CTFd</span>
+    <span>Portfolio — Projet Capture The Flag</span>
+</footer>
+
+<!-- ===================== JAVASCRIPT ===================== -->
+<script>
+    /* =========================================================
+       INTERSECTION OBSERVER — Fade-in animations
+    ========================================================= */
+    const fadeEls = document.querySelectorAll('.fade-in');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry, i) => {
+            if (entry.isIntersecting) {
+                // Stagger children in same parent
+                const siblings = Array.from(entry.target.parentElement.querySelectorAll('.fade-in'));
+                const idx = siblings.indexOf(entry.target);
+                setTimeout(() => {
+                    entry.target.classList.add('visible');
+                }, idx * 80);
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.12 });
+
+    fadeEls.forEach(el => observer.observe(el));
+
+    /* =========================================================
+       CAROUSEL FACTORY — réutilisable pour user & admin
+    ========================================================= */
+    function initCarousel(config) {
+        const { trackId, prevId, nextId, dotsId } = config;
+
+        const track     = document.getElementById(trackId);
+        const prevBtn   = document.getElementById(prevId);
+        const nextBtn   = document.getElementById(nextId);
+        const dotsWrap  = document.getElementById(dotsId);
+
+        if (!track) return;
+
+        const slides    = track.querySelectorAll('.carousel-slide');
+        const total     = slides.length;
+        let current     = 0;
+        let autoTimer   = null;
+
+        /* ---- Créer les dots ---- */
+        slides.forEach((_, i) => {
+            const dot = document.createElement('button');
+            dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+            dot.setAttribute('aria-label', `Slide ${i + 1}`);
+            dot.addEventListener('click', () => goTo(i));
+            dotsWrap.appendChild(dot);
+        });
+
+        const dots = dotsWrap.querySelectorAll('.carousel-dot');
+
+        /* ---- Mise à jour de l'affichage ---- */
+        function updateUI() {
+            // Déplacement du track
+            track.style.transform = `translateX(-${current * 100}%)`;
+
+            // Dots
+            dots.forEach((d, i) => d.classList.toggle('active', i === current));
+
+            // Counters (tous les éléments .slide-counter dans les slides)
+            slides.forEach((slide, i) => {
+                const counter = slide.querySelector('.slide-counter');
+                if (counter) counter.textContent = `${i + 1} / ${total}`;
+            });
+        }
+
+        /* ---- Navigation ---- */
+        function goTo(index) {
+            current = (index + total) % total;
+            updateUI();
+            resetAuto();
+        }
+
+        prevBtn.addEventListener('click', () => goTo(current - 1));
+        nextBtn.addEventListener('click', () => goTo(current + 1));
+
+        /* ---- Swipe tactile ---- */
+        let startX = 0;
+        track.addEventListener('touchstart', e => { startX = e.touches[0].clientX; }, { passive: true });
+        track.addEventListener('touchend',   e => {
+            const dx = e.changedTouches[0].clientX - startX;
+            if (Math.abs(dx) > 50) goTo(current + (dx < 0 ? 1 : -1));
+        });
+
+        /* ---- Auto-play (5s) ---- */
+        function startAuto() {
+            autoTimer = setInterval(() => goTo(current + 1), 5000);
+        }
+        function resetAuto() {
+            clearInterval(autoTimer);
+            startAuto();
+        }
+
+        // Pause au survol
+        track.parentElement.addEventListener('mouseenter', () => clearInterval(autoTimer));
+        track.parentElement.addEventListener('mouseleave', startAuto);
+
+        updateUI();
+        startAuto();
+    }
+
+    /* ---- Initialisation des deux carrousels ---- */
+    initCarousel({
+        trackId: 'user-track',
+        prevId:  'user-prev',
+        nextId:  'user-next',
+        dotsId:  'user-dots',
+    });
+
+    initCarousel({
+        trackId: 'admin-track',
+        prevId:  'admin-prev',
+        nextId:  'admin-next',
+        dotsId:  'admin-dots',
+    });
+</script>
+
+</body>
+</html>
