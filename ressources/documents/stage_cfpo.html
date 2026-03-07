@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stage de développement – CFPO</title>
+
+  <!-- ══════════════════════════════════════════
+       STYLES — inspiré Dolibarr ERP
+       ══════════════════════════════════════════ -->
+  <style>
+    /* ── Variables ─────────────────────────────── */
+    :root {
+      --doli-blue:    #3c6eb4;
+      --doli-blue-d:  #2d5491;
+      --doli-blue-l:  #e8f0fb;
+      --doli-header:  #2c4a7c;
+      --doli-orange:  #e07c00;
+      --bg:           #f0f0f0;
+      --surface:      #ffffff;
+      --surface2:     #f7f9fc;
+      --border:       #d0d8e8;
+      --border-l:     #e4e9f2;
+      --text:         #333344;
+      --text-muted:   #6e7f99;
+      --green:        #2e7d32;
+      --green-bg:     #e8f5e9;
+      --red:          #b71c1c;
+      --red-bg:       #ffebee;
+      --amber:        #e65100;
+      --amber-bg:     #fff3e0;
+      --font:         'Trebuchet MS', 'Segoe UI', Arial, sans-serif;
+      --font-mono:    'Courier New', Courier, monospace;
+      --radius:       4px;
+      --shadow:       0 1px 4px rgba(0,0,50,.10);
+      --shadow-md:    0 2px 10px rgba(0,0,50,.12);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: .875rem;
+      line-height: 1.6;
+    }
+
+    a { color: var(--doli-blue); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* ── Topbar ────────────────────────────────── */
+    #topbar {
+      background: var(--doli-header);
+      height: 42px;
+      display: flex;
+      align-items: center;
+      padding: 0 1.5rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 6px rgba(0,0,0,.25);
+    }
+
+    .topbar-logo {
+      display: flex;
+      align-items: center;
+      gap: .55rem;
+    }
+
+    .topbar-logo-icon {
+      width: 26px; height: 26px;
+      background: var(--doli-blue);
+      border-radius: 3px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .75rem;
+      font-weight: 900;
+      color: #fff;
+    }
+
+    .topbar-logo span {
+      font-size: .9rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .topbar-nav {
+      display: flex;
+      gap: 0;
+      margin-left: 2rem;
+      height: 100%;
+    }
+
+    .topbar-nav a {
+      color: rgba(255,255,255,.75);
+      font-size: .78rem;
+      padding: 0 .9rem;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      border-bottom: 3px solid transparent;
+      transition: color .15s, border-color .15s;
+      text-decoration: none;
+    }
+
+    .topbar-nav a:hover,
+    .topbar-nav a.active {
+      color: #fff;
+      border-bottom-color: var(--doli-orange);
+    }
+
+    .topbar-right {
+      margin-left: auto;
+      font-size: .72rem;
+      color: rgba(255,255,255,.5);
+    }
+
+    /* ── Breadcrumb ────────────────────────────── */
+    #breadcrumb {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: .5rem 1.5rem;
+      font-size: .76rem;
+      color: var(--text-muted);
+    }
+
+    #breadcrumb a { color: var(--doli-blue); }
+    #breadcrumb span { color: var(--text-muted); margin: 0 .35rem; }
+
+    /* ── Layout ────────────────────────────────── */
+    #layout {
+      display: flex;
+      min-height: calc(100vh - 42px);
+    }
+
+    /* ── Sidebar ───────────────────────────────── */
+    #sidebar {
+      width: 210px;
+      flex-shrink: 0;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      padding: 1rem 0;
+    }
+
+    .sidebar-heading {
+      font-size: .68rem;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      padding: .5rem 1rem .3rem;
+    }
+
+    .sidebar-nav a {
+      display: flex;
+      align-items: center;
+      gap: .55rem;
+      padding: .45rem 1rem;
+      color: var(--text);
+      font-size: .8rem;
+      text-decoration: none;
+      border-left: 3px solid transparent;
+      transition: background .15s, border-color .15s, color .15s;
+    }
+
+    .sidebar-nav a:hover,
+    .sidebar-nav a.active {
+      background: var(--doli-blue-l);
+      color: var(--doli-blue-d);
+      border-left-color: var(--doli-blue);
+    }
+
+    .sidebar-nav a .icon {
+      width: 18px;
+      text-align: center;
+      font-style: normal;
+      font-size: .95rem;
+    }
+
+    .sidebar-sep {
+      height: 1px;
+      background: var(--border-l);
+      margin: .6rem 1rem;
+    }
+
+    /* ── Contenu ───────────────────────────────── */
+    #main-content {
+      flex: 1;
+      padding: 1.5rem;
+      min-width: 0;
+    }
+
+    /* ── Titre page ────────────────────────────── */
+    .page-title-bar {
+      background: var(--doli-blue);
+      color: #fff;
+      border-radius: var(--radius) var(--radius) 0 0;
+      padding: .65rem 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+      margin-bottom: 0;
+    }
+
+    .page-title-bar h1 {
+      font-size: .95rem;
+      font-weight: 700;
+    }
+
+    .page-title-bar .badge-module {
+      margin-left: auto;
+      background: rgba(255,255,255,.18);
+      border: 1px solid rgba(255,255,255,.3);
+      border-radius: 99px;
+      font-size: .68rem;
+      padding: .15rem .6rem;
+      color: rgba(255,255,255,.9);
+    }
+
+    /* ── Cards ─────────────────────────────────── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      margin-bottom: 1.2rem;
+      overflow: hidden;
+    }
+
+    .card-header {
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border);
+      padding: .55rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+    }
+
+    .card-header h2 {
+      font-size: .82rem;
+      font-weight: 700;
+      color: var(--doli-blue-d);
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+
+    .card-header .hicon { font-size: 1rem; }
+
+    .card-body { padding: 1.1rem 1.2rem; }
+
+    /* ── Tableau info ──────────────────────────── */
+    .info-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .82rem;
+    }
+
+    .info-table tr { border-bottom: 1px solid var(--border-l); }
+    .info-table tr:last-child { border-bottom: none; }
+
+    .info-table th {
+      text-align: left;
+      width: 38%;
+      padding: .5rem .6rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      background: var(--surface2);
+      white-space: nowrap;
+    }
+
+    .info-table td { padding: .5rem .6rem; color: var(--text); }
+
+    /* ── Badges ────────────────────────────────── */
+    .badge {
+      display: inline-block;
+      font-size: .68rem;
+      font-weight: 700;
+      padding: .18rem .6rem;
+      border-radius: 99px;
+      white-space: nowrap;
+    }
+
+    .badge-blue   { background: var(--doli-blue-l); color: var(--doli-blue-d); border: 1px solid #b0c8ec; }
+    .badge-green  { background: var(--green-bg);    color: var(--green);       border: 1px solid #a5d6a7; }
+    .badge-amber  { background: var(--amber-bg);    color: var(--amber);       border: 1px solid #ffcc80; }
+    .badge-gray   { background: #eee;               color: #555;               border: 1px solid #ccc; }
+
+    /* ── Grille 2 col ──────────────────────────── */
+    .col-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.2rem;
+    }
+
+    /* ── Liste Dolibarr ────────────────────────── */
+    .doli-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: .3rem;
+    }
+
+    .doli-list li {
+      font-size: .83rem;
+      color: var(--text);
+      display: flex;
+      align-items: flex-start;
+      gap: .55rem;
+      padding: .35rem 0;
+      border-bottom: 1px dashed var(--border-l);
+    }
+
+    .doli-list li:last-child { border-bottom: none; }
+
+    .doli-list li::before {
+      content: '▶';
+      color: var(--doli-blue);
+      font-size: .55rem;
+      margin-top: .32rem;
+      flex-shrink: 0;
+    }
+
+    /* ── Pills technos ─────────────────────────── */
+    .tech-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .6rem;
+    }
+
+    .tech-pill {
+      display: flex;
+      align-items: center;
+      gap: .4rem;
+      background: var(--doli-blue-l);
+      border: 1px solid #b0c8ec;
+      border-radius: var(--radius);
+      padding: .3rem .75rem;
+      font-size: .78rem;
+      color: var(--doli-blue-d);
+      font-weight: 600;
+      transition: background .15s;
+    }
+
+    .tech-pill:hover { background: #d0e0f8; }
+    .tech-pill .tip  { font-size: .85rem; }
+
+    .tech-sep {
+      width: 100%;
+      margin: .4rem 0 .2rem;
+      font-size: .7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+    }
+
+    .tech-sep::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ── Timeline ──────────────────────────────── */
+    .timeline { position: relative; padding-left: 1.4rem; }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 5px; top: .5rem; bottom: 0;
+      width: 2px;
+      background: var(--border);
+    }
+
+    .tl-item {
+      position: relative;
+      margin-bottom: 1.4rem;
+    }
+
+    .tl-item::before {
+      content: '';
+      position: absolute;
+      left: -1.4rem;
+      top: .45rem;
+      width: 10px; height: 10px;
+      background: var(--doli-blue);
+      border: 2px solid #fff;
+      border-radius: 50%;
+      box-shadow: 0 0 0 2px var(--doli-blue);
+    }
+
+    .tl-item .tl-label {
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: var(--doli-blue);
+      margin-bottom: .25rem;
+    }
+
+    .tl-item .tl-title {
+      font-size: .88rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: .3rem;
+    }
+
+    .tl-item p { font-size: .82rem; color: var(--text); line-height: 1.65; }
+
+    /* ── Blocs code ────────────────────────────── */
+    .code-box {
+      background: #f4f4f8;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--doli-blue);
+      border-radius: 0 var(--radius) var(--radius) 0;
+      padding: .7rem 1rem;
+      font-family: var(--font-mono);
+      font-size: .75rem;
+      color: #334;
+      margin-top: .6rem;
+      line-height: 1.8;
+      overflow-x: auto;
+    }
+
+    .code-box .c { color: #888; }
+    .code-box .k { color: var(--doli-blue-d); font-weight: bold; }
+    .code-box .s { color: #2e7d32; }
+
+    /* ── Carrousel ─────────────────────────────── */
+    .carousel-outer {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: #fff;
+      box-shadow: var(--shadow);
+    }
+
+    .carousel-bar {
+      background: var(--doli-blue);
+      padding: .45rem .9rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .carousel-bar span {
+      font-size: .75rem;
+      color: rgba(255,255,255,.85);
+      font-weight: 600;
+    }
+
+    .carousel-counter {
+      font-size: .7rem;
+      background: rgba(255,255,255,.18);
+      color: #fff;
+      padding: .1rem .5rem;
+      border-radius: 99px;
+    }
+
+    .carousel-stage {
+      position: relative;
+      overflow: hidden;
+      background: #eaecf0;
+    }
+
+    .carousel-track {
+      display: flex;
+      transition: transform .45s cubic-bezier(.6,0,.2,1);
+    }
+
+    .carousel-slide {
+      min-width: 100%;
+      position: relative;
+    }
+
+    .carousel-slide img {
+      width: 100%;
+      height: 400px;
+      object-fit: contain;
+      background: #eaecf0;
+      display: block;
+    }
+
+    .carousel-caption {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      background: rgba(44,74,124,.88);
+      color: #fff;
+      font-size: .76rem;
+      padding: .45rem .9rem;
+    }
+
+    .c-btn {
+      position: absolute;
+      top: 50%; transform: translateY(-50%);
+      background: rgba(255,255,255,.92);
+      border: 1px solid var(--border);
+      color: var(--doli-blue);
+      width: 36px; height: 36px;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-size: 1rem;
+      display: flex; align-items: center; justify-content: center;
+      transition: background .15s, color .15s;
+      z-index: 5;
+      box-shadow: var(--shadow);
+    }
+
+    .c-btn:hover { background: var(--doli-blue); color: #fff; }
+    .c-btn.prev  { left: .6rem; }
+    .c-btn.next  { right: .6rem; }
+
+    .carousel-footer {
+      background: var(--surface2);
+      border-top: 1px solid var(--border);
+      padding: .55rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: .4rem;
+    }
+
+    .cdot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #bbc;
+      cursor: pointer;
+      border: none;
+      transition: background .2s, transform .2s;
+    }
+
+    .cdot.active {
+      background: var(--doli-blue);
+      transform: scale(1.3);
+    }
+
+    /* ── Tableau compétences ───────────────────── */
+    .skill-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .82rem;
+    }
+
+    .skill-table thead th {
+      background: var(--doli-blue);
+      color: #fff;
+      padding: .5rem .75rem;
+      text-align: left;
+      font-weight: 600;
+      font-size: .75rem;
+      letter-spacing: .04em;
+    }
+
+    .skill-table tbody tr {
+      border-bottom: 1px solid var(--border-l);
+      transition: background .12s;
+    }
+
+    .skill-table tbody tr:hover { background: var(--doli-blue-l); }
+
+    .skill-table tbody td {
+      padding: .48rem .75rem;
+      color: var(--text);
+      vertical-align: top;
+    }
+
+    .skill-table tbody td:first-child {
+      font-weight: 600;
+      color: var(--doli-blue-d);
+      white-space: nowrap;
+    }
+
+    /* ── Alert / citation ──────────────────────── */
+    .alert-box {
+      background: #fffde7;
+      border: 1px solid #ffe082;
+      border-left: 4px solid var(--doli-orange);
+      border-radius: var(--radius);
+      padding: 1rem 1.2rem;
+      font-size: .83rem;
+      color: var(--text);
+      font-style: italic;
+      line-height: 1.7;
+    }
+
+    .alert-box strong {
+      display: block;
+      font-style: normal;
+      font-size: .72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--doli-orange);
+      margin-bottom: .4rem;
+    }
+
+    /* ── Footer ────────────────────────────────── */
+    #footer {
+      background: var(--doli-header);
+      color: rgba(255,255,255,.5);
+      text-align: center;
+      padding: .75rem 1rem;
+      font-size: .72rem;
+    }
+
+    /* ── Animations scroll ─────────────────────── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity .5s ease, transform .5s ease;
+    }
+
+    .reveal.visible { opacity: 1; transform: none; }
+
+    /* ── Responsive ────────────────────────────── */
+    @media (max-width: 760px) {
+      #sidebar { display: none; }
+      .col-2   { grid-template-columns: 1fr; }
+      .carousel-slide img { height: 220px; }
+      .topbar-nav { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOPBAR -->
+  <div id="topbar">
+    <div class="topbar-logo">
+      <div class="topbar-logo-icon">D</div>
+      <span>Dolibarr ERP/CRM</span>
+    </div>
+    <nav class="topbar-nav">
+      <a href="#cfpo" class="active">Accueil</a>
+      <a href="#tech">Modules</a>
+      <a href="#travail">Réalisations</a>
+      <a href="#carousel-section">Captures</a>
+      <a href="#retour">Bilan</a>
+    </nav>
+    <div class="topbar-right">Stage CFPO · 2ᵉ année</div>
+  </div>
+
+  <!-- BREADCRUMB -->
+  <div id="breadcrumb">
+    <a href="#">Accueil</a>
+    <span>›</span>
+    <a href="#">Portfolio</a>
+    <span>›</span>
+    Stage de développement – CFPO
+  </div>
+
+  <!-- LAYOUT -->
+  <div id="layout">
+
+    <!-- Sidebar -->
+    <aside id="sidebar">
+      <div class="sidebar-heading">Navigation</div>
+      <nav class="sidebar-nav">
+        <a href="#cfpo"             class="active"><i class="icon">🏢</i> Contexte du stage</a>
+        <a href="#tech">            <i class="icon">⚙️</i> Technologies</a>
+        <a href="#travail">         <i class="icon">🔧</i> Réalisations</a>
+        <a href="#module-api">      <i class="icon">🔗</i> API REST</a>
+        <a href="#module-rh">       <i class="icon">👥</i> Module RH</a>
+        <a href="#carousel-section"><i class="icon">🖼️</i> Captures d'écran</a>
+        <a href="#competences">     <i class="icon">📋</i> Compétences</a>
+        <a href="#retour">          <i class="icon">💬</i> Retour d'expérience</a>
+      </nav>
+      <div class="sidebar-sep"></div>
+      <div class="sidebar-heading">Infos stage</div>
+      <nav class="sidebar-nav">
+        <a href="#"><i class="icon">📅</i> 13 jan. → 4 avr.</a>
+        <a href="#"><i class="icon">📍</i> CFPO</a>
+        <a href="#"><i class="icon">🐘</i> PHP / Dolibarr</a>
+      </nav>
+    </aside>
+
+    <!-- Contenu principal -->
+    <main id="main-content">
+
+      <div class="page-title-bar">
+        <span>📁</span>
+        <h1>Stage de développement – CFPO &nbsp;·&nbsp; Développement modules ERP/CRM</h1>
+        <span class="badge-module">Stage 2ᵉ année</span>
+      </div>
+
+      <!-- 1. CFPO -->
+      <section id="cfpo">
+        <div class="card reveal">
+          <div class="card-header">
+            <span class="hicon">🏢</span>
+            <h2>Présentation du CFPO</h2>
+          </div>
+          <div class="card-body">
+            <table class="info-table">
+              <tr>
+                <th>Organisme</th>
+                <td>Centre de Formation Professionnelle Occitan (CFPO)</td>
+              </tr>
+              <tr>
+                <th>Activité</th>
+                <td>Gestion et organisation de formations professionnelles</td>
+              </tr>
+              <tr>
+                <th>Période du stage</th>
+                <td>
+                  <span class="badge badge-green">13 janvier 2025</span>
+                  &nbsp;→&nbsp;
+                  <span class="badge badge-green">4 avril 2025</span>
+                  &nbsp;(12 semaines)
+                </td>
+              </tr>
+              <tr>
+                <th>Logiciel principal</th>
+                <td><span class="badge badge-blue">Dolibarr ERP/CRM (open source)</span></td>
+              </tr>
+              <tr>
+                <th>Taille de l'équipe</th>
+                <td>Petite équipe — travail en proximité directe</td>
+              </tr>
+              <tr>
+                <th>Mission principale</th>
+                <td>Développement et amélioration de modules Dolibarr adaptés aux besoins internes</td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. TECHNOLOGIES -->
+      <section id="tech">
+        <div class="col-2">
+          <div class="card reveal">
+            <div class="card-header">
+              <span class="hicon">⚙️</span>
+              <h2>Langages &amp; Technologies</h2>
+            </div>
+            <div class="card-body">
+              <div class="tech-grid">
+                <div class="tech-sep">Développement</div>
+                <span class="tech-pill"><span class="tip">🐘</span> PHP</span>
+                <span class="tech-pill"><span class="tip">🌐</span> HTML</span>
+                <span class="tech-pill"><span class="tip">🎨</span> CSS</span>
+                <span class="tech-pill"><span class="tip">✨</span> JavaScript</span>
+                <div class="tech-sep">Données &amp; API</div>
+                <span class="tech-pill"><span class="tip">🔗</span> API REST</span>
+                <span class="tech-pill"><span class="tip">🗄️</span> SQL</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card reveal">
+            <div class="card-header">
+              <span class="hicon">🛠️</span>
+              <h2>Environnement &amp; Outils</h2>
+            </div>
+            <div class="card-body">
+              <div class="tech-grid">
+                <div class="tech-sep">IDE &amp; Serveur</div>
+                <span class="tech-pill"><span class="tip">💡</span> IntelliJ IDEA</span>
+                <span class="tech-pill"><span class="tip">🖥️</span> WampServer</span>
+                <div class="tech-sep">Collaboration</div>
+                <span class="tech-pill"><span class="tip">☁️</span> Nextcloud</span>
+                <div class="tech-sep">ERP</div>
+                <span class="tech-pill"><span class="tip">📦</span> Dolibarr</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. MODULE TRANSFERT -->
+      <section id="travail">
+        <div class="card reveal">
+          <div class="card-header">
+            <span class="hicon">🔧</span>
+            <h2>Réalisation — Module de transfert de données</h2>
+          </div>
+          <div class="card-body">
+            <div class="timeline">
+              <div class="tl-item">
+                <div class="tl-label">Étape 1 · Mission initiale</div>
+                <div class="tl-title">Conception du module</div>
+                <p>En début de stage, j'ai été chargé de concevoir un module permettant de <strong>transférer des données entre deux systèmes</strong>. L'objectif était de faciliter la synchronisation d'informations entre les différentes plateformes utilisées par l'organisme.</p>
+              </div>
+              <div class="tl-item">
+                <div class="tl-label">Étape 2 · Première version</div>
+                <div class="tl-title">Accès direct aux données — v1</div>
+                <p>Une première version fonctionnelle a été développée avec un <strong>accès direct aux données</strong>. Elle répondait techniquement au besoin initial, mais s'est heurtée à une contrainte externe majeure.</p>
+                <div class="code-box">
+<span class="c">// v1 — lecture directe en base de données distante</span>
+<span class="k">function</span> fetchDataDirect(<span class="s">$source</span>) {
+&nbsp;&nbsp;<span class="k">return</span> $db->query(<span class="s">"SELECT * FROM source_table"</span>);
+}</div>
+              </div>
+              <div class="tl-item">
+                <div class="tl-label">Étape 3 · Contrainte externe</div>
+                <div class="tl-title">Blocage — intégration refusée</div>
+                <p>L'entreprise partenaire concernée <strong>ne permettait pas ce type d'intégration directe</strong>. Il a fallu repenser entièrement l'approche technique et repartir sur une nouvelle architecture.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. API REST -->
+      <section id="module-api">
+        <div class="card reveal">
+          <div class="card-header">
+            <span class="hicon">🔗</span>
+            <h2>Refonte du module — Intégration API REST</h2>
+          </div>
+          <div class="card-body">
+            <div class="timeline">
+              <div class="tl-item">
+                <div class="tl-label">Étape 4 · Refonte complète</div>
+                <div class="tl-title">Développement via API REST — v2</div>
+                <p>J'ai redéveloppé intégralement le module en utilisant une <strong>API REST</strong>, respectant les règles d'accès imposées par le système externe.</p>
+                <div class="code-box">
+<span class="c">// v2 — appel API REST avec authentification Bearer</span>
+<span class="k">function</span> fetchDataViaAPI(<span class="s">$endpoint</span>, <span class="s">$token</span>) {
+&nbsp;&nbsp;$ch = curl_init(<span class="s">$endpoint</span>);
+&nbsp;&nbsp;curl_setopt($ch, CURLOPT_HTTPHEADER, [
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="s">'Authorization: Bearer '</span> . <span class="s">$token</span>,
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="s">'Accept: application/json'</span>
+&nbsp;&nbsp;]);
+&nbsp;&nbsp;curl_setopt($ch, CURLOPT_RETURNTRANSFER, <span class="k">true</span>);
+&nbsp;&nbsp;<span class="k">return</span> json_decode(curl_exec($ch), <span class="k">true</span>);
+}</div>
+              </div>
+              <div class="tl-item">
+                <div class="tl-label">Étape 5 · Bilan technique</div>
+                <div class="tl-title">Apports de cette refonte</div>
+                <ul class="doli-list">
+                  <li>Compréhension des échanges inter-systèmes via protocole HTTP</li>
+                  <li>Structuration et gestion des requêtes API (headers, tokens, JSON)</li>
+                  <li>Adaptation d'un développement aux contraintes techniques réelles</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. MODULE RH -->
+      <section id="module-rh">
+        <div class="card reveal">
+          <div class="card-header">
+            <span class="hicon">👥</span>
+            <h2>Amélioration — Module RH (gestion des congés)</h2>
+          </div>
+          <div class="card-body">
+            <div class="timeline">
+              <div class="tl-item">
+                <div class="tl-label">Contexte</div>
+                <div class="tl-title">Module de gestion des congés existant</div>
+                <p>En parallèle, j'ai contribué à l'amélioration du module RH déjà intégré dans Dolibarr, dédié à la <strong>gestion des congés des employés</strong>.</p>
+              </div>
+              <div class="tl-item">
+                <div class="tl-label">Travail réalisé</div>
+                <div class="tl-title">Ergonomie &amp; Interface</div>
+                <ul class="doli-list">
+                  <li>Amélioration de l'ergonomie de l'interface utilisateur</li>
+                  <li>Retravail des aspects visuels pour une meilleure lisibilité</li>
+                  <li>Consultation des congés rendue plus claire et intuitive</li>
+                  <li>Respect des conventions de code et du style Dolibarr</li>
+                </ul>
+                <div class="code-box">
+<span class="c">/* Amélioration UI — module congés Dolibarr */</span>
+.conge-card {
+&nbsp;&nbsp;<span class="k">display</span>: <span class="s">grid</span>;
+&nbsp;&nbsp;<span class="k">grid-template-columns</span>: <span class="s">1fr auto</span>;
+&nbsp;&nbsp;<span class="k">border-left</span>: <span class="s">3px solid #3c6eb4</span>;
+&nbsp;&nbsp;<span class="k">transition</span>: <span class="s">background .2s ease</span>;
+}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6. CARROUSEL -->
+      <section id="carousel-section">
+        <div class="card reveal">
+          <div class="card-header">
+            <span class="hicon">🖼️</span>
+            <h2>Captures d'écran du projet</h2>
+          </div>
+          <div class="card-body" style="padding:.8rem;">
+            <div class="carousel-outer" id="carousel">
+              <div class="carousel-bar">
+                <span>Dolibarr › Modules › Captures d'écran</span>
+                <span class="carousel-counter" id="cCounter">1 / 5</span>
+              </div>
+              <div class="carousel-stage">
+                <div class="carousel-track" id="cTrack">
+                  <div class="carousel-slide">
+                    <img src="https://desal-soul.github.io/PortfolioApprentisage/img/stageagefoddxacceuil.png" alt="Page d'accueil du module" loading="lazy" />
+                    <div class="carousel-caption">Page d'accueil du module — vue principale</div>
+                  </div>
+                  <div class="carousel-slide">
+                    <img src="https://desal-soul.github.io/PortfolioApprentisage/img/stageagefoddxajout.png" alt="Formulaire d'ajout" loading="lazy" />
+                    <div class="carousel-caption">Formulaire d'ajout — saisie de données</div>
+                  </div>
+                  <div class="carousel-slide">
+                    <img src="https://desal-soul.github.io/PortfolioApprentisage/img/stageagefoddxbd.png" alt="Base de données" loading="lazy" />
+                    <div class="carousel-caption">Structure base de données — schéma SQL</div>
+                  </div>
+                  <div class="carousel-slide">
+                    <img src="https://desal-soul.github.io/PortfolioApprentisage/img/stageapi.png" alt="API REST" loading="lazy" />
+                    <div class="carousel-caption">Intégration API REST — appels et réponses JSON</div>
+                  </div>
+                  <div class="carousel-slide">
+                    <img src="https://desal-soul.github.io/PortfolioApprentisage/img/stageacm.png" alt="Module congés RH" loading="lazy" />
+                    <div class="carousel-caption">Module RH — gestion des congés améliorée</div>
+                  </div>
+                </div>
+                <button class="c-btn prev" id="cPrev" aria-label="Précédent">&#8592;</button>
+                <button class="c-btn next" id="cNext" aria-label="Suivant">&#8594;</button>
+              </div>
+              <div class="carousel-footer" id="cDots"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 7. COMPÉTENCES -->
+      <section id="competences">
+        <div class="card reveal">
+          <div class="card-header">
+            <span class="hicon">📋</span>
+            <h2>Compétences développées durant le stage</h2>
+          </div>
+          <div class="card-body" style="padding:0;">
+            <table class="skill-table">
+              <thead>
+                <tr>
+                  <th style="width:32%">Compétence</th>
+                  <th>Description</th>
+                  <th style="width:16%; text-align:center;">Statut</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Développement ERP</td>
+                  <td>Conception et développement de modules dans Dolibarr en environnement de production</td>
+                  <td style="text-align:center;"><span class="badge badge-green">Acquis</span></td>
+                </tr>
+                <tr>
+                  <td>Intégration API REST</td>
+                  <td>Appels API distants, gestion des tokens d'authentification, traitement JSON</td>
+                  <td style="text-align:center;"><span class="badge badge-green">Acquis</span></td>
+                </tr>
+                <tr>
+                  <td>Code legacy</td>
+                  <td>Lecture, compréhension et extension d'un projet existant à grande échelle</td>
+                  <td style="text-align:center;"><span class="badge badge-blue">En cours</span></td>
+                </tr>
+                <tr>
+                  <td>Adaptation technique</td>
+                  <td>Refonte d'architecture face à des contraintes externes imprévues</td>
+                  <td style="text-align:center;"><span class="badge badge-green">Acquis</span></td>
+                </tr>
+                <tr>
+                  <td>Amélioration UI</td>
+                  <td>Refonte ergonomique d'interface en respectant une charte graphique existante</td>
+                  <td style="text-align:center;"><span class="badge badge-green">Acquis</span></td>
+                </tr>
+                <tr>
+                  <td>Autonomie</td>
+                  <td>Identification des problèmes, proposition et implémentation de solutions en autonomie</td>
+                  <td style="text-align:center;"><span class="badge badge-green">Acquis</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- 8. RETOUR -->
+      <section id="retour">
+        <div class="col-2">
+          <div class="card reveal">
+            <div class="card-header">
+              <span class="hicon">✅</span>
+              <h2>Points positifs</h2>
+            </div>
+            <div class="card-body">
+              <ul class="doli-list">
+                <li>Ambiance de travail agréable et bienveillante</li>
+                <li>Petite équipe favorisant les échanges directs</li>
+                <li>Liberté d'initiative laissée sur les projets confiés</li>
+                <li>Montée en autonomie progressive et réelle</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="card reveal">
+            <div class="card-header">
+              <span class="hicon">🔺</span>
+              <h2>Axes d'amélioration</h2>
+            </div>
+            <div class="card-body">
+              <ul class="doli-list">
+                <li>Communication externe — RH et partenaires techniques</li>
+                <li>Mieux structurer les échanges inter-équipes</li>
+                <li>Formaliser les validations avant chaque itération</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="alert-box reveal">
+          <strong>💬 Bilan personnel</strong>
+          "Ce stage a renforcé mon autonomie : j'ai souvent dû identifier les problèmes, proposer des solutions
+          concrètes, puis les implémenter. J'ai particulièrement apprécié l'ambiance de travail, la petite taille
+          de l'équipe et la liberté d'initiative laissée sur les projets."
+        </div>
+      </section>
+
+    </main>
+  </div><!-- /layout -->
+
+  <!-- FOOTER -->
+  <footer id="footer">
+    Dolibarr ERP/CRM &nbsp;·&nbsp;
+    Stage de développement — CFPO &nbsp;·&nbsp;
+    13 jan. → 4 avr. 2025 &nbsp;·&nbsp;
+    PHP · JavaScript · SQL · API REST
+  </footer>
+
+  <!-- JAVASCRIPT -->
+  <script>
+    /* ─── Carrousel ──────────────────────────── */
+    (function () {
+      const track   = document.getElementById('cTrack');
+      const prevBtn = document.getElementById('cPrev');
+      const nextBtn = document.getElementById('cNext');
+      const dotsEl  = document.getElementById('cDots');
+      const counter = document.getElementById('cCounter');
+
+      const slides = track.querySelectorAll('.carousel-slide');
+      const total  = slides.length;
+      let   cur    = 0;
+      let   timer;
+
+      slides.forEach((_, i) => {
+        const d = document.createElement('button');
+        d.className = 'cdot' + (i === 0 ? ' active' : '');
+        d.setAttribute('aria-label', 'Slide ' + (i + 1));
+        d.addEventListener('click', () => { goTo(i); reset(); });
+        dotsEl.appendChild(d);
+      });
+
+      const dots = dotsEl.querySelectorAll('.cdot');
+
+      function goTo(n) {
+        cur = (n + total) % total;
+        track.style.transform = `translateX(-${cur * 100}%)`;
+        dots.forEach((d, i) => d.classList.toggle('active', i === cur));
+        counter.textContent = (cur + 1) + ' / ' + total;
+      }
+
+      prevBtn.addEventListener('click', () => { goTo(cur - 1); reset(); });
+      nextBtn.addEventListener('click', () => { goTo(cur + 1); reset(); });
+
+      function start() { timer = setInterval(() => goTo(cur + 1), 4500); }
+      function reset() { clearInterval(timer); start(); }
+      start();
+
+      let tx = 0;
+      track.addEventListener('touchstart', e => { tx = e.changedTouches[0].clientX; }, { passive: true });
+      track.addEventListener('touchend',   e => {
+        const dx = e.changedTouches[0].clientX - tx;
+        if (Math.abs(dx) > 40) { goTo(dx < 0 ? cur + 1 : cur - 1); reset(); }
+      }, { passive: true });
+
+      document.addEventListener('keydown', e => {
+        if (e.key === 'ArrowLeft')  { goTo(cur - 1); reset(); }
+        if (e.key === 'ArrowRight') { goTo(cur + 1); reset(); }
+      });
+    })();
+
+    /* ─── Nav active au scroll ───────────────── */
+    (function () {
+      const sections = document.querySelectorAll('section[id]');
+      const links    = document.querySelectorAll('#topbar .topbar-nav a, #sidebar .sidebar-nav a');
+
+      const obs = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            links.forEach(l => {
+              l.classList.toggle('active', l.getAttribute('href') === '#' + e.target.id);
+            });
+          }
+        });
+      }, { threshold: .35 });
+
+      sections.forEach(s => obs.observe(s));
+    })();
+
+    /* ─── Révélations scroll ─────────────────── */
+    (function () {
+      const els = document.querySelectorAll('.reveal');
+      const obs = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+          if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }
+        });
+      }, { threshold: .08 });
+      els.forEach(el => obs.observe(el));
+    })();
+  </script>
+
+</body>
+</html>

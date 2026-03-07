@@ -1,177 +1,1871 @@
 <!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>Title</title>
-    </head>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Portfolio BUT Informatique — Mission Log</title>
     <style>
+        /* ============================================================
+           VARIABLES & RESET
+        ============================================================ */
         :root {
-            --fond : #413652;
+            --bg-base:        #0d1117;
+            --bg-surface:     #161b22;
+            --bg-card:        #1c2230;
+            --bg-card-hover:  #1f2840;
+            --border:         #2a3449;
+            --border-light:   #334166;
 
-            --competence1: #986f9c;
-            --competence2: #c090a7;
-            --competence3: #c9d4b8;
-            --competence4: #90c0a0;
-            --competence5: #6f919c;
-            --competence6: #575f7e;
+            --text-primary:   #e6edf3;
+            --text-secondary: #8b949e;
+            --text-muted: #717d8c;
+
+            --accent-blue:    #58a6ff;
+            --accent-green:   #3fb950;
+            --accent-orange:  #d29922;
+            --accent-purple:  #a371f7;
+            --accent-teal:    #39d353;
+
+            /* Statuts */
+            --status-done:    #3fb950;
+            --status-wip:     #d29922;
+            --status-todo:    #6e7681;
+
+            --radius-sm:  6px;
+            --radius-md:  10px;
+            --radius-lg:  16px;
+
+            --shadow-card: 0 4px 20px rgba(0,0,0,.45);
+            --shadow-glow: 0 0 24px rgba(88,166,255,.12);
+
+            --font-display: 'Georgia', 'Times New Roman', serif;
+            --font-body:    'Menlo', 'Consolas', monospace;
+            --font-ui:      -apple-system, 'Segoe UI', sans-serif;
         }
 
-        * {
-            padding: 0;
-            margin: 0;
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            background: var(--bg-base);
+            color: var(--text-primary);
+            font-family: var(--font-ui);
+            font-size: 15px;
+            line-height: 1.6;
+            min-height: 100vh;
         }
 
-        html {
-            background-color: var(--fond);
-            overflow-y: scroll;
-            scrollbar-color: var(--competence3) var(--fond);
-            scrollbar-width: thin;
-            padding: 2vh;
+        /* ============================================================
+           NOISE TEXTURE OVERLAY
+        ============================================================ */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 0;
+            opacity: .4;
         }
 
-        #competence1 { background-color: var(--competence1); color: var()}
-        #competence2 { background-color: var(--competence2); color: var()}
-        #competence3 { background-color: var(--competence3); color: var()}
-        #competence4 { background-color: var(--competence4); color: var()}
-        #competence5 { background-color: var(--competence5); color: var()}
-        #competence6 { background-color: var(--competence6); color: var()}
-
-        .hidden { display: none}
-
-
-        div.competence {
-            padding: 3vh 4vh;
-            border-radius: 2% / 6%;
-            margin: 2vh;
+        /* ============================================================
+           LAYOUT
+        ============================================================ */
+        .page-wrapper {
+            position: relative;
+            z-index: 1;
+            max-width: 920px;
+            margin: 0 auto;
+            padding: 0 20px 80px;
         }
 
-        .niveau h3 {
-            padding-left: 2vh ;
-            padding-top: 1vh;
-        }
-        .niveau h4 {
-            padding-left: 4vh ;
-            padding-top: 1vh;
-        }
-        .niveau p {
-             padding-left: 7vh ;
-        }
-        span{
-            display: inline-block;
-            transform: rotate(-90deg);
-        }
-        h4.open span{
-            transform: rotate(0deg);
+        /* ============================================================
+           HEADER — HUD style
+        ============================================================ */
+        .site-header {
+            padding: 52px 0 40px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 40px;
         }
 
+        .header-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        .player-card {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .avatar {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-purple) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: -1px;
+            color: #fff;
+            flex-shrink: 0;
+            box-shadow: 0 0 0 3px rgba(88,166,255,.2);
+        }
+
+        .player-info h1 {
+            font-family: var(--font-display);
+            font-size: 1.55rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -.3px;
+        }
+
+        .player-info .subtitle {
+            font-size: .78rem;
+            color: var(--text-secondary);
+            letter-spacing: .8px;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+
+        /* Mini stats top-right */
+        .header-stats {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .stat-pill {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 5px 12px;
+            font-size: .72rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .stat-pill .dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        /* ============================================================
+           GLOBAL PROGRESS
+        ============================================================ */
+        .global-progress {
+            margin-top: 32px;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .progress-label {
+            font-size: .72rem;
+            letter-spacing: .9px;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+        }
+
+        .progress-pct {
+            font-family: var(--font-body);
+            font-size: .78rem;
+            color: var(--accent-blue);
+        }
+
+        .progress-track {
+            height: 6px;
+            background: var(--bg-surface);
+            border-radius: 3px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 3px;
+            background: linear-gradient(90deg, var(--accent-blue) 0%, var(--accent-purple) 100%);
+            transform-origin: left;
+            transform: scaleX(0);
+            animation: fillBar .9s cubic-bezier(.22,.68,0,1.2) .3s forwards;
+        }
+
+        @keyframes fillBar {
+            to { transform: scaleX(1); }
+        }
+
+        .progress-segments {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .seg {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: .68rem;
+            color: var(--text-muted);
+        }
+
+        .seg-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+        }
+
+        /* ============================================================
+           SECTION TITLE (before competences)
+        ============================================================ */
+        .section-heading {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .section-heading h2 {
+            font-size: .7rem;
+            letter-spacing: 1.4px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        .section-heading::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        /* ============================================================
+           COMPETENCE CARD (Mission)
+        ============================================================ */
+        .competence-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .competence-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-card);
+            transition: border-color .25s, box-shadow .25s;
+            animation: cardReveal .4s ease both;
+        }
+
+        .competence-card:nth-child(1) { animation-delay: .05s; }
+        .competence-card:nth-child(2) { animation-delay: .12s; }
+        .competence-card:nth-child(3) { animation-delay: .19s; }
+        .competence-card:nth-child(4) { animation-delay: .26s; }
+        .competence-card:nth-child(5) { animation-delay: .33s; }
+        .competence-card:nth-child(6) { animation-delay: .40s; }
+
+        @keyframes cardReveal {
+            from { opacity: 0; transform: translateY(14px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .competence-card:hover {
+            border-color: var(--border-light);
+            box-shadow: var(--shadow-card), var(--shadow-glow);
+        }
+
+        /* Coloré accent strip selon compétence */
+        .competence-card[data-color="blue"]   { --card-accent: var(--accent-blue); }
+        .competence-card[data-color="green"]  { --card-accent: var(--accent-green); }
+        .competence-card[data-color="orange"] { --card-accent: var(--accent-orange); }
+        .competence-card[data-color="purple"] { --card-accent: var(--accent-purple); }
+        .competence-card[data-color="teal"]   { --card-accent: var(--accent-teal); }
+        .competence-card[data-color="red"]    { --card-accent: #f85149; }
+
+        .card-strip {
+            height: 3px;
+            background: var(--card-accent);
+            opacity: .85;
+        }
+
+        /* ============================================================
+           CARD HEADER (Mission header)
+        ============================================================ */
+        .card-header {
+            padding: 20px 22px 18px;
+            cursor: pointer;
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            align-items: center;
+            gap: 16px;
+            user-select: none;
+            transition: background .2s;
+        }
+
+        .card-header:hover {
+            background: rgba(255,255,255,.02);
+        }
+
+        .mission-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: var(--radius-sm);
+            background: rgba(255,255,255,.04);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+            transition: background .2s, border-color .2s;
+        }
+
+        .card-header:hover .mission-icon {
+            background: rgba(255,255,255,.07);
+            border-color: var(--card-accent);
+        }
+
+        .card-meta {
+            min-width: 0;
+        }
+
+        .card-tag {
+            font-size: .64rem;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            color: var(--card-accent);
+            margin-bottom: 2px;
+            opacity: .85;
+        }
+
+        .card-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .card-subtitle {
+            font-size: .76rem;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+
+        .card-actions {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        /* Mini progress per card */
+        .mini-progress {
+            width: 80px;
+        }
+
+        .mini-track {
+            height: 4px;
+            background: var(--bg-base);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .mini-fill {
+            height: 100%;
+            background: var(--card-accent);
+            border-radius: 2px;
+            opacity: .7;
+            transform-origin: left;
+            transform: scaleX(0);
+            transition: transform .7s cubic-bezier(.22,.68,0,1.2) .2s;
+        }
+
+        .competence-card.revealed .mini-fill {
+            transform: scaleX(1);
+        }
+
+        .mini-pct {
+            font-family: var(--font-body);
+            font-size: .62rem;
+            color: var(--text-muted);
+            margin-top: 3px;
+            text-align: right;
+        }
+
+        /* Chevron */
+        .chevron {
+            width: 18px;
+            height: 18px;
+            color: var(--text-muted);
+            transition: transform .3s cubic-bezier(.34,1.56,.64,1), color .2s;
+            flex-shrink: 0;
+        }
+
+        .competence-card.open .chevron {
+            transform: rotate(180deg);
+            color: var(--card-accent);
+        }
+
+        /* ============================================================
+           NIVEAU TABS
+        ============================================================ */
+        .niveau-tabs {
+            display: flex;
+            gap: 6px;
+            padding: 0 22px;
+            border-top: 1px solid var(--border);
+            background: rgba(0,0,0,.15);
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .niveau-tabs::-webkit-scrollbar { display: none; }
+
+        .tab-btn {
+            padding: 9px 14px;
+            font-size: .73rem;
+            letter-spacing: .4px;
+            color: var(--text-muted);
+            background: none;
+            border: none;
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: color .2s, border-color .2s;
+        }
+
+        .tab-btn:hover { color: var(--text-secondary); }
+
+        .tab-btn.active {
+            color: var(--card-accent);
+            border-bottom-color: var(--card-accent);
+        }
+
+        /* ============================================================
+           CARD BODY — smooth collapse/expand
+        ============================================================ */
+        .card-body {
+            display: grid;
+            grid-template-rows: 0fr;
+            transition: grid-template-rows .38s cubic-bezier(.4,0,.2,1);
+        }
+
+        .card-body.open {
+            grid-template-rows: 1fr;
+        }
+
+        .card-body-inner {
+            overflow: hidden;
+        }
+
+        /* ============================================================
+           NIVEAU PANEL
+        ============================================================ */
+        .niveau-panels {
+            padding: 20px 22px 22px;
+        }
+
+        .niveau-panel { display: none; }
+        .niveau-panel.active { display: block; }
+
+        .niveau-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .niveau-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: .68rem;
+            letter-spacing: .6px;
+            text-transform: uppercase;
+            font-weight: 600;
+            border: 1px solid currentColor;
+        }
+
+        .niveau-badge.n1 { color: var(--accent-green);  background: rgba(63,185,80,.08); }
+        .niveau-badge.n2 { color: var(--accent-orange); background: rgba(210,153,34,.08); }
+        .niveau-badge.n3 { color: var(--accent-purple); background: rgba(163,113,247,.08); }
+
+        .niveau-desc {
+            font-size: .78rem;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        /* ============================================================
+           AC LIST
+        ============================================================ */
+        .ac-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .ac-item {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            transition: border-color .2s;
+        }
+
+        .ac-item:hover { border-color: var(--border-light); }
+
+        .ac-item-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 14px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        /* Status dot */
+        .status-dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            transition: box-shadow .2s;
+        }
+
+        .status-dot.done {
+            background: var(--status-done);
+            box-shadow: 0 0 0 3px rgba(63,185,80,.15);
+        }
+
+        .status-dot.wip {
+            background: var(--status-wip);
+            box-shadow: 0 0 0 3px rgba(210,153,34,.15);
+        }
+
+        .status-dot.todo {
+            background: var(--status-todo);
+        }
+
+        .ac-code {
+            font-family: var(--font-body);
+            font-size: .68rem;
+            color: var(--card-accent);
+            opacity: .8;
+            flex-shrink: 0;
+        }
+
+        .ac-title {
+            font-size: .84rem;
+            color: var(--text-primary);
+            font-weight: 500;
+            flex: 1;
+        }
+
+        .status-label {
+            font-size: .62rem;
+            letter-spacing: .6px;
+            text-transform: uppercase;
+            padding: 2px 8px;
+            border-radius: 10px;
+            flex-shrink: 0;
+        }
+
+        .status-label.done   { color: var(--status-done);   background: rgba(63,185,80,.1); }
+        .status-label.wip    { color: var(--status-wip);    background: rgba(210,153,34,.1); }
+        .status-label.todo   { color: var(--status-todo);   background: rgba(110,118,129,.1); }
+
+        .ac-chevron {
+            width: 14px;
+            height: 14px;
+            color: var(--text-muted);
+            flex-shrink: 0;
+            transition: transform .28s cubic-bezier(.34,1.56,.64,1);
+        }
+
+        .ac-item.open .ac-chevron { transform: rotate(180deg); }
+
+        /* AC body collapse */
+        .ac-body {
+            display: grid;
+            grid-template-rows: 0fr;
+            transition: grid-template-rows .3s cubic-bezier(.4,0,.2,1);
+        }
+
+        .ac-body.open { grid-template-rows: 1fr; }
+
+        .ac-body-inner {
+            overflow: hidden;
+        }
+
+        .ac-content {
+            padding: 0 14px 13px 34px;
+            font-size: .79rem;
+            color: var(--text-secondary);
+            line-height: 1.65;
+        }
+
+        .ac-content p { margin-bottom: 6px; }
+        .ac-content p:last-child { margin-bottom: 0; }
+
+        .ac-content .evidence {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 8px;
+            font-size: .68rem;
+            color: var(--text-muted);
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 3px 8px;
+        }
+
+        /* ============================================================
+           FOOTER
+        ============================================================ */
+        .site-footer {
+            text-align: center;
+            padding-top: 40px;
+            border-top: 1px solid var(--border);
+            margin-top: 60px;
+        }
+
+        .site-footer p {
+            font-size: .7rem;
+            color: var(--text-muted);
+            letter-spacing: .5px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* ============================================================
+           RESPONSIVE
+        ============================================================ */
+        @media (max-width: 600px) {
+            .header-top { flex-direction: column; }
+            .card-header { grid-template-columns: auto 1fr; }
+            .card-actions { display: none; }
+            .mini-progress { display: none; }
+            .card-title { font-size: .92rem; }
+            .niveau-tabs { padding: 0 12px; }
+            .niveau-panels { padding: 16px 14px 18px; }
+        }
+
+        /* ============================================================
+           SCROLL-TRIGGERED REVEAL (IntersectionObserver via JS)
+        ============================================================ */
+        .reveal-on-scroll {
+            opacity: 0;
+            transform: translateY(16px);
+            transition: opacity .5s ease, transform .5s ease;
+        }
+
+        .reveal-on-scroll.visible {
+            opacity: 1;
+            transform: none;
+        }
     </style>
-    <body>
-        <div id='competence1' class='competence'>
-            <h2>Compétence 1: Optimiser des applications</h2>
-            <div class='niveau'>
-                <h3>Niveau 2: Sélectionner les algorithmes adéquats pour répondre à un problème donné</h3>
+</head>
+<body>
+
+<div class="page-wrapper">
+
+    <!-- ============================================================
+         HEADER
+    ============================================================ -->
+    <header class="site-header">
+        <div class="header-top">
+            <div class="player-card">
+                <div class="avatar">AD</div>
+                <div class="player-info">
+                    <h1>Alexandre DESCHANEL</h1>
+                    <p class="subtitle">BUT Informatique &mdash; Année 2 &mdash; IAMSI &mdash; Portfolio Apprentissage</p>
+                </div>
+            </div>
+            <div class="header-stats">
+                <span class="stat-pill"><span class="dot" style="background:var(--status-done)"></span>Acquis : 44</span>
+                <span class="stat-pill"><span class="dot" style="background:var(--status-wip)"></span>En cours : 0</span>
+                <span class="stat-pill"><span class="dot" style="background:var(--status-todo)"></span>À développer : 10</span>
             </div>
         </div>
 
-        <div id='competence2' class='competence'>
-                <h2>Compétence 2: Optimiser des applications</h2>
-                <div class='niveau'>
-                    <h3>Niveau 2: Sélectionner les algorithmes adéquats pour répondre à un problème donné</h3>
-                    <h4 id='span-c2n2a1' onclick="toggle_visibility('span-c2n2a1')"><span>▼</span>AC 1: Choisir des structures de données complexes adaptées au problème</h4>
-                    <div id='c2n2a1' class='ac hidden'>
-                        <p>Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.</p>
+        <!-- Global progress -->
+        <div class="global-progress">
+            <div class="progress-header">
+                <span class="progress-label">Progression globale — BUT Info</span>
+                <span class="progress-pct">81.48%</span>
+            </div>
+            <div class="progress-track">
+                <div class="progress-fill" style="--target: 100%; width: 81.48%;"></div>
+            </div>
+            <div class="progress-segments">
+                <span class="seg"><span class="seg-dot" style="background:var(--status-done)"></span>Acquis</span>
+                <span class="seg"><span class="seg-dot" style="background:var(--status-wip)"></span>En cours</span>
+                <span class="seg"><span class="seg-dot" style="background:var(--status-todo)"></span>À développer</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- ============================================================
+         MISSIONS (Compétences)
+    ============================================================ -->
+    <div class="section-heading">
+        <h2>Missions actives</h2>
+    </div>
+
+    <div class="competence-grid" id="competence-grid">
+
+        <!-- ===================== COMPÉTENCE 1 ===================== -->
+        <div class="competence-card reveal-on-scroll hidden" data-color="blue" id="comp-1">
+            <div class="card-strip"></div>
+            <div class="card-header" onclick="toggleCard(this)">
+                <div class="mission-icon">⚙️</div>
+                <div class="card-meta">
+                    <div class="card-tag">C1 — Compétence</div>
+                    <div class="card-title">Réaliser un développement d'application</div>
+                    <div class="card-subtitle">Conception, implémentation, tests</div>
+                </div>
+                <div class="card-actions">
+                    <div class="mini-progress">
+                        <div class="mini-track"><div class="mini-fill" style="width:75%"></div></div>
+                        <div class="mini-pct">75 %</div>
                     </div>
+                    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 12 15 18 9"/>
+                    </svg>
+                </div>
+            </div>
 
-                    <h4 id='span-c2n2a2' onclick="toggle_visibility('span-c2n2a2')"><span>▼</span>AC 2: Utiliser des techniques algorithmiques adaptées pour des problèmes complexes</h4>
-                    <div id='c2n2a2' class='ac hidden'>
-                        <p>Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.</p>
+            <!-- Niveau tabs -->
+            <div class="niveau-tabs">
+                <button class="tab-btn active" onclick="switchTab(this, 'comp-1', 1)">Niveau 1</button>
+                <button class="tab-btn" onclick="switchTab(this, 'comp-1', 2)">Niveau 2</button>
+                <button class="tab-btn" onclick="switchTab(this, 'comp-1', 3)">Niveau 3</button>
+            </div>
+
+            <!-- Card body (expandable) -->
+            <div class="card-body">
+                <div class="card-body-inner">
+                    <div class="niveau-panels">
+
+                        <!-- Niveau 1 -->
+                        <div class="niveau-panel active" id="comp-1-n1">
+                            <div class="niveau-header">
+                                <span class="niveau-badge n1">✦ Niveau 1 — Initié</span>
+                                <span class="niveau-desc">Développer des applications informatiques simples</span>
+                            </div>
+                            <div class="ac-list">
+                                <div class="ac-item">
+                                    <div class="ac-item-header" onclick="toggleAC(this)">
+                                        <span class="status-dot done"></span>
+                                        <span class="ac-code">AC1</span>
+                                        <span class="ac-title">Implémenter des conceptions simples</span>
+                                        <span class="status-label done">Acquis</span>
+                                        <svg class="ac-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                                    </div>
+                                    <div class="ac-body">
+                                        <div class="ac-body-inner">
+                                            <div class="ac-content">
+                                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="ac-item">
+                                    <div class="ac-item-header" onclick="toggleAC(this)">
+                                        <span class="status-dot done"></span>
+                                        <span class="ac-code">AC2</span>
+                                        <span class="ac-title">Élaborer des conceptions simples</span>
+                                        <span class="status-label done">Acquis</span>
+                                        <svg class="ac-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                                    </div>
+                                    <div class="ac-body">
+                                        <div class="ac-body-inner">
+                                            <div class="ac-content">
+                                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="ac-item">
+                                    <div class="ac-item-header" onclick="toggleAC(this)">
+                                        <span class="status-dot done"></span>
+                                        <span class="ac-code">AC3</span>
+                                        <span class="ac-title">Faire des tests et les documenter</span>
+                                        <span class="status-label done">Acquis</span>
+                                        <svg class="ac-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                                    </div>
+                                    <div class="ac-body">
+                                        <div class="ac-body-inner">
+                                            <div class="ac-content">
+                                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div><!-- /n1 -->
+
+                        <!-- Niveau 2 -->
+                        <div class="niveau-panel" id="comp-1-n2">
+                            <div class="niveau-header">
+                                <span class="niveau-badge n2">◆ Niveau 2 — Confirmé</span>
+                                <span class="niveau-desc">Partir des exigences fonctionnelles et non fonctionnelles</span>
+                            </div>
+                            <div class="ac-list">
+
+                                <div class="ac-item">
+                                    <div class="ac-item-header" onclick="toggleAC(this)">
+                                        <span class="status-dot wip"></span>
+                                        <span class="ac-code">AC12.01</span>
+                                        <span class="ac-title">Élaborer et implémenter les spécifications</span>
+                                        <span class="status-label wip">En cours</span>
+                                        <svg class="ac-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                                    </div>
+                                    <div class="ac-body">
+                                        <div class="ac-body-inner">
+                                            <div class="ac-content">
+                                                <p>Analyse et formalisation des besoins client. Rédaction d'un cahier des charges technique et fonctionnel. Transposition en architecture logicielle adaptée.</p>
+                                                <span class="evidence">📎 SAÉ 2.01 — Application web collaborative (en cours)</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="ac-item">
+                                    <div class="ac-item-header" onclick="toggleAC(this)">
+                                        <span class="status-dot todo"></span>
+                                        <span class="ac-code">AC12.02</span>
+                                        <span class="ac-title">Appliquer des principes d'accessibilité</span>
+                                        <span class="status-label todo">À développer</span>
+                                        <svg class="ac-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                                    </div>
+                                    <div class="ac-body">
+                                        <div class="ac-body-inner">
+                                            <div class="ac-content">
+                                                <p>Intégration des normes WCAG 2.1 dans les interfaces web. Audit d'accessibilité, balises ARIA, contraste des couleurs et navigation clavier.</p>
+                                                <span class="evidence">📎 Prévu SAÉ 2.03 — Refonte interface accessible</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div><!-- /n2 -->
+
+                        <!-- Niveau 3 -->
+                        <div class="niveau-panel" id="comp-1-n3">
+                            <div class="niveau-header">
+                                <span class="niveau-badge n3">❋ Niveau 3 — Expert</span>
+                                <span class="niveau-desc">Adapter des applications sur un ensemble de supports</span>
+                            </div>
+                            <div class="ac-list">
+                                <div class="ac-item">
+                                    <div class="ac-item-header" onclick="toggleAC(this)">
+                                        <span class="status-dot todo"></span>
+                                        <span class="ac-code">AC13.01</span>
+                                        <span class="ac-title">Choisir et implémenter les architectures adaptées</span>
+                                        <span class="status-label todo">À développer</span>
+                                        <svg class="ac-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                                    </div>
+                                    <div class="ac-body">
+                                        <div class="ac-body-inner">
+                                            <div class="ac-content">
+                                                <p>Sélection et mise en œuvre d'architectures microservices, MVC ou événementielles selon les contraintes du projet. Justification des choix techniques.</p>
+                                                <span class="evidence">📎 Non débuté — BUT3</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div><!-- /n3 -->
+
                     </div>
+                </div>
+            </div>
+        </div><!-- /comp-1 -->
 
-                    <h4 id='span-c2n2a3' onclick="toggle_visibility('span-c2n2a3')"><span>▼</span>AC 3: Comprendre les enjeux et moyens de sécurisation des données et du code</h4>
-                    <div id='c2n2a3' class='ac hidden'>
-                        <p>Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.</p>
+        <!-- ===================== COMPÉTENCE 2 ===================== -->
+        <div class="competence-card reveal-on-scroll" data-color="green" id="comp-2">
+            <div class="card-strip"></div>
+            <div class="card-header" onclick="toggleCard(this)">
+                <div class="mission-icon">🗄️</div>
+                <div class="card-meta">
+                    <div class="card-tag">C2 — Compétence</div>
+                    <div class="card-title">Optimiser des applications</div>
+                    <div class="card-subtitle">Algorithmes, structures de données, performance</div>
+                </div>
+                <div class="card-actions">
+                    <div class="mini-progress">
+                        <div class="mini-track"><div class="mini-fill" style="width:100%"></div></div>
+                        <div class="mini-pct">100 %</div>
                     </div>
+                    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 12 15 18 9"/>
+                    </svg>
+                </div>
+            </div>
 
-                    <h4 id='span-c2n2a4' onclick="toggle_visibility('span-c2n2a4')"><span>▼</span>AC 4: Évaluer l’impact environnemental et sociétal des solutions proposées</h4>
-                    <div id='c2n2a4' class='ac hidden'>
-                        <p>Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.</p>
-                        <p>Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.</p>
+            <div class="niveau-tabs">
+                <button class="tab-btn hidden" onclick="switchTab(this, 'comp-2', 1)">Niveau 1</button>
+                <button class="tab-btn active" onclick="switchTab(this, 'comp-2', 2)">Niveau 2</button>
+                <button class="tab-btn hidden" onclick="switchTab(this, 'comp-2', 3)">Niveau 3</button>
+            </div>
+
+            <div class="card-body">
+                <div class="card-body-inner">
+                    <div class="niveau-panels">
+
+                        <div class="niveau-panel" id="comp-2-n1">
+                            <div class="niveau-header">
+                                <span class="niveau-badge n1">✦ Niveau 1 — Initié</span>
+                                <span class="niveau-desc">Analyser un problème avec des méthodes formelles</span>
+                            </div>
+                            <div class="ac-list">
+
+                                <div class="ac-item">
+                                    <div class="ac-item-header" onclick="toggleAC(this)">
+                                        <span class="status-dot done"></span>
+                                        <span class="ac-code">AC21.01</span>
+                                        <span class="ac-title">Analyser un problème avec des méthodes formelles</span>
+                                        <span class="status-label done">Acquis</span>
+                                        <svg class="ac-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                                    </div>
+                                    <div class="ac-body">
+                                        <div class="ac-body-inner">
+                                            <div class="ac-content">
+                                                <p>Décomposition d'un problème complexe en sous-problèmes. Utilisation de la preuve formelle et de la récurrence pour valider des algorithmes.</p>
+                                                <span class="evidence">📎 SAÉ 1.02 — Analyse algorithmique tri</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="ac-item">
+                                    <div class="ac-item-header" onclick="toggleAC(this)">
+                                        <span class="status-dot done"></span>
+                                        <span class="ac-code">AC21.02</span>
+                                        <span class="ac-title">Comparer des algorithmes pour des problèmes classiques</span>
+                                        <span class="status-label done">Acquis</span>
+                                        <svg class="ac-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                                    </div>
+                                    <div class="ac-body">
+                                        <div class="ac-body-inner">
+                                            <div class="ac-content">
+                                                <p>Comparaison des complexités O(n), O(n log n), O(n²). Benchmarks empiriques sur des jeux de données variés. Choix justifié de la structure de données adaptée.</p>
+                                                <span class="evidence">📎 TP Algorithmes — Rapport de complexité</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="niveau-panel active" id="comp-2-n2">
+                            <div class="niveau-header">
+                                <span class="niveau-badge n2">◆ Niveau 2 — Confirmé</span>
+                                <span class="niveau-desc">Sélectionner les algorithmes adéquats pour répondre à un problème donné</span>
+                            </div>
+                            <div class="ac-list">
+                                <div class="ac-item">
+                                    <div class="ac-item-header" onclick="toggleAC(this)">
+                                        <span class="status-dot done"></span>
+                                        <span class="ac-code">AC1</span>
+                                        <span class="ac-title">Choisir des structures de données complexes adaptées au problème</span>
+                                        <span class="status-label done">Acquis</span>
+                                        <svg class="ac-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                                    </div>
+                                    <div class="ac-body">
+                                        <div class="ac-body-inner">
+                                            <div class="ac-content">
+                                                <p>Dans mes projets de jeu de dames et d’adaptation numérique de Trains, j’ai choisi des structures de données adaptées à la nature des problèmes. Pour le jeu de dames, une matrice 2D permet une représentation fidèle du plateau et un accès direct aux cases en temps constant, facilitant le calcul des déplacements et des captures. Pour le projet Trains, la modélisation implicite du réseau sous forme de graphe permet de représenter efficacement les relations entre villes et de simplifier les opérations de parcours et de vérification des connexions. Ces choix ont permis d’optimiser les performances et la clarté du code.</p>
+                                                <span class="evidence">🛤️ Train</span> <span class="evidence">𖣯 Dame</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="ac-item">
+                                    <div class="ac-item-header" onclick="toggleAC(this)">
+                                        <span class="status-dot done"></span>
+                                        <span class="ac-code">AC2</span>
+                                        <span class="ac-title">Utiliser des techniques algorithmiques adaptées pour des problèmes complexes</span>
+                                        <span class="status-label done">Acquis</span>
+                                        <svg class="ac-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                                    </div>
+                                    <div class="ac-body">
+                                        <div class="ac-body-inner">
+                                            <div class="ac-content">
+                                                <p>Dans plusieurs de mes projets, j’ai été amené à mobiliser des techniques algorithmiques adaptées à des problématiques complexes.</p>
+                                                <p>Dans le cadre de mon jeu de dames, la gestion des captures multiples et l’exploration des coups possibles impliquent une logique arborescente. Chaque action d’un joueur génère un nouvel état du plateau, pouvant lui-même produire plusieurs possibilités. Cette structure en arbre nécessite une exploration contrôlée des états, proche des méthodes de parcours récursif ou de backtracking, afin de traiter correctement les enchaînements de décisions.</p>
+                                                <p>Dans le projet Trains, la modélisation du réseau sous forme de graphe m’a conduit à utiliser des techniques de parcours adaptées. La gestion des connexions entre villes et la validation des trajets reposent sur des mécanismes similaires aux algorithmes de parcours en profondeur ou en largeur. Ces approches permettent de traiter efficacement des structures relationnelles complexes et d’éviter des vérifications redondantes.</p>
+                                                <p>Enfin, dans le projet web METALL & PULVER, j’ai implémenté l’algorithme de distance de Vladimir Levenshtein afin de détecter et corriger des fautes d’orthographe. Cet algorithme repose sur une technique de programmation dynamique, qui consiste à décomposer un problème d’optimisation en sous-problèmes mémorisés dans une matrice. Cette approche permet de déterminer le nombre minimal d’opérations nécessaires pour transformer une chaîne de caractères en une autre, tout en maîtrisant la complexité algorithmique.</p>
+                                                <p>Ces différents projets montrent ma capacité à identifier la nature algorithmique d’un problème (exploration d’états, parcours de graphes, optimisation combinatoire) et à sélectionner des méthodes adaptées à sa complexité, plutôt que de recourir à des solutions naïves.</p>
+                                                <span class="evidence">🛤️ Train</span> <span class="evidence">𖣯 Dame</span> <span class="evidence">⚙️ METALL & PULVER</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="ac-item">
+                                    <div class="ac-item-header" onclick="toggleAC(this)">
+                                        <span class="status-dot done"></span>
+                                        <span class="ac-code">AC3</span>
+                                        <span class="ac-title">Comprendre les enjeux et moyens de sécurisation des données et du code</span>
+                                        <span class="status-label done">Acquis</span>
+                                        <svg class="ac-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                                    </div>
+                                    <div class="ac-body">
+                                        <div class="ac-body-inner">
+                                            <div class="ac-content">
+                                                <p>Dans mes projets liés aux plateformes CTF, notamment CTF+Z et The Last Hour, la sécurisation des données et de l’infrastructure constituait une priorité. La conception des défis ne consistait pas uniquement à proposer des épreuves techniques, mais également à s’assurer que les vulnérabilités étaient maîtrisées et confinées au périmètre prévu. Cela impliquait de protéger le serveur VPS, d’isoler les environnements, de limiter les droits d’accès et de prévenir toute exploitation non intentionnelle du système.</p>
+                                                <p>L’utilisation de CTFd m’a également amené à comprendre l’importance de la gestion des authentifications, du stockage sécurisé des mots de passe (hachage), ainsi que de la protection contre les attaques classiques (injections, exécutions arbitraires, exposition de fichiers sensibles). Concevoir des défis de sécurité m’a permis de mieux appréhender les mécanismes d’attaque et donc d’améliorer mes pratiques défensives.</p>
+                                                <p>Dans le cadre du défi IA de Jazz-b42, une attention particulière a été portée à la protection de la clé API utilisée pour interagir avec un service externe. La clé ne devait en aucun cas être exposée côté client. Elle a donc été stockée et utilisée exclusivement côté serveur, via des variables d’environnement, afin d’éviter toute fuite dans le code source ou dans les requêtes visibles par l’utilisateur. Cette démarche illustre ma compréhension des risques liés à la divulgation d’informations sensibles et des bonnes pratiques permettant de les prévenir.</p>
+                                                <p>Ces expériences m’ont permis de comprendre que la sécurisation ne se limite pas à corriger des failles, mais qu’elle doit être intégrée dès la conception : isolation des composants, gestion des accès, protection des données sensibles et anticipation des vecteurs d’attaque.</p>
+                                                <span class="evidence">🚩 CTF+Z</span> <span class="evidence">𝄞 The Last Hour</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="ac-item">
+                                    <div class="ac-item-header" onclick="toggleAC(this)">
+                                        <span class="status-dot done"></span>
+                                        <span class="ac-code">AC4</span>
+                                        <span class="ac-title">Évaluer l’impact environnemental et sociétal des solutions proposées</span>
+                                        <span class="status-label done">Acquis</span>
+                                        <svg class="ac-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                                    </div>
+                                    <div class="ac-body">
+                                        <div class="ac-body-inner">
+                                            <div class="ac-content">
+                                                <p>Au cours de mes projets, j’ai été amené à intégrer une réflexion sur l’impact environnemental et sociétal des solutions développées.</p>
+                                                <p>Lors de ma participation aux éditions 2024 et 2025 de la Nuit de l'Info, j’ai travaillé sur des thématiques directement liées aux enjeux contemporains. En 2024, le sujet « Et si l’océan était un corps humain ? » visait à sensibiliser à la protection des écosystèmes marins à travers une approche numérique interactive. En 2025, « Le Village Numérique Résistant » interrogeait la place du numérique face aux défis sociétaux actuels. Ces expériences m’ont conduit à réfléchir au rôle du développement informatique comme outil de sensibilisation et d’engagement citoyen.</p>
+                                                <p>Par ailleurs, dans plusieurs projets personnels, j’ai pris en compte l’impact des technologies utilisées, notamment en évaluant leur consommation de ressources et leur pertinence au regard des besoins réels. La sélection d’un framework, d’une architecture ou d’un hébergement n’est pas neutre : elle influence la consommation énergétique, la maintenabilité et l’empreinte carbone du projet.</p>
+                                                <p>J’ai également réalisé un site web dédié à l’analyse de l’impact écologique des data centers, mettant en évidence leur consommation énergétique, leurs besoins en refroidissement et leur contribution aux émissions de CO₂. Ce projet m’a permis d’approfondir ma compréhension des enjeux liés à l’infrastructure du numérique, souvent invisible pour l’utilisateur final mais déterminante à grande échelle.</p>
+                                                <p>Ces expériences montrent ma capacité à dépasser la dimension purement technique d’un projet pour en évaluer les conséquences environnementales et sociétales, et à intégrer ces réflexions dans mes choix technologiques.</p>
+                                                <span class="evidence">🌊 Nuit de l'info 2024</span> <span class="evidence">💻 Nuit de l'info 2025</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="niveau-panel" id="comp-2-n3">
+                            <div class="niveau-header">
+                                <span class="niveau-badge n3">❋ Niveau 3 — Expert</span>
+                                <span class="niveau-desc">Optimisation avancée et profiling</span>
+                            </div>
+                            <div class="ac-list">
+                                <div class="ac-item">
+                                    <div class="ac-item-header" onclick="toggleAC(this)">
+                                        <span class="status-dot todo"></span>
+                                        <span class="ac-code">AC23.01</span>
+                                        <span class="ac-title">Appréhender les systèmes informatiques complexes</span>
+                                        <span class="status-label todo">À développer</span>
+                                        <svg class="ac-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                                    </div>
+                                    <div class="ac-body">
+                                        <div class="ac-body-inner">
+                                            <div class="ac-content">
+                                                <p>Profiling et optimisation de programmes. Analyse de bottlenecks, cache CPU, parallélisme. Techniques de memoization et programmation dynamique avancée.</p>
+                                                <span class="evidence">📎 Non débuté — BUT3</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
-
                 </div>
             </div>
-        <div id='competence3' class='competence'>
-            <h2>Compétence 3: Administrer des systèmes informatiques communicants complexes</h2>
-            <div class='niveau'>
-                <h3>Niveau 2: Déployer des services dans une architecture réseau</h3>
-                <h4 id='span-c3n2a1' onclick="toggle_visibility('span-c3n2a1')"><span>▼</span>AC 1: Concevoir et développer des applications communicantes</h4>
-                <div id='c3n2a1' class='ac hidden'>
-                    <p>Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.</p>
-                </div>
+        </div><!-- /comp-2 -->
 
-                <h4 id='span-c3n2a2' onclick="toggle_visibility('span-c3n2a2')"><span>▼</span>AC 2: Utiliser des serveurs et des services réseaux virtualisés</h4>
-                <div id='c3n2a2' class='ac hidden'>
-                    <p>Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.</p>
+        <!-- ===================== COMPÉTENCE 3 ===================== -->
+        <div class="competence-card reveal-on-scroll" data-color="orange" id="comp-3">
+            <div class="card-strip"></div>
+            <div class="card-header" onclick="toggleCard(this)">
+                <div class="mission-icon">🌐</div>
+                <div class="card-meta">
+                    <div class="card-tag">C3 — Compétence</div>
+                    <div class="card-title">Administrer des systèmes informatiques communicants</div>
+                    <div class="card-subtitle">Réseaux, systèmes, sécurité</div>
                 </div>
-
-                <h4 id='span-c3n2a3' onclick="toggle_visibility('span-c3n2a3')"><span>▼</span>AC 3: Sécuriser les services et données d’un système</h4>
-                <div id='c3n2a3' class='ac hidden'>
-                    <p>Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.</p>
+                <div class="card-actions">
+                    <div class="mini-progress">
+                        <div class="mini-track"><div class="mini-fill" style="width:100%"></div></div>
+                        <div class="mini-pct">100 %</div>
+                    </div>
+                    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 12 15 18 9"/>
+                    </svg>
                 </div>
-
             </div>
-        </div>
-        <div id='competence4' class='competence'>
-            <h2>Compétence 4: Gérer des données de l’information</h2>
-            <div class='niveau'>
-                <h3>Niveau 2: Optimiser une base de données, interagir avec une application et mettre en œuvre la sécurité</h3>
-                <h4 id='span-c4n2a1' onclick="toggle_visibility('span-c4n2a1')"><span>▼</span>AC 1: Optimiser les modèles de données de l’entreprise</h4>
-                <div id='c4n2a1' class='ac hidden'>
-                    <p>Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.</p>
-                </div>
 
-                <h4 id='span-c4n2a2' onclick="toggle_visibility('span-c4n2a2')"><span>▼</span>AC 2: Assurer la confidentialité des données</h4>
-                <div id='c4n2a2' class='ac hidden'>
-                    <p>Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.</p>
-                </div>
-
-                <h4 id='span-c4n2a3' onclick="toggle_visibility('span-c4n2a3')"><span>▼</span>AC 3: Organiser la restitution de données à travers la programmation et la visualisation</h4>
-                <div id='c4n2a3' class='ac hidden'>
-                    <p>Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.</p>
-                </div>
-
-                <h4 id='span-c4n2a4' onclick="toggle_visibility('span-c4n2a4')"><span>▼</span>AC 4: Manipuler des données hétérogènes</h4>
-                <div id='c4n2a4' class='ac hidden'>
-                    <p>Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.</p>
-                </div>
-
+            <div class="niveau-tabs">
+                <button class="tab-btn hidden" onclick="switchTab(this, 'comp-3', 1)">Niveau 1</button>
+                <button class="tab-btn active" onclick="switchTab(this, 'comp-3', 2)">Niveau 2</button>
+                <button class="tab-btn hidden" onclick="switchTab(this, 'comp-3', 3)">Niveau 3</button>
             </div>
-        </div>
 
-        <div id='competence5' class='competence'>
-            <h2>Compétence 5: Optimiser des applications</h2>
-            <div class='niveau'>
-                <h3>Niveau 2: Sélectionner les algorithmes adéquats pour répondre à un problème donné</h3>
+            <div class="card-body">
+                <div class="card-body-inner">
+                    <div class="niveau-panels">
+                        <div class="niveau-panel" id="comp-3-n1">
+                            <div class="niveau-header">
+                                <span class="niveau-badge n1">✦ Niveau 1 — Initié</span>
+                                <span class="niveau-desc">Déployer des services dans une architecture réseau</span>
+                            </div>
+                            <div class="ac-list">
+
+                                <div class="ac-item">
+                                    <div class="ac-item-header" onclick="toggleAC(this)">
+                                        <span class="status-dot done"></span>
+                                        <span class="ac-code">AC31.01</span>
+                                        <span class="ac-title">Identifier les différents composants d'un réseau</span>
+                                        <span class="status-label done">Acquis</span>
+                                        <svg class="ac-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                                    </div>
+                                    <div class="ac-body">
+                                        <div class="ac-body-inner">
+                                            <div class="ac-content">
+                                                <p>Maîtrise des modèles OSI et TCP/IP. Identification des équipements actifs (routeurs, switches, firewalls) et passifs. Configuration de base sous Cisco Packet Tracer.</p>
+                                                <span class="evidence">📎 TP Réseaux — Topologie et adressage IP</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="ac-item">
+                                    <div class="ac-item-header" onclick="toggleAC(this)">
+                                        <span class="status-dot wip"></span>
+                                        <span class="ac-code">AC31.02</span>
+                                        <span class="ac-title">Utiliser des systèmes d'exploitation GNU/Linux</span>
+                                        <span class="status-label wip">En cours</span>
+                                        <svg class="ac-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                                    </div>
+                                    <div class="ac-body">
+                                        <div class="ac-body-inner">
+                                            <div class="ac-content">
+                                                <p>Administration d'un système Linux (Debian/Ubuntu). Shell scripting bash, gestion des utilisateurs, des droits et des services systemd.</p>
+                                                <span class="evidence">📎 SAÉ 1.03 — Serveur web Apache/Nginx configuré</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="niveau-panel active" id="comp-3-n2">
+                            <div class="niveau-header">
+                                <span class="niveau-badge n2">◆ Niveau 2 — Confirmé</span>
+                                <span class="niveau-desc">Déployer des services dans une architecture réseau</span>
+                            </div>
+                            <div class="ac-list">
+                                <div class="ac-item">
+                                    <div class="ac-item-header" onclick="toggleAC(this)">
+                                        <span class="status-dot done"></span>
+                                        <span class="ac-code">AC1</span>
+                                        <span class="ac-title">Concevoir et développer des applications communicantes</span>
+                                        <span class="status-label done">Acquis</span>
+                                        <svg class="ac-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                                    </div>
+                                    <div class="ac-body">
+                                        <div class="ac-body-inner">
+                                            <div class="ac-content">
+                                                <p>Dans plusieurs projets, j’ai été amené à concevoir ou utiliser des applications capables de communiquer entre elles via des interfaces réseau.</p>
+                                                <p>Lors de mon stage, j’ai développé des modules permettant le transfert de données entre deux systèmes à l’aide d’une API REST. Une API REST permet à différentes applications d’échanger des informations via des requêtes HTTP structurées. Dans ce cadre, j’ai mis en place l’authentification des requêtes afin de sécuriser l’accès au service, ainsi qu’un système de gestion des erreurs pour garantir la fiabilité des échanges de données. Ces modules permettaient de récupérer des informations depuis une base source puis de les transmettre vers une autre instance du système, ce qui illustre la mise en place d’une application communicante dans une architecture client-serveur.</p>
+                                                <p>J’ai également mobilisé cette compétence dans le projet CTF+Z en utilisant la plateforme CTFd pour organiser un CTF. Cette plateforme repose sur des interactions constantes entre les utilisateurs et le serveur, notamment pour la soumission des réponses, la vérification automatique des défis et la mise à jour du classement. La configuration et l’utilisation de cette plateforme impliquent donc la compréhension du fonctionnement d’une application web communicante.</p>
+                                                <p>Le projet The Last Hour, également basé sur CTFd, approfondit cet aspect. Ce CTF narratif inspiré d’un univers jazz noir intègre un défi utilisant l’API de Mistral AI. Ce défi repose sur l’interaction avec un service d’intelligence artificielle externe simulant une IA journalistique compromise. La résolution du challenge nécessite donc une interaction entre plusieurs services : la plateforme du CTF, le serveur du défi et l’API d’intelligence artificielle.</p>
+                                                <p>Enfin, je travaille actuellement sur Gate K, une plateforme visant à centraliser et à relier les différents projets de CTF réalisés cette année. Ce projet consiste à concevoir un système capable d’interagir avec plusieurs plateformes afin de regrouper certaines informations ou fonctionnalités au sein d’un point d’accès unique. Cette approche nécessite de réfléchir à l’architecture des échanges entre services et à la manière de structurer la communication entre plusieurs applications.</p>
+                                                <p>Ces différents projets m’ont permis de développer ma capacité à concevoir et à utiliser des applications communicantes, en mettant en place des échanges de données entre services, en intégrant des API externes et en réfléchissant à l’architecture globale des interactions entre systèmes.</p>
+                                                <span class="evidence">💼 Stage CFPO</span> <span class="evidence">🚩 CTF+Z</span> <span class="evidence">𝄞 The Last Hour</span> <span class="evidence">🌀 Gate K</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="ac-item">
+                                    <div class="ac-item-header" onclick="toggleAC(this)">
+                                        <span class="status-dot done"></span>
+                                        <span class="ac-code">AC2</span>
+                                        <span class="ac-title">Utiliser des serveurs et des services réseaux virtualisés</span>
+                                        <span class="status-label done">Acquis</span>
+                                        <svg class="ac-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                                    </div>
+                                    <div class="ac-body">
+                                        <div class="ac-body-inner">
+                                            <div class="ac-content">
+                                                <p>Dans plusieurs projets, j’ai été amené à utiliser et déployer des services réseau dans des environnements virtualisés afin de garantir leur isolation, leur reproductibilité et leur stabilité.</p>
+                                                <p>Dans le cadre du projet CTF+Z, j’ai déployé la plateforme CTFd sur un serveur en utilisant Docker. Docker permet d’exécuter une application dans un conteneur contenant toutes les dépendances nécessaires à son fonctionnement. Cette approche facilite le déploiement et permet de reproduire facilement l’environnement sur différentes machines. L’utilisation de conteneurs m’a permis de maintenir un service stable pour les participants tout en simplifiant la gestion de l’infrastructure.</p>
+                                                <p>Le projet The Last Hour, également basé sur CTFd, repose sur une organisation similaire. Les différents services du CTF sont conteneurisés avec Docker afin de garantir un environnement cohérent pour l’ensemble de la plateforme et des défis. Cette architecture permet d’isoler les composants du système et de simplifier leur déploiement.</p>
+                                                <p>Je travaille également sur Gate K, une plateforme en cours de développement visant à centraliser plusieurs projets de CTF réalisés cette année. Dans ce projet, Docker est utilisé pour structurer l’architecture de la plateforme et faciliter le déploiement des différents services. Cette approche permet de concevoir une infrastructure modulaire où chaque composant peut être déployé et maintenu indépendamment.</p>
+                                                <p>Dans certains défis de cybersécurité, j’ai également utilisé une machine virtuelle basée sur Kali Linux afin de disposer d’un environnement spécialisé pour les outils d’analyse et de sécurité. Par exemple, pour la résolution d’un défi impliquant le cassage de mots de passe, j’ai utilisé l’outil John the Ripper afin de tester différentes méthodes de récupération de mot de passe à partir d’un hash. L’utilisation d’une machine virtuelle permet d’exécuter ce type d’outil dans un environnement isolé et reproductible.</p>
+                                                <p>Afin de faciliter l’utilisation de cet environnement, j’ai également rédigé une documentation expliquant les étapes d’installation et de configuration nécessaires.</p>
+                                                <p>Cette expérience s’appuie également sur un travail réalisé en première année, où j’ai produit une documentation expliquant l’installation de Ubuntu soit en dual boot, soit dans une machine virtuelle. Cette documentation présentait les étapes d’installation ainsi que les avantages et limites de chaque méthode. Le dual boot permet d’accéder directement aux ressources matérielles de la machine et offre de meilleures performances, tandis que la machine virtuelle permet d’exécuter plusieurs systèmes simultanément et d’isoler l’environnement de travail.</p>
+                                                <p>Ces différents projets m’ont permis de comprendre l’intérêt des environnements virtualisés dans le déploiement et l’utilisation de services réseau. Ils permettent de reproduire facilement un environnement technique, d’isoler les systèmes et de tester des outils ou des configurations sans compromettre l’infrastructure principale.</p>
+                                                <span class="evidence">🚩 CTF+Z</span> <span class="evidence">𝄞 The Last Hour</span> <span class="evidence">🌀 Gate K</span> <span class="evidence">📄 Doc Ubuntu</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="ac-item">
+                                    <div class="ac-item-header" onclick="toggleAC(this)">
+                                        <span class="status-dot done"></span>
+                                        <span class="ac-code">AC3</span>
+                                        <span class="ac-title">Sécuriser les services et données d’un système</span>
+                                        <span class="status-label done">Acquis</span>
+                                        <svg class="ac-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                                    </div>
+                                    <div class="ac-body">
+                                        <div class="ac-body-inner">
+                                            <div class="ac-content">
+                                                <p>Dans plusieurs projets, j’ai été amené à prendre en compte les problématiques de sécurité liées aux services informatiques et aux échanges de données entre </p>
+                                                <p>Lors de mon stage, j’ai développé des modules permettant le transfert de données entre deux systèmes via une API REST. Dans ce contexte, il était nécessaire de sécuriser les échanges afin d’éviter les accès non autorisés ou les erreurs de traitement. J’ai donc mis en place un système d’authentification permettant de contrôler l’accès aux services, ainsi que des mécanismes de vérification et de filtrage des données reçues afin de limiter les risques liés à des entrées incorrectes ou malveillantes. La gestion des erreurs a également été prise en compte afin d’éviter la divulgation d’informations sensibles lors d’un échec de requête.</p>
+                                                <p>Dans le projet CTF+Z, basé sur la plateforme CTFd, j’ai travaillé sur la configuration des droits d’accès afin de contrôler les interactions avec la plateforme. Par exemple, les visiteurs non connectés ne pouvaient accéder qu’au tableau des scores, tandis que la soumission des réponses ou l’accès aux défis nécessitait une authentification. Cette gestion des permissions permet de protéger les fonctionnalités du système tout en laissant certaines informations accessibles au public.</p>
+                                                <p>Les projets CTF+Z et The Last Hour reposent également sur la conception de défis de cybersécurité. Dans ce contexte, certaines vulnérabilités sont volontairement intégrées dans les challenges afin de permettre aux participants de les exploiter. La conception de ces défis nécessite toutefois de s’assurer que les failles restent limitées au défi lui-même et ne compromettent pas l’infrastructure globale du CTF. Cela implique de comprendre le fonctionnement des vulnérabilités tout en mettant en place des mécanismes d’isolation et de contrôle.</p>
+                                                <p>Dans certains défis, l’utilisation d’outils de sécurité comme John the Ripper dans un environnement spécialisé basé sur Kali Linux m’a également permis d’expérimenter des techniques d’analyse et de récupération de mots de passe à partir de hash. Cette approche permet de mieux comprendre les risques liés à l’utilisation de mots de passe faibles et l’importance de bonnes pratiques de sécurité.</p>
+                                                <p>Enfin, dans le cadre du projet Gate K, qui vise à centraliser plusieurs plateformes de CTF, la question de la sécurité est également centrale. La conception d’une plateforme reliant plusieurs services nécessite de réfléchir à la gestion des accès, à la protection des données échangées entre les systèmes et à la sécurisation des différents points d’interaction.</p>
+                                                <p>Ces différentes expériences m’ont permis de développer une meilleure compréhension des enjeux de sécurité dans les systèmes informatiques communicants, en intégrant des mécanismes de protection des services, de contrôle des accès et de gestion sécurisée des données.</p>
+                                                <span class="evidence">💼 Stage CFPO</span> <span class="evidence">🚩 CTF+Z</span> <span class="evidence">𝄞 The Last Hour</span> <span class="evidence">🌀 Gate K</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="niveau-panel" id="comp-3-n3">
+                            <div class="niveau-header">
+                                <span class="niveau-badge n3">❋ Niveau 3 — Expert</span>
+                                <span class="niveau-desc">Maintenir et faire évoluer un SI</span>
+                            </div>
+                            <div class="ac-list">
+                                <div class="ac-item">
+                                    <div class="ac-item-header" onclick="toggleAC(this)">
+                                        <span class="status-dot todo"></span>
+                                        <span class="ac-code">AC33.01</span>
+                                        <span class="ac-title">Faire évoluer un SI</span>
+                                        <span class="status-label todo">À développer</span>
+                                        <svg class="ac-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                                    </div>
+                                    <div class="ac-body">
+                                        <div class="ac-body-inner">
+                                            <div class="ac-content">
+                                                <p>lopus C3 A2</p>
+                                                <span class="evidence">📎 Non débuté — BUT3</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
             </div>
-        </div>
-        <div id='competence6' class='competence'>
-            <h2>Compétence 6: Optimiser des applications</h2>
-            <div class='niveau'>
-                <h3>Niveau 2: Sélectionner les algorithmes adéquats pour répondre à un problème donné</h3>
+        </div><!-- /comp-3 -->
+
+        <!-- ===================== COMPÉTENCE 4 ===================== -->
+        <div class="competence-card reveal-on-scroll" data-color="purple" id="comp-4">
+            <div class="card-strip"></div>
+            <div class="card-header" onclick="toggleCard(this)">
+                <div class="mission-icon">📊</div>
+                <div class="card-meta">
+                    <div class="card-tag">C4 — Compétence</div>
+                    <div class="card-title">Gérer des données de l'information</div>
+                    <div class="card-subtitle">Bases de données, SQL, modélisation</div>
+                </div>
+                <div class="card-actions">
+                    <div class="mini-progress">
+                        <div class="mini-track"><div class="mini-fill" style="width:100%"></div></div>
+                        <div class="mini-pct">100 %</div>
+                    </div>
+                    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 12 15 18 9"/>
+                    </svg>
+                </div>
             </div>
-        </div>
-    </body>
-    <script>
-        function toggle_visibility(id){
-            if (document.getElementById(id).classList.contains('open')){
-                document.getElementById(id).classList.remove('open');
-                document.getElementById(id.slice(5)).classList.add('hidden');
 
-            } else {
-                document.getElementById(id).classList.add('open');
-                document.getElementById(id.slice(5)).classList.remove('hidden');
-            }
+            <div class="niveau-tabs">
+                <button class="tab-btn hidden" onclick="switchTab(this, 'comp-4', 1)">Niveau 1</button>
+                <button class="tab-btn active" onclick="switchTab(this, 'comp-4', 2)">Niveau 2</button>
+                <button class="tab-btn hidden" onclick="switchTab(this, 'comp-4', 3)">Niveau 3</button>
+            </div>
 
+            <div class="card-body">
+                <div class="card-body-inner">
+                    <div class="niveau-panels">
+
+                        <div class="niveau-panel" id="comp-4-n1">
+                            <div class="niveau-header">
+                                <span class="niveau-badge n1">✦ Niveau 1 — Initié</span>
+                                <span class="niveau-desc">Concevoir et mettre en place une base de données</span>
+                            </div>
+                            <div class="ac-list">
+
+                                <div class="ac-item">
+                                    <div class="ac-item-header" onclick="toggleAC(this)">
+                                        <span class="status-dot done"></span>
+                                        <span class="ac-code">AC41.01</span>
+                                        <span class="ac-title">Mettre à jour et interroger une base de données</span>
+                                        <span class="status-label done">Acquis</span>
+                                        <svg class="ac-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                                    </div>
+                                    <div class="ac-body">
+                                        <div class="ac-body-inner">
+                                            <div class="ac-content">
+                                                <p>Maîtrise du SQL (SELECT, INSERT, UPDATE, DELETE, JOIN). Création et gestion de bases relationnelles PostgreSQL/MySQL. Indexation et optimisation de requêtes basiques.</p>
+                                                <span class="evidence">📎 SAÉ 1.04 — Base de données médiathèque</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="ac-item">
+                                    <div class="ac-item-header" onclick="toggleAC(this)">
+                                        <span class="status-dot done"></span>
+                                        <span class="ac-code">AC41.02</span>
+                                        <span class="ac-title">Visualiser des données</span>
+                                        <span class="status-label done">Acquis</span>
+                                        <svg class="ac-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                                    </div>
+                                    <div class="ac-body">
+                                        <div class="ac-body-inner">
+                                            <div class="ac-content">
+                                                <p>Création de tableaux de bord avec des outils de BI. Représentation graphique (histogrammes, courbes, camemberts) à partir de données SQL. Exportation et reporting.</p>
+                                                <span class="evidence">📎 TP Data Viz — Dashboard Power BI / matplotlib</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="niveau-panel active" id="comp-4-n2">
+                            <div class="niveau-header">
+                                <span class="niveau-badge n2">◆ Niveau 2 — Confirmé</span>
+                                <span class="niveau-desc">Optimiser une base de données, interagir avec une application et mettre en œuvre la sécurité</span>
+                            </div>
+                            <div class="ac-list">
+                                <div class="ac-item">
+                                    <div class="ac-item-header" onclick="toggleAC(this)">
+                                        <span class="status-dot done"></span>
+                                        <span class="ac-code">AC1</span>
+                                        <span class="ac-title">Optimiser les modèles de données de l’entreprise</span>
+                                        <span class="status-label done">Acquis</span>
+                                        <svg class="ac-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                                    </div>
+                                    <div class="ac-body">
+                                        <div class="ac-body-inner">
+                                            <div class="ac-content">
+                                                <p>Dans plusieurs projets, j’ai été amené à travailler sur l’organisation et l’optimisation de structures de données afin d’améliorer la gestion et l’exploitation de l’information.</p>
+                                                <p>Lors de mon stage, j’ai travaillé sur des modules impliquant le transfert et le traitement de données entre différentes bases. Afin d’améliorer les performances des traitements, j’ai optimisé certaines requêtes SQL utilisées par les modules développés. Ce travail a notamment impliqué l’analyse des requêtes les plus coûteuses et l’ajout d’index sur certaines colonnes afin d’accélérer les opérations de recherche et de jointure. L’indexation permet en effet de réduire le temps d’accès aux données en évitant de parcourir l’ensemble des enregistrements d’une table lors d’une requête.</p>
+                                                <p>J’ai également été amené à adapter les structures de données utilisées par les modules afin de faciliter les échanges entre systèmes et de limiter les traitements inutiles lors des transferts. Ces optimisations ont permis d’améliorer la fluidité des opérations réalisées par les modules, notamment lors du traitement de volumes de données importants.</p>
+                                                <p>Dans le projet Eliga, j’ai participé à une réflexion plus globale sur l’organisation des données. L’objectif était de passer d’un système de suivi mêlant documents papier et fichiers informatiques peu structurés à une gestion numérique plus cohérente. Ce travail a consisté à analyser les informations nécessaires au suivi des activités puis à proposer une structuration plus claire des données afin de faciliter leur consultation et leur mise à jour.</p>
+                                                <p>Cette démarche s’apparente à une phase de modélisation des données, où l’on cherche à organiser les informations de manière logique afin de simplifier leur utilisation dans les outils informatiques. L’amélioration de la structure des données permet non seulement de faciliter leur exploitation, mais aussi de réduire les erreurs et les incohérences dans leur gestion.</p>
+                                                <p>Ces expériences m’ont permis de comprendre l’importance de la modélisation et de l’optimisation des données dans les systèmes d’information. Une base de données bien structurée et correctement indexée permet d’améliorer les performances des applications et de rendre l’information plus accessible et exploitable.</p>
+                                                <span class="evidence">💼 Stage CFPO</span> <span class="evidence">🔄 Eliga</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="ac-item">
+                                    <div class="ac-item-header" onclick="toggleAC(this)">
+                                        <span class="status-dot done"></span>
+                                        <span class="ac-code">AC2</span>
+                                        <span class="ac-title">Assurer la confidentialité des données</span>
+                                        <span class="status-label done">Acquis</span>
+                                        <svg class="ac-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                                    </div>
+                                    <div class="ac-body">
+                                        <div class="ac-body-inner">
+                                            <div class="ac-content">
+                                                <p>Dans plusieurs projets, j’ai été amené à prendre en compte la confidentialité des données lors du développement ou de l’administration de systèmes informatiques.</p>
+                                                <p>Lors de mon stage, j’ai développé des modules permettant le transfert de données entre différentes bases dans l’environnement de Dolibarr. Dans ce contexte, il était nécessaire de s’assurer que les informations échangées restaient accessibles uniquement aux services autorisés. Pour cela, j’ai mis en place des validations côté serveur afin de vérifier la cohérence des données reçues et éviter l’intégration d’informations incorrectes ou malveillantes.</p>
+                                                <p>J’ai également appliqué des restrictions sur les modules développés afin de limiter l’accès aux opérations de transfert de données aux utilisateurs disposant des droits nécessaires. Cette gestion des permissions permet de réduire les risques d’accès non autorisé aux informations contenues dans les bases de données.</p>
+                                                <p>Dans le cadre des projets CTF+Z et The Last Hour, basés sur la plateforme CTFd, la protection des données concernait principalement les informations des participants ainsi que les contenus des défis. Les réponses aux challenges, les comptes utilisateurs et certaines informations internes de la plateforme doivent rester accessibles uniquement aux personnes authentifiées.</p>
+                                                <p>La configuration des permissions a donc été utilisée pour contrôler l’accès aux différentes fonctionnalités du système. Par exemple, seuls les joueurs connectés peuvent accéder aux défis et soumettre des réponses, tandis que certaines informations publiques comme le classement restent visibles pour les visiteurs. Cette séparation entre données publiques et données protégées permet de préserver la confidentialité des informations sensibles.</p>
+                                                <p>Ces différentes expériences m’ont permis de comprendre que la confidentialité des données repose autant sur la gestion des accès que sur la protection des bases de données elles-mêmes. La mise en place de contrôles côté serveur, la restriction des permissions et la séparation des informations publiques et privées sont des éléments essentiels pour garantir la sécurité des données dans une application.</p>
+                                                <span class="evidence">💼 Stage CFPO</span> <span class="evidence">🚩 CTF+Z</span> <span class="evidence">𝄞 The Last Hour</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="ac-item">
+                                    <div class="ac-item-header" onclick="toggleAC(this)">
+                                        <span class="status-dot done"></span>
+                                        <span class="ac-code">AC3</span>
+                                        <span class="ac-title">Organiser la restitution de données à travers la programmation et la visualisation</span>
+                                        <span class="status-label done">Acquis</span>
+                                        <svg class="ac-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                                    </div>
+                                    <div class="ac-body">
+                                        <div class="ac-body-inner">
+                                            <div class="ac-content">
+                                                <p>Dans plusieurs projets, j’ai été amené à organiser et à afficher des données issues d’une application afin de les rendre compréhensibles et exploitables par les utilisateurs.</p>
+                                                <p>Dans le projet Trains, développé en Java avec JavaFX, j’ai participé à la conception de l’interface graphique permettant d’afficher les informations liées au déroulement de la partie. L’interface devait présenter différentes données de jeu, comme le score des joueurs, leur réserve de cartes ou leur deck. Ces informations sont mises à jour dynamiquement en fonction des actions réalisées pendant la partie. Cela nécessite de relier les données internes du programme aux éléments visuels de l’interface afin que l’affichage reflète correctement l’état du jeu.</p>
+                                                <p>J’ai également travaillé sur un projet de jeu de dames développé en Python avec une interface graphique. L’interface permet d’afficher différentes informations de la partie, comme le nom des joueurs, le score ou l’état du plateau. Comme pour le projet Trains, ces données sont synchronisées avec la logique du jeu afin que l’interface se mette à jour en fonction des actions des joueurs.</p>
+                                                <p>Dans le cadre du projet Gate K, je travaille sur une plateforme visant à centraliser plusieurs projets de CTF. L’une des fonctionnalités en cours de développement est une page de profil gamifiée permettant de présenter les informations liées aux joueurs et à leur progression dans différents événements. Cette interface doit afficher et organiser des données provenant de plusieurs plateformes de CTF, ce qui implique de concevoir une présentation claire et cohérente des informations.</p>
+                                                <p>L’un des principaux défis de ce projet concerne la centralisation des données issues de différents CTF, qui peuvent utiliser des structures ou des terminologies différentes pour représenter des informations similaires (scores, équipes, points, progression, etc.). Le travail consiste donc à structurer ces données et à concevoir une interface capable de les restituer de manière compréhensible pour l’utilisateur.</p>
+                                                <p>Ces projets m’ont permis de développer des compétences dans l’organisation et la visualisation de données au sein d’une application. Ils montrent l’importance de concevoir des interfaces capables de transformer des informations techniques en éléments visuels clairs et facilement interprétables.</p>
+                                                <span class="evidence">🛤️ Train</span> <span class="evidence">𖣯 Dame</span> <span class="evidence">🌀 Gate K</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="ac-item">
+                                    <div class="ac-item-header" onclick="toggleAC(this)">
+                                        <span class="status-dot done"></span>
+                                        <span class="ac-code">AC4</span>
+                                        <span class="ac-title">Manipuler des données hétérogènes</span>
+                                        <span class="status-label done">Acquis</span>
+                                        <svg class="ac-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                                    </div>
+                                    <div class="ac-body">
+                                        <div class="ac-body-inner">
+                                            <div class="ac-content">
+                                                <p>Dans plusieurs projets, j’ai été amené à manipuler des données provenant de sources différentes et possédant des structures variées.</p>
+                                                <p>Lors de mon stage, j’ai développé des modules permettant le transfert et le traitement de données entre plusieurs bases dans l’environnement de Dolibarr. Les données manipulées pouvaient provenir de systèmes utilisant des structures différentes, ce qui nécessitait d’adapter leur traitement afin de garantir leur compatibilité avec les modules développés.</p>
+                                                <p>Dans certains cas, les informations étaient récupérées depuis des bases de données relationnelles via des requêtes SQL. Dans d’autres cas, elles étaient obtenues à travers une API REST et transmises sous forme de JSON. Ces deux formats impliquent des approches différentes : les données relationnelles sont organisées en tables liées entre elles, tandis que les données JSON sont structurées de manière hiérarchique sous forme d’objets.</p>
+                                                <p>Le développement des modules nécessitait donc d’analyser la structure des données reçues, de les transformer lorsque cela était nécessaire et de les intégrer dans le système cible tout en conservant leur cohérence. Ce travail impliquait notamment la correspondance entre différents champs de données, la conversion de formats et la gestion d’éventuelles incohérences.</p>
+                                                <p>Dans le cadre du projet Gate K, qui vise à centraliser plusieurs plateformes de CTF, je suis également confronté à la manipulation de données hétérogènes. Les différentes plateformes ou événements peuvent utiliser des structures et des terminologies différentes pour représenter des informations similaires, comme les scores, les équipes, les défis ou la progression des joueurs.</p>
+                                                <p>Le travail consiste donc à analyser ces différentes structures de données afin de pouvoir les centraliser dans une même plateforme et les restituer de manière cohérente. Cela implique de créer des correspondances entre les différents formats et de concevoir un modèle de données capable de représenter ces informations de manière unifiée.</p>
+                                                <p>Ces expériences m’ont permis de développer une meilleure compréhension des problématiques liées à l’interopérabilité des systèmes d’information. Dans de nombreux environnements professionnels, les applications doivent être capables de manipuler et d’intégrer des données provenant de sources variées, ce qui nécessite de savoir analyser leur structure et adapter leur traitement afin de les rendre compatibles entre elles.</p>
+                                                <span class="evidence">💼 Stage CFPO</span> <span class="evidence">🌀 Gate K</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="niveau-panel" id="comp-4-n3">
+                            <div class="niveau-header">
+                                <span class="niveau-badge n3">❋ Niveau 3 — Expert</span>
+                                <span class="niveau-desc">Administrer et exploiter les données à grande échelle</span>
+                            </div>
+                            <div class="ac-list">
+                                <div class="ac-item">
+                                    <div class="ac-item-header" onclick="toggleAC(this)">
+                                        <span class="status-dot todo"></span>
+                                        <span class="ac-code">AC43.01</span>
+                                        <span class="ac-title">Organiser la restitution de données</span>
+                                        <span class="status-label todo">À développer</span>
+                                        <svg class="ac-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                                    </div>
+                                    <div class="ac-body">
+                                        <div class="ac-body-inner">
+                                            <div class="ac-content">
+                                                <p>Architecture data warehouse, ETL, gestion de big data. Bases NoSQL (MongoDB, Redis). Pipelines de données et gouvernance RGPD.</p>
+                                                <span class="evidence">📎 Non débuté — BUT3</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div><!-- /comp-4 -->
+
+        <!-- ===================== COMPÉTENCE 5 ===================== -->
+        <div class="competence-card reveal-on-scroll hidden" data-color="teal" id="comp-5">
+            <div class="card-strip"></div>
+            <div class="card-header" onclick="toggleCard(this)">
+                <div class="mission-icon">🤝</div>
+                <div class="card-meta">
+                    <div class="card-tag">C5 — Compétence</div>
+                    <div class="card-title">Conduire un projet</div>
+                    <div class="card-subtitle">Gestion, méthodes agiles, pilotage</div>
+                </div>
+                <div class="card-actions">
+                    <div class="mini-progress">
+                        <div class="mini-track"><div class="mini-fill" style="width:40%"></div></div>
+                        <div class="mini-pct">40 %</div>
+                    </div>
+                    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 12 15 18 9"/>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="niveau-tabs">
+                <button class="tab-btn active" onclick="switchTab(this, 'comp-5', 1)">Niveau 1</button>
+                <button class="tab-btn" onclick="switchTab(this, 'comp-5', 2)">Niveau 2</button>
+                <button class="tab-btn" onclick="switchTab(this, 'comp-5', 3)">Niveau 3</button>
+            </div>
+
+            <div class="card-body">
+                <div class="card-body-inner">
+                    <div class="niveau-panels">
+
+                        <div class="niveau-panel active" id="comp-5-n1">
+                            <div class="niveau-header">
+                                <span class="niveau-badge n1">✦ Niveau 1 — Initié</span>
+                                <span class="niveau-desc">Identifier les processus présents dans une organisation</span>
+                            </div>
+                            <div class="ac-list">
+
+                                <div class="ac-item">
+                                    <div class="ac-item-header" onclick="toggleAC(this)">
+                                        <span class="status-dot done"></span>
+                                        <span class="ac-code">AC51.01</span>
+                                        <span class="ac-title">Appréhender les besoins du client</span>
+                                        <span class="status-label done">Acquis</span>
+                                        <svg class="ac-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                                    </div>
+                                    <div class="ac-body">
+                                        <div class="ac-body-inner">
+                                            <div class="ac-content">
+                                                <p>Conduite d'entretiens client, rédaction de user stories, priorisation avec MoSCoW. Traduction des besoins métier en spécifications techniques exploitables.</p>
+                                                <span class="evidence">📎 SAÉ 1.05 — Cahier des charges applicatif</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="ac-item">
+                                    <div class="ac-item-header" onclick="toggleAC(this)">
+                                        <span class="status-dot wip"></span>
+                                        <span class="ac-code">AC51.02</span>
+                                        <span class="ac-title">Mettre en place les outils de gestion de projet</span>
+                                        <span class="status-label wip">En cours</span>
+                                        <svg class="ac-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                                    </div>
+                                    <div class="ac-body">
+                                        <div class="ac-body-inner">
+                                            <div class="ac-content">
+                                                <p>Utilisation de Jira, Trello, GitHub Projects. Diagrammes de Gantt, sprints Scrum, rétrospectives. Suivi de l'avancement et gestion des risques.</p>
+                                                <span class="evidence">📎 SAÉ 2.05 — Projet agile équipe (en cours)</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="niveau-panel" id="comp-5-n2">
+                            <div class="niveau-header">
+                                <span class="niveau-badge n2">◆ Niveau 2 — Confirmé</span>
+                                <span class="niveau-desc">Elaborer et mettre en œuvre les décisions</span>
+                            </div>
+                            <div class="ac-list">
+                                <div class="ac-item">
+                                    <div class="ac-item-header" onclick="toggleAC(this)">
+                                        <span class="status-dot todo"></span>
+                                        <span class="ac-code">AC52.01</span>
+                                        <span class="ac-title">Élaborer un plan de projet</span>
+                                        <span class="status-label todo">À développer</span>
+                                        <svg class="ac-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                                    </div>
+                                    <div class="ac-body">
+                                        <div class="ac-body-inner">
+                                            <div class="ac-content">
+                                                <p>Structuration WBS, estimation de charges, gestion du budget, planning de ressources et suivi des indicateurs de performance (KPI) projet.</p>
+                                                <span class="evidence">📎 Prévu SAÉ 3.05 — Projet client réel</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="niveau-panel" id="comp-5-n3">
+                            <div class="niveau-header">
+                                <span class="niveau-badge n3">❋ Niveau 3 — Expert</span>
+                                <span class="niveau-desc">Manager une équipe informatique</span>
+                            </div>
+                            <div class="ac-list">
+                                <div class="ac-item">
+                                    <div class="ac-item-header" onclick="toggleAC(this)">
+                                        <span class="status-dot todo"></span>
+                                        <span class="ac-code">AC53.01</span>
+                                        <span class="ac-title">Piloter un projet informatique</span>
+                                        <span class="status-label todo">À développer</span>
+                                        <svg class="ac-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                                    </div>
+                                    <div class="ac-body">
+                                        <div class="ac-body-inner">
+                                            <div class="ac-content">
+                                                <p>Management opérationnel d'une équipe, conduite du changement, gestion des conflits et reporting à la direction. Maîtrise des méthodes PMI et Prince2.</p>
+                                                <span class="evidence">📎 Non débuté — BUT3</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div><!-- /comp-5 -->
+
+        <!-- ===================== COMPÉTENCE 6 ===================== -->
+        <div class="competence-card reveal-on-scroll hidden" data-color="red" id="comp-6">
+            <div class="card-strip"></div>
+            <div class="card-header" onclick="toggleCard(this)">
+                <div class="mission-icon">💼</div>
+                <div class="card-meta">
+                    <div class="card-tag">C6 — Compétence</div>
+                    <div class="card-title">Travailler dans une équipe informatique</div>
+                    <div class="card-subtitle">Communication, collaboration, insertion professionnelle</div>
+                </div>
+                <div class="card-actions">
+                    <div class="mini-progress">
+                        <div class="mini-track"><div class="mini-fill" style="width:65%"></div></div>
+                        <div class="mini-pct">65 %</div>
+                    </div>
+                    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 12 15 18 9"/>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="niveau-tabs">
+                <button class="tab-btn active" onclick="switchTab(this, 'comp-6', 1)">Niveau 1</button>
+                <button class="tab-btn" onclick="switchTab(this, 'comp-6', 2)">Niveau 2</button>
+                <button class="tab-btn" onclick="switchTab(this, 'comp-6', 3)">Niveau 3</button>
+            </div>
+
+            <div class="card-body">
+                <div class="card-body-inner">
+                    <div class="niveau-panels">
+
+                        <div class="niveau-panel active" id="comp-6-n1">
+                            <div class="niveau-header">
+                                <span class="niveau-badge n1">✦ Niveau 1 — Initié</span>
+                                <span class="niveau-desc">Identifier ses aptitudes pour travailler dans une équipe</span>
+                            </div>
+                            <div class="ac-list">
+
+                                <div class="ac-item">
+                                    <div class="ac-item-header" onclick="toggleAC(this)">
+                                        <span class="status-dot done"></span>
+                                        <span class="ac-code">AC61.01</span>
+                                        <span class="ac-title">Comprendre la diversité, la distance et les contraintes</span>
+                                        <span class="status-label done">Acquis</span>
+                                        <svg class="ac-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                                    </div>
+                                    <div class="ac-body">
+                                        <div class="ac-body-inner">
+                                            <div class="ac-content">
+                                                <p>Travail en équipes pluridisciplinaires et en distanciel. Adaptation aux contraintes de disponibilité et aux profils différents. Utilisation d'outils collaboratifs (Slack, Teams, Git).</p>
+                                                <span class="evidence">📎 SAÉ 1.06 — Projet équipe distancielle</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="ac-item">
+                                    <div class="ac-item-header" onclick="toggleAC(this)">
+                                        <span class="status-dot done"></span>
+                                        <span class="ac-code">AC61.02</span>
+                                        <span class="ac-title">Appliquer une démarche pour intégrer une équipe</span>
+                                        <span class="status-label done">Acquis</span>
+                                        <svg class="ac-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                                    </div>
+                                    <div class="ac-body">
+                                        <div class="ac-body-inner">
+                                            <div class="ac-content">
+                                                <p>Onboarding dans une équipe existante (stage, alternance), prise en main d'un projet en cours, lecture de documentation et respect des conventions de code.</p>
+                                                <span class="evidence">📎 Stage S1 — Rapport d'intégration équipe dev</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="niveau-panel" id="comp-6-n2">
+                            <div class="niveau-header">
+                                <span class="niveau-badge n2">◆ Niveau 2 — Confirmé</span>
+                                <span class="niveau-desc">Situer son rôle et ses missions au sein d'une équipe</span>
+                            </div>
+                            <div class="ac-list">
+                                <div class="ac-item">
+                                    <div class="ac-item-header" onclick="toggleAC(this)">
+                                        <span class="status-dot wip"></span>
+                                        <span class="ac-code">AC62.01</span>
+                                        <span class="ac-title">Organiser et partager une veille technologique</span>
+                                        <span class="status-label wip">En cours</span>
+                                        <svg class="ac-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                                    </div>
+                                    <div class="ac-body">
+                                        <div class="ac-body-inner">
+                                            <div class="ac-content">
+                                                <p>Mise en place d'une veille via RSS, newsletters tech, GitHub Trending et X/Twitter. Partage structuré au sein de l'équipe via Notion ou Confluence.</p>
+                                                <span class="evidence">📎 Blog de veille — 3 articles publiés (en cours)</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="niveau-panel" id="comp-6-n3">
+                            <div class="niveau-header">
+                                <span class="niveau-badge n3">❋ Niveau 3 — Expert</span>
+                                <span class="niveau-desc">Manager une équipe et accompagner ses membres</span>
+                            </div>
+                            <div class="ac-list">
+                                <div class="ac-item">
+                                    <div class="ac-item-header" onclick="toggleAC(this)">
+                                        <span class="status-dot todo"></span>
+                                        <span class="ac-code">AC63.01</span>
+                                        <span class="ac-title">Accompagner une équipe dans son amélioration continue</span>
+                                        <span class="status-label todo">À développer</span>
+                                        <svg class="ac-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                                    </div>
+                                    <div class="ac-body">
+                                        <div class="ac-body-inner">
+                                            <div class="ac-content">
+                                                <p>Animation de rétrospectives, coaching technique, mentorat de juniors. Mise en place de pratiques d'amélioration continue (code reviews, mob programming).</p>
+                                                <span class="evidence">📎 Non débuté — BUT3 / Alternance</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div><!-- /comp-6 -->
+
+    </div><!-- /competence-grid -->
+
+    <!-- ============================================================
+         FOOTER
+    ============================================================ -->
+    <footer class="site-footer">
+        <p>Portfolio BUT Informatique &mdash; Dernière mise à jour : mars 2026 &mdash; Construit avec ♦ passion</p>
+    </footer>
+
+</div><!-- /page-wrapper -->
+
+<script>
+    /* ============================================================
+       TOGGLE COMPETENCE CARD (Mission)
+    ============================================================ */
+    function toggleCard(headerEl) {
+        const card      = headerEl.closest('.competence-card');
+        const body      = card.querySelector('.card-body');
+        const isOpen    = card.classList.contains('open');
+
+        if (isOpen) {
+            card.classList.remove('open');
+            body.classList.remove('open');
+        } else {
+            card.classList.add('open');
+            body.classList.add('open');
+            // Trigger mini-fill animation on reveal
+            card.classList.add('revealed');
         }
-    </script>
+    }
+
+    /* ============================================================
+       SWITCH NIVEAU TAB
+    ============================================================ */
+    function switchTab(tabBtn, cardId, niveau) {
+        const card = document.getElementById(cardId);
+
+        // Update tab buttons
+        card.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        tabBtn.classList.add('active');
+
+        // Update panels
+        card.querySelectorAll('.niveau-panel').forEach(panel => panel.classList.remove('active'));
+        const target = document.getElementById(`${cardId}-n${niveau}`);
+        if (target) target.classList.add('active');
+    }
+
+    /* ============================================================
+       TOGGLE AC ITEM
+    ============================================================ */
+    function toggleAC(headerEl) {
+        const item    = headerEl.closest('.ac-item');
+        const body    = item.querySelector('.ac-body');
+        const isOpen  = item.classList.contains('open');
+
+        if (isOpen) {
+            item.classList.remove('open');
+            body.classList.remove('open');
+        } else {
+            item.classList.add('open');
+            body.classList.add('open');
+        }
+    }
+
+    /* ============================================================
+       SCROLL-TRIGGERED REVEAL (IntersectionObserver)
+    ============================================================ */
+    const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+                // Also trigger mini-fill bar (always visible on scroll)
+                entry.target.classList.add('revealed');
+                revealObserver.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.08 });
+
+    document.querySelectorAll('.reveal-on-scroll').forEach(el => revealObserver.observe(el));
+
+    /* ============================================================
+       ANIMATED GLOBAL PROGRESS BAR
+       (CSS handles the animation via @keyframes fillBar)
+    ============================================================ */
+    // Already handled in CSS with animation on .progress-fill
+
+    /* ============================================================
+       KEYBOARD ACCESSIBILITY
+    ============================================================ */
+    document.querySelectorAll('.card-header, .ac-item-header').forEach(el => {
+        el.setAttribute('tabindex', '0');
+        el.setAttribute('role', 'button');
+        el.addEventListener('keydown', e => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                el.click();
+            }
+        });
+    });
+</script>
+
+</body>
 </html>

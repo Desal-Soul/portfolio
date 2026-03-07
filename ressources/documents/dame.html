@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Jeu de Dames — Portfolio Projet</title>
+
+    <style>
+        /* ======================================================
+           VARIABLES & RESET
+        ====================================================== */
+        :root {
+            --bg:          #080b10;
+            --bg-card:     #0f1420;
+            --bg-card2:    #141926;
+            --border:      rgba(255,255,255,0.07);
+            --accent:      #c9862a;
+            --accent-2:    #e8b96a;
+            --accent-glow: rgba(201,134,42,0.25);
+            --text:        #e2e8f0;
+            --text-muted:  #7a8aa0;
+            --text-dim:    #4a5568;
+            --python:      #3b82f6;
+            --tkinter:     #8b5cf6;
+            --radius:      14px;
+            --radius-sm:   8px;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Georgia', 'Times New Roman', serif;
+            line-height: 1.75;
+            overflow-x: hidden;
+        }
+
+        /* ======================================================
+           CHECKERBOARD BACKGROUND TEXTURE
+        ====================================================== */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                    repeating-conic-gradient(rgba(255,255,255,0.012) 0% 25%, transparent 0% 50%);
+            background-size: 60px 60px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Ambient glow blob */
+        body::after {
+            content: '';
+            position: fixed;
+            top: -200px;
+            right: -200px;
+            width: 700px;
+            height: 700px;
+            background: radial-gradient(circle, rgba(201,134,42,0.08) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ======================================================
+           LAYOUT HELPERS
+        ====================================================== */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        section { padding: 80px 0; }
+
+        /* ======================================================
+           TYPOGRAPHY
+        ====================================================== */
+        h1, h2, h3 {
+            font-family: 'Georgia', serif;
+            font-weight: normal;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+        }
+
+        h2 {
+            font-size: clamp(1.6rem, 3vw, 2.1rem);
+            color: var(--text);
+            margin-bottom: 12px;
+        }
+
+        h3 {
+            font-size: 1.1rem;
+            color: var(--accent-2);
+            margin-bottom: 8px;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 0.05em;
+        }
+
+        p { color: var(--text-muted); margin-bottom: 1rem; font-size: 1.02rem; }
+        p:last-child { margin-bottom: 0; }
+
+        /* ======================================================
+           SECTION LABEL
+        ====================================================== */
+        .section-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.72rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 20px;
+        }
+
+        .section-label::before {
+            content: '';
+            display: block;
+            width: 28px;
+            height: 1px;
+            background: var(--accent);
+        }
+
+        /* ======================================================
+           DIVIDER
+        ====================================================== */
+        .divider {
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border) 30%, var(--border) 70%, transparent);
+            margin: 0;
+        }
+
+        /* ======================================================
+           HERO SECTION
+        ====================================================== */
+        #hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 120px 0 80px;
+            position: relative;
+        }
+
+        /* Decorative board element */
+        .hero-board {
+            position: absolute;
+            right: -60px;
+            top: 50%;
+            transform: translateY(-50%) rotate(15deg);
+            width: 360px;
+            height: 360px;
+            opacity: 0.06;
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            grid-template-rows: repeat(8, 1fr);
+            pointer-events: none;
+        }
+
+        .hero-board-cell {
+            border: 1px solid rgba(201,134,42,0.5);
+        }
+
+        .hero-board-cell.filled { background: rgba(201,134,42,0.4); }
+
+        .hero-eyebrow {
+            font-family: 'Courier New', monospace;
+            font-size: 0.75rem;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: fadeUp 0.8s ease both;
+        }
+
+        .hero-eyebrow::after {
+            content: '';
+            flex: 1;
+            max-width: 80px;
+            height: 1px;
+            background: var(--accent);
+            opacity: 0.5;
+        }
+
+        .hero-title {
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: normal;
+            letter-spacing: -0.04em;
+            line-height: 1.0;
+            color: var(--text);
+            margin-bottom: 16px;
+            animation: fadeUp 0.8s 0.1s ease both;
+        }
+
+        .hero-title span {
+            color: var(--accent);
+            position: relative;
+        }
+
+        .hero-title span::after {
+            content: '';
+            position: absolute;
+            left: 0; bottom: 2px;
+            width: 100%; height: 3px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-2));
+            border-radius: 2px;
+        }
+
+        .hero-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            max-width: 520px;
+            margin-bottom: 36px;
+            animation: fadeUp 0.8s 0.2s ease both;
+        }
+
+        .hero-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            animation: fadeUp 0.8s 0.3s ease both;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 100px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.78rem;
+            letter-spacing: 0.04em;
+            border: 1px solid;
+        }
+
+        .badge.python {
+            background: rgba(59,130,246,0.1);
+            border-color: rgba(59,130,246,0.35);
+            color: #93c5fd;
+        }
+
+        .badge.tkinter {
+            background: rgba(139,92,246,0.1);
+            border-color: rgba(139,92,246,0.35);
+            color: #c4b5fd;
+        }
+
+        .badge.year {
+            background: rgba(201,134,42,0.1);
+            border-color: rgba(201,134,42,0.35);
+            color: var(--accent-2);
+        }
+
+        /* ======================================================
+           CARD
+        ====================================================== */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 32px;
+            transition: border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: rgba(201,134,42,0.25);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.3), 0 0 0 1px rgba(201,134,42,0.08);
+        }
+
+        /* ======================================================
+           VERSION TIMELINE
+        ====================================================== */
+        .timeline {
+            position: relative;
+            padding-left: 28px;
+            margin-top: 16px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 8px; bottom: 8px;
+            width: 1px;
+            background: linear-gradient(180deg, var(--accent), transparent);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -32px;
+            top: 8px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent);
+            box-shadow: 0 0 0 3px rgba(201,134,42,0.2);
+        }
+
+        .timeline-version {
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            color: var(--accent);
+            margin-bottom: 2px;
+        }
+
+        /* ======================================================
+           FEATURES GRID
+        ====================================================== */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 16px;
+            margin-top: 32px;
+        }
+
+        .feature-card {
+            background: var(--bg-card2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 24px;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .feature-card:hover {
+            border-color: rgba(201,134,42,0.3);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+
+        .feature-icon {
+            width: 36px;
+            height: 36px;
+            background: rgba(201,134,42,0.12);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 14px;
+            font-size: 1.1rem;
+        }
+
+        .feature-title {
+            font-family: 'Courier New', monospace;
+            font-size: 0.88rem;
+            color: var(--text);
+            margin-bottom: 6px;
+        }
+
+        .feature-desc {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        /* ======================================================
+           CAROUSEL
+        ====================================================== */
+        #carousel-section { padding: 80px 0; }
+
+        .carousel-wrapper {
+            position: relative;
+            border-radius: var(--radius);
+            overflow: hidden;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            margin-top: 32px;
+        }
+
+        .carousel-track {
+            display: flex;
+            transition: transform 0.55s cubic-bezier(0.77, 0, 0.18, 1);
+        }
+
+        .carousel-slide {
+            min-width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #05070c;
+            min-height: 420px;
+            position: relative;
+        }
+
+        .carousel-slide img {
+            max-width: 100%;
+            max-height: 480px;
+            object-fit: contain;
+            display: block;
+        }
+
+        /* Placeholder for missing images */
+        .carousel-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-dim);
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+        }
+
+        .carousel-placeholder svg { opacity: 0.3; }
+
+        .carousel-controls {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        .carousel-btn {
+            background: rgba(201,134,42,0.1);
+            border: 1px solid rgba(201,134,42,0.3);
+            border-radius: 8px;
+            color: var(--accent-2);
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            transition: background 0.2s ease, transform 0.15s ease;
+        }
+
+        .carousel-btn:hover {
+            background: rgba(201,134,42,0.2);
+            transform: scale(1.08);
+        }
+
+        .carousel-btn:active { transform: scale(0.95); }
+
+        .carousel-dots {
+            display: flex;
+            gap: 8px;
+        }
+
+        .carousel-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--text-dim);
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.3s ease;
+            border: none;
+        }
+
+        .carousel-dot.active {
+            background: var(--accent);
+            transform: scale(1.3);
+        }
+
+        .carousel-counter {
+            font-family: 'Courier New', monospace;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+        }
+
+        /* ======================================================
+           VIDEO SECTION
+        ====================================================== */
+        #video-section { padding: 80px 0; }
+
+        .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 */
+            height: 0;
+            overflow: hidden;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            margin-top: 32px;
+            background: #000;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            border: none;
+        }
+
+        /* ======================================================
+           SKILLS SECTION
+        ====================================================== */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 14px;
+            margin-top: 32px;
+        }
+
+        .skill-item {
+            background: var(--bg-card2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            transition: border-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .skill-item:hover {
+            border-color: rgba(201,134,42,0.3);
+            transform: translateY(-2px);
+        }
+
+        .skill-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--accent);
+            box-shadow: 0 0 8px var(--accent-glow);
+        }
+
+        .skill-name {
+            font-family: 'Courier New', monospace;
+            font-size: 0.88rem;
+            color: var(--text);
+        }
+
+        /* ======================================================
+           TWO-COLUMN LAYOUT
+        ====================================================== */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-top: 32px;
+        }
+
+        /* ======================================================
+           FOOTER
+        ====================================================== */
+        footer {
+            padding: 40px 0;
+            border-top: 1px solid var(--border);
+        }
+
+        .footer-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .footer-brand {
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            color: var(--text-dim);
+        }
+
+        .footer-brand span { color: var(--accent); }
+
+        .footer-note {
+            font-family: 'Courier New', monospace;
+            font-size: 0.75rem;
+            color: var(--text-dim);
+        }
+
+        /* ======================================================
+           SCROLL REVEAL
+        ====================================================== */
+        .reveal {
+            opacity: 0;
+            transform: translateY(28px);
+            transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ======================================================
+           KEYFRAMES
+        ====================================================== */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ======================================================
+           RESPONSIVE
+        ====================================================== */
+        @media (max-width: 700px) {
+            section { padding: 60px 0; }
+
+            .hero-board { display: none; }
+
+            .hero-title { font-size: clamp(2.5rem, 12vw, 4rem); }
+
+            .two-col { grid-template-columns: 1fr; }
+
+            .card { padding: 22px; }
+
+            .carousel-slide { min-height: 260px; }
+
+            .features-grid { grid-template-columns: 1fr; }
+
+            .skills-grid { grid-template-columns: 1fr 1fr; }
+
+            .footer-inner { flex-direction: column; align-items: flex-start; }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- =====================================================
+     HERO
+====================================================== -->
+<section id="hero">
+    <div class="container">
+
+        <!-- Decorative checkerboard -->
+        <div class="hero-board" id="heroBoard" aria-hidden="true"></div>
+
+        <p class="hero-eyebrow">Projet Informatique</p>
+
+        <h1 class="hero-title">
+            Jeu de<br><span>Dames</span>
+        </h1>
+
+        <p class="hero-subtitle">
+            Un jeu de dames complet développé en Python avec Tkinter —
+            de la Première au projet encadré de Terminale.
+        </p>
+
+        <div class="hero-badges">
+        <span class="badge python">
+          <!-- Python logo (SVG inline) -->
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M11.914 0C5.82 0 6.2 2.656 6.2 2.656l.007 2.752h5.814v.826H3.9S0 5.789 0 11.969c0 6.18 3.403 5.963 3.403 5.963h2.031v-2.869s-.109-3.402 3.35-3.402h5.769s3.24.052 3.24-3.131V3.129S18.28 0 11.914 0zm-3.21 1.81a1.037 1.037 0 1 1 0 2.073 1.037 1.037 0 0 1 0-2.073z"/>
+            <path d="M12.086 24c6.094 0 5.714-2.656 5.714-2.656l-.007-2.752h-5.814v-.826h8.121S24 18.211 24 12.031c0-6.18-3.403-5.963-3.403-5.963h-2.031v2.869s.109 3.402-3.35 3.402H9.447s-3.24-.052-3.24 3.131v5.4S5.72 24 12.086 24zm3.21-1.81a1.037 1.037 0 1 1 0-2.073 1.037 1.037 0 0 1 0 2.073z"/>
+          </svg>
+          Python
+        </span>
+            <span class="badge tkinter">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+            <rect x="2" y="2" width="20" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
+            <path d="M7 19h10M12 18v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          Tkinter GUI
+        </span>
+            <span class="badge year">Première → Terminale</span>
+            <span class="badge year">2 ans de développement</span>
+        </div>
+    </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- =====================================================
+     PRÉSENTATION GÉNÉRALE
+====================================================== -->
+<section id="presentation">
+    <div class="container">
+        <p class="section-label reveal">Présentation</p>
+        <h2 class="reveal">Vue d'ensemble du projet</h2>
+
+        <div class="card reveal" style="margin-top:32px;">
+            <p>
+                Ce projet incarne deux années d'apprentissage continu du développement logiciel.
+                Parti d'une idée simple — créer un jeu de dames jouable — il a évolué pour devenir
+                un cas d'étude concret en conception orientée objet, en architecture d'interface graphique
+                et en gestion de projet.
+            </p>
+            <p>
+                L'évolution en deux phases distinctes (version binôme en Première, refonte solo en Terminale)
+                illustre la progression naturelle d'un développeur face aux mêmes problèmes, mais avec
+                une maturité technique et une vision architecturale grandissantes.
+            </p>
+        </div>
+    </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- =====================================================
+     CONTEXTE — PREMIÈRE
+====================================================== -->
+<section id="contexte">
+    <div class="container">
+        <p class="section-label reveal">Contexte — Première</p>
+        <h2 class="reveal">L'origine du projet</h2>
+
+        <div class="two-col" style="margin-top:32px;">
+            <div class="card reveal">
+                <h3>La genèse</h3>
+                <p>
+                    Ce projet a débuté lors de mon année de Première, dans le cadre d'un travail libre
+                    où nous pouvions choisir librement un jeu à développer.
+                </p>
+                <p>
+                    Avec mon binôme, nous avons retenu le jeu de dames : un défi technique accessible
+                    mais suffisamment riche pour explorer les mécaniques de jeu, la gestion d'état
+                    et l'interface graphique.
+                </p>
+            </div>
+
+            <div class="card reveal" style="transition-delay:0.1s;">
+                <h3>Tkinter : la découverte</h3>
+                <p>
+                    C'est à travers ce projet que nous avons découvert <strong style="color:var(--accent-2)">Tkinter</strong>
+                    pour la première fois. Apprendre une bibliothèque graphique tout en construisant un jeu
+                    a été un exercice formatif intense.
+                </p>
+                <p>
+                    Nous avons bâti le projet progressivement, étape par étape, afin d'obtenir rapidement
+                    une version jouable et de garder la motivation intacte tout au long du développement.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- =====================================================
+     DÉVELOPPEMENT EN BINÔME — VERSIONNAGE
+====================================================== -->
+<section id="developpement">
+    <div class="container">
+        <p class="section-label reveal">Phase 1 — Binôme</p>
+        <h2 class="reveal">Développement initial & versionnage</h2>
+
+        <div class="card reveal" style="margin-top:32px;">
+            <h3>Système de versionnage <span style="font-size:0.9em;color:var(--text-muted)">— format x.y</span></h3>
+            <p>
+                Pour suivre l'évolution du projet, nous avons mis en place un système de versionnage
+                simple mais efficace, au format <code style="color:var(--accent-2);background:rgba(201,134,42,0.08);padding:2px 6px;border-radius:4px;font-size:0.9em;">x.y</code> :
+            </p>
+
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-version">x — Version majeure</div>
+                    <p style="margin:0;font-size:0.95rem;">
+                        Nouvelles règles, gestion des captures, ajout de fonctionnalités importantes
+                        modifiant en profondeur le comportement du jeu.
+                    </p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-version">y — Version mineure</div>
+                    <p style="margin:0;font-size:0.95rem;">
+                        Optimisations de performance, corrections de bugs, améliorations visuelles
+                        et ajustements de l'interface.
+                    </p>
+                </div>
+            </div>
+
+            <p style="margin-top:16px;font-style:italic;font-size:0.92rem;">
+                À l'issue de ce premier cycle, nous disposions d'une version fonctionnelle, bien que
+                peu optimisée. Avec l'évolution de Python et de Tkinter, certaines parties de ce code
+                ne sont aujourd'hui plus totalement compatibles.
+            </p>
+        </div>
+    </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- =====================================================
+     FONCTIONNALITÉS
+====================================================== -->
+<section id="fonctionnalites">
+    <div class="container">
+        <p class="section-label reveal">Fonctionnalités</p>
+        <h2 class="reveal">Ce que le jeu propose</h2>
+
+        <div class="features-grid">
+
+            <div class="feature-card reveal" style="transition-delay:0.05s;">
+                <div class="feature-icon">♟</div>
+                <div class="feature-title">Plateau dynamique</div>
+                <p class="feature-desc">Le plateau est dessiné dynamiquement via le canvas Tkinter, s'adaptant au contexte d'affichage.</p>
+            </div>
+
+            <div class="feature-card reveal" style="transition-delay:0.1s;">
+                <div class="feature-icon">⬤</div>
+                <div class="feature-title">Pions graphiques</div>
+                <p class="feature-desc">Les pions sont affichés graphiquement avec une représentation claire des deux joueurs.</p>
+            </div>
+
+            <div class="feature-card reveal" style="transition-delay:0.15s;">
+                <div class="feature-icon">⤢</div>
+                <div class="feature-title">Interface responsive</div>
+                <p class="feature-desc">L'interface s'adapte à la taille de la fenêtre pour une expérience fluide quelle que soit la résolution.</p>
+            </div>
+
+            <div class="feature-card reveal" style="transition-delay:0.2s;">
+                <div class="feature-icon">🔄</div>
+                <div class="feature-title">Gestion des tours</div>
+                <p class="feature-desc">Alternance automatique des tours entre les deux joueurs avec retour visuel de l'état de jeu.</p>
+            </div>
+
+            <div class="feature-card reveal" style="transition-delay:0.25s;">
+                <div class="feature-icon">✕</div>
+                <div class="feature-title">Captures</div>
+                <p class="feature-desc">Gestion complète des règles de capture, incluant les prises multiples sur un même tour.</p>
+            </div>
+
+            <div class="feature-card reveal" style="transition-delay:0.3s;">
+                <div class="feature-icon">🖱</div>
+                <div class="feature-title">Interface interactive</div>
+                <p class="feature-desc">Sélection et déplacement des pions à la souris via une interface graphique réactive.</p>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- =====================================================
+     VIDÉO DE DÉMONSTRATION
+====================================================== -->
+<section id="video-section">
+    <div class="container">
+        <p class="section-label reveal">Démonstration</p>
+        <h2 class="reveal">Vidéo du projet en action</h2>
+
+        <p class="reveal" style="max-width:600px;margin-top:8px;">
+            Cette vidéo présente le jeu de dames en fonctionnement,
+            illustrant l'interface graphique Tkinter, les déplacements de pions et
+            la gestion des règles du jeu.
+        </p>
+
+        <!-- Lecteur YouTube intégré (iframe) -->
+        <div class="video-wrapper reveal" style="margin-top:32px;">
+            <iframe
+                    src="https://www.youtube.com/embed/84_zolDAywM"
+                    title="Démonstration — Jeu de Dames Python / Tkinter"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowfullscreen
+                    loading="lazy"
+            ></iframe>
+        </div>
+
+    </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- =====================================================
+     REFONTE — TERMINALE
+====================================================== -->
+<section id="refonte">
+    <div class="container">
+        <p class="section-label reveal">Phase 2 — Terminale</p>
+        <h2 class="reveal">Refonte complète du projet</h2>
+
+        <div class="two-col" style="margin-top:32px;">
+            <div class="card reveal">
+                <h3>Le contexte</h3>
+                <p>
+                    En Terminale, dans le cadre d'un projet encadré et évalué, j'ai choisi de reprendre
+                    ce jeu en solo afin d'en proposer une refonte complète.
+                </p>
+                <p>
+                    Ce n'était plus seulement un jeu à faire fonctionner — c'était un logiciel à
+                    <strong style="color:var(--text)">concevoir correctement</strong>.
+                </p>
+            </div>
+
+            <div class="card reveal" style="transition-delay:0.1s;">
+                <h3>Les axes d'amélioration</h3>
+                <div class="timeline" style="margin-top:8px;">
+                    <div class="timeline-item">
+                        <p style="margin:0;font-size:0.93rem;">Réécriture complète de la structure du code</p>
+                    </div>
+                    <div class="timeline-item">
+                        <p style="margin:0;font-size:0.93rem;">Amélioration de la logique interne du jeu</p>
+                    </div>
+                    <div class="timeline-item">
+                        <p style="margin:0;font-size:0.93rem;">Refonte de l'ergonomie de l'interface</p>
+                    </div>
+                    <div class="timeline-item" style="margin-bottom:0">
+                        <p style="margin:0;font-size:0.93rem;">Restructuration pour la maintenabilité</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- =====================================================
+     COMPÉTENCES ACQUISES
+====================================================== -->
+<section id="competences">
+    <div class="container">
+        <p class="section-label reveal">Bilan</p>
+        <h2 class="reveal">Compétences développées</h2>
+
+        <p class="reveal" style="max-width:580px;margin-top:8px;">
+            Deux années de travail sur ce projet m'ont permis de consolider un ensemble de
+            compétences clés en développement logiciel.
+        </p>
+
+        <div class="skills-grid">
+
+            <div class="skill-item reveal" style="transition-delay:0.05s;">
+                <div class="skill-dot"></div>
+                <div class="skill-name">Programmation orientée objet</div>
+            </div>
+
+            <div class="skill-item reveal" style="transition-delay:0.1s;">
+                <div class="skill-dot"></div>
+                <div class="skill-name">Conception d'interfaces graphiques</div>
+            </div>
+
+            <div class="skill-item reveal" style="transition-delay:0.15s;">
+                <div class="skill-dot"></div>
+                <div class="skill-name">Modularité du code</div>
+            </div>
+
+            <div class="skill-item reveal" style="transition-delay:0.2s;">
+                <div class="skill-dot"></div>
+                <div class="skill-name">Maintenabilité & organisation</div>
+            </div>
+
+            <div class="skill-item reveal" style="transition-delay:0.25s;">
+                <div class="skill-dot"></div>
+                <div class="skill-name">Versionnage de projet</div>
+            </div>
+
+            <div class="skill-item reveal" style="transition-delay:0.3s;">
+                <div class="skill-dot"></div>
+                <div class="skill-name">Travail en binôme & solo</div>
+            </div>
+
+            <div class="skill-item reveal" style="transition-delay:0.35s;">
+                <div class="skill-dot"></div>
+                <div class="skill-name">Refactoring & réécriture</div>
+            </div>
+
+            <div class="skill-item reveal" style="transition-delay:0.4s;">
+                <div class="skill-dot"></div>
+                <div class="skill-name">Débogage & gestion des erreurs</div>
+            </div>
+
+        </div>
+
+        <!-- Conclusion -->
+        <div class="card reveal" style="margin-top:40px;border-color:rgba(201,134,42,0.2);background:linear-gradient(135deg, rgba(201,134,42,0.06), var(--bg-card));">
+            <h3 style="color:var(--accent-2)">Conclusion</h3>
+            <p>
+                Ce projet m'a accompagné pendant deux années et reflète mon évolution progressive
+                en développement logiciel, depuis mes premières expérimentations jusqu'à une version
+                plus structurée et mieux organisée.
+            </p>
+            <p>
+                Il illustre non seulement ma capacité à construire une application fonctionnelle,
+                mais aussi ma démarche d'amélioration continue et ma volonté de toujours remettre
+                mon travail en question pour produire un code de meilleure qualité.
+            </p>
+        </div>
+
+    </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- =====================================================
+     FOOTER
+====================================================== -->
+<footer>
+    <div class="container">
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <span>Jeu de Dames</span> — Projet Python / Tkinter
+            </div>
+            <div class="footer-note">Première &amp; Terminale · Python · Tkinter</div>
+        </div>
+    </div>
+</footer>
+
+
+<!-- =====================================================
+     JAVASCRIPT
+====================================================== -->
+<script>
+    /* ====================================================
+       1. GÉNÉRATION DU PLATEAU DÉCORATIF (hero)
+    ==================================================== */
+    (function buildHeroBoard() {
+        const board = document.getElementById('heroBoard');
+        if (!board) return;
+
+        // Motif damier classique (cases noires)
+        const darkCells = new Set([
+            1,3,5,7, 8,10,12,14, 17,19,21,23, 24,26,28,30,
+            33,35,37,39, 40,42,44,46, 49,51,53,55, 56,58,60,62
+        ]);
+
+        for (let i = 0; i < 64; i++) {
+            const cell = document.createElement('div');
+            cell.className = 'hero-board-cell' + (darkCells.has(i) ? ' filled' : '');
+            board.appendChild(cell);
+        }
+    })();
+
+
+    /* ====================================================
+       2. CARROUSEL D'IMAGES
+    ==================================================== */
+    (function initCarousel() {
+        const track   = document.getElementById('carouselTrack');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const dotsEl  = document.getElementById('carouselDots');
+        const counter = document.getElementById('carouselCounter');
+
+        if (!track) return;
+
+        const slides = Array.from(track.querySelectorAll('.carousel-slide'));
+        const total  = slides.length;
+        let current  = 0;
+        let autoTimer;
+
+        /* --- Création des points de navigation --- */
+        slides.forEach((_, i) => {
+            const dot = document.createElement('button');
+            dot.className   = 'carousel-dot' + (i === 0 ? ' active' : '');
+            dot.setAttribute('role', 'tab');
+            dot.setAttribute('aria-label', 'Image ' + (i + 1));
+            dot.addEventListener('click', () => goTo(i));
+            dotsEl.appendChild(dot);
+        });
+
+        /* --- Navigation vers un slide --- */
+        function goTo(index) {
+            current = (index + total) % total;
+            track.style.transform = `translateX(-${current * 100}%)`;
+
+            // Mise à jour des dots
+            dotsEl.querySelectorAll('.carousel-dot').forEach((d, i) => {
+                d.classList.toggle('active', i === current);
+                d.setAttribute('aria-selected', i === current);
+            });
+
+            // Mise à jour du compteur
+            counter.textContent = (current + 1) + ' / ' + total;
+        }
+
+        /* --- Boutons précédent / suivant --- */
+        prevBtn.addEventListener('click', () => { resetAuto(); goTo(current - 1); });
+        nextBtn.addEventListener('click', () => { resetAuto(); goTo(current + 1); });
+
+        /* --- Défilement automatique (5s) --- */
+        function startAuto() {
+            autoTimer = setInterval(() => goTo(current + 1), 5000);
+        }
+
+        function resetAuto() {
+            clearInterval(autoTimer);
+            startAuto();
+        }
+
+        startAuto();
+
+        /* --- Swipe tactile (mobile) --- */
+        let touchStartX = 0;
+        track.addEventListener('touchstart', e => {
+            touchStartX = e.changedTouches[0].clientX;
+        }, { passive: true });
+
+        track.addEventListener('touchend', e => {
+            const delta = touchStartX - e.changedTouches[0].clientX;
+            if (Math.abs(delta) > 40) {
+                resetAuto();
+                goTo(delta > 0 ? current + 1 : current - 1);
+            }
+        }, { passive: true });
+
+        /* --- Raccourcis clavier --- */
+        document.addEventListener('keydown', e => {
+            if (e.key === 'ArrowLeft')  { resetAuto(); goTo(current - 1); }
+            if (e.key === 'ArrowRight') { resetAuto(); goTo(current + 1); }
+        });
+    })();
+
+
+    /* ====================================================
+       3. SCROLL REVEAL
+    ==================================================== */
+    (function initScrollReveal() {
+        const elements = document.querySelectorAll('.reveal');
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target); // animation une seule fois
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -40px 0px'
+        });
+
+        elements.forEach(el => observer.observe(el));
+    })();
+
+</script>
+
+</body>
+</html>

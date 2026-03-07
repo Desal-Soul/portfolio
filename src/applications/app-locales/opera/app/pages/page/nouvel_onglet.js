@@ -267,7 +267,7 @@ shadow.innerHTML = `
                         <div class="voxtek-hex-icon"><span>🎧</span></div>
                         <span class="voxtek-label">DISCORD</span>
                     </a>
-                    <a href="mailto:alexandre.deschanel.666@gmail.com" class="voxtek-shortcut-item" target="_blank">
+                    <a href="mailto:alexandre.deschanel.desal@gmail.com" class="voxtek-shortcut-item" target="_blank">
                         <div class="voxtek-hex-icon"><span>✉</span></div>
                         <span class="voxtek-label">MAIL</span>
                     </a>

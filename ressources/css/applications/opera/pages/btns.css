@@ -1,5 +1,5 @@
 
-#btn_cacher, #btn_fermer {
+#btn_cacher_opera, #btn_fermer_opera {
     width: 4vh;
     height: 4vh;
     color: white;
@@ -11,12 +11,12 @@
     align-content: center;
 }
 
-#btn_cacher:hover {
+#btn_cacher_opera:hover {
     background-color: rgba(107, 127, 215, 0.69);
     font-size: 2vh;
 }
 
-#btn_fermer:hover {
+#btn_fermer_opera:hover {
     background-color: rgba(250, 26, 26, 0.69);
     font-size: 2vh;
 }

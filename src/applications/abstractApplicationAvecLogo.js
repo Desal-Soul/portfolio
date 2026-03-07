@@ -30,6 +30,9 @@ export class AbstractApplicationAvecLogo extends AbstractApplication {
 
     cacher_logo() {
         if (this._logo.classList.contains("selected")) {this._logo.classList.remove("selected");}
+        console.log(this._logo.classList)
+        if (this._logo.classList.contains("open")) {this._logo.classList.remove("open");}
+        console.log(this._logo.classList)
         if (!this._is_pin) {if (!this._logo.classList.contains("hidden")) {this._logo.classList.add("hidden");}}
     }
 
@@ -51,8 +54,7 @@ export class AbstractApplicationAvecLogo extends AbstractApplication {
 
     fermer() {
         this.cacher_logo();
-        if (this._logo.classList.contains("open")) {this._logo.classList.remove("open");}
-        super.fermer();
+        super.fermer()
     }
 
 }

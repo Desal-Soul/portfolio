@@ -7,4 +7,7 @@ accueil.insert_page(page_presentation);
 import {page_cv} from "../../pages/page/page_cv.js"
 accueil.insert_page(page_cv);
 
+import {page_contact} from "../../pages/page/page_contact.js"
+accueil.insert_page(page_contact)
+
 for (const key of accueil._listes_page._liste.keys()) {accueil._listes_page._actuel = accueil._listes_page._liste.get(key);break;}

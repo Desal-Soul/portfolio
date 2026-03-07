@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact — Portfolio</title>
+
+  <!-- Google Fonts : Syne (titres) + DM Mono (labels) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <!-- ===================== STYLES ===================== -->
+  <style>
+    /* ── Variables ─────────────────────────────────────── */
+    :root {
+      --bg:         #080c14;
+      --bg-card:    rgba(255,255,255,0.035);
+      --bg-hover:   rgba(255,255,255,0.07);
+      --border:     rgba(255,255,255,0.07);
+      --border-hover: rgba(0,229,196,0.5);
+      --accent:     #00e5c4;
+      --accent-dim: rgba(0,229,196,0.12);
+      --text:       #e8edf5;
+      --muted:      #5a6478;
+      --radius:     18px;
+
+      /* couleurs par plateforme */
+      --c-email:   #4ea8f5;
+      --c-linkedin:#0a66c2;
+      --c-github:  #e8edf5;
+      --c-gitlab:  #fc6d26;
+      --c-discord: #7289da;
+    }
+
+    /* ── Reset & base ───────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Mono', monospace;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow-x: hidden;
+    }
+
+    /* ── Fond : grille + glow central ──────────────────── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,229,196,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,229,196,.04) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      top: -20vh;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 900px;
+      height: 700px;
+      background: radial-gradient(ellipse, rgba(0,229,196,0.08) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Wrapper principal ──────────────────────────────── */
+    .page {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 820px;
+      padding: 80px 24px 60px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 56px;
+    }
+
+    /* ── Header ─────────────────────────────────────────── */
+    .header {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      animation: fadeUp .7s ease both;
+    }
+
+    .header__badge {
+      font-size: .72rem;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      border: 1px solid rgba(0,229,196,0.3);
+      padding: 6px 18px;
+      border-radius: 99px;
+      background: rgba(0,229,196,0.06);
+    }
+
+    .header__title {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2.8rem, 8vw, 5rem);
+      font-weight: 800;
+      line-height: 1.0;
+      letter-spacing: -.03em;
+      /* dégradé texte */
+      background: linear-gradient(135deg, #e8edf5 30%, var(--accent) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .header__sub {
+      font-size: .9rem;
+      color: var(--muted);
+      max-width: 420px;
+      line-height: 1.7;
+      font-weight: 300;
+    }
+
+    /* ── Grille de cartes ────────────────────────────────── */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      width: 100%;
+    }
+
+    /* ── Carte de contact ───────────────────────────────── */
+    .card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 20px;
+      padding: 28px 26px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      text-decoration: none;
+      color: var(--text);
+      overflow: hidden;
+      cursor: pointer;
+      transition:
+        background .3s ease,
+        border-color .3s ease,
+        transform .35s cubic-bezier(.22,1,.36,1),
+        box-shadow .3s ease;
+
+      /* animation d'entrée décalée — définie via JS */
+      opacity: 0;
+      transform: translateY(28px);
+    }
+
+    .card.visible {
+      animation: cardIn .55s cubic-bezier(.22,1,.36,1) both;
+    }
+
+    .card:hover {
+      background: var(--bg-hover);
+      border-color: var(--border-hover);
+      transform: translateY(-6px) scale(1.02);
+      box-shadow:
+        0 20px 60px rgba(0,0,0,0.5),
+        0 0 30px rgba(0,229,196,0.07);
+    }
+
+    /* Ligne lumineuse en haut de la carte au hover */
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--platform-color, var(--accent)), transparent);
+      opacity: 0;
+      transition: opacity .3s;
+    }
+
+    .card:hover::before { opacity: 1; }
+
+    /* Glow de fond subtil */
+    .card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: var(--radius);
+      background: radial-gradient(ellipse at top left, var(--platform-color, var(--accent)), transparent 70%);
+      opacity: 0;
+      transition: opacity .4s;
+    }
+
+    .card:hover::after { opacity: .06; }
+
+    /* ── Icône ──────────────────────────────────────────── */
+    .card__icon-wrap {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: background .3s, border-color .3s;
+      position: relative;
+      z-index: 1;
+    }
+
+    .card:hover .card__icon-wrap {
+      background: var(--accent-dim);
+      border-color: rgba(0,229,196,0.3);
+    }
+
+    .card__icon-wrap svg {
+      width: 24px;
+      height: 24px;
+      fill: var(--platform-color, var(--accent));
+      transition: transform .35s cubic-bezier(.22,1,.36,1);
+    }
+
+    .card:hover .card__icon-wrap svg { transform: scale(1.18); }
+
+    /* ── Texte ──────────────────────────────────────────── */
+    .card__body { position: relative; z-index: 1; }
+
+    .card__platform {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .card__value {
+      font-size: .78rem;
+      color: var(--muted);
+      font-weight: 300;
+      word-break: break-all;
+    }
+
+    /* ── Flèche ─────────────────────────────────────────── */
+    .card__arrow {
+      position: absolute;
+      bottom: 22px;
+      right: 22px;
+      width: 22px;
+      height: 22px;
+      opacity: 0;
+      transform: translate(-6px, 6px);
+      transition:
+        opacity .3s ease,
+        transform .35s cubic-bezier(.22,1,.36,1);
+      z-index: 1;
+    }
+
+    .card__arrow svg {
+      width: 100%;
+      height: 100%;
+      stroke: var(--accent);
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .card:hover .card__arrow {
+      opacity: 1;
+      transform: translate(0, 0);
+    }
+
+    /* ── Séparateur décoratif ────────────────────────────── */
+    .divider {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      animation: fadeUp .7s .2s ease both;
+    }
+
+    .divider__line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), transparent);
+    }
+
+    .divider__dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      opacity: .5;
+    }
+
+    /* ── Footer ─────────────────────────────────────────── */
+    footer {
+      position: relative;
+      z-index: 1;
+      padding: 24px;
+      text-align: center;
+      font-size: .72rem;
+      color: var(--muted);
+      letter-spacing: .08em;
+      font-weight: 300;
+      animation: fadeUp .7s .5s ease both;
+    }
+
+    footer span { color: var(--accent); }
+
+    /* ── Keyframes ──────────────────────────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Responsive ─────────────────────────────────────── */
+    @media (max-width: 500px) {
+      .page { padding: 60px 16px 40px; gap: 40px; }
+      .grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ===================== PAGE ===================== -->
+  <main class="page">
+
+    <!-- ── Header ── -->
+    <header class="header">
+      <div class="header__badge">Disponible pour de nouveaux projets</div>
+      <h1 class="header__title">Contact</h1>
+      <p class="header__sub">
+        Vous pouvez me contacter via les plateformes suivantes —
+        je réponds généralement sous 48 h.
+      </p>
+    </header>
+
+    <!-- ── Divider ── -->
+    <div class="divider">
+      <div class="divider__line"></div>
+      <div class="divider__dot"></div>
+      <div class="divider__line"></div>
+    </div>
+
+    <!-- ── Grille de contacts ── -->
+    <section class="grid" aria-label="Liens de contact">
+
+      <!-- Email -->
+      <a class="card"
+         href="mailto:alexandre.deschanel.desal@gmail.com"
+         style="--platform-color: var(--c-email)"
+         aria-label="Envoyer un email"
+         data-delay="0">
+        <div class="card__icon-wrap">
+          <!-- Icône Mail -->
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9
+                     2-2V6c0-1.1-.9-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"/>
+          </svg>
+        </div>
+        <div class="card__body">
+          <div class="card__platform">Email</div>
+          <div class="card__value">alexandre.deschanel.desal@gmail.com</div>
+        </div>
+        <div class="card__arrow">
+          <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </div>
+      </a>
+
+      <!-- LinkedIn -->
+      <a class="card"
+         href="https://www.linkedin.com/in/alexandre-deschanel/"
+         target="_blank" rel="noopener noreferrer"
+         style="--platform-color: var(--c-linkedin)"
+         aria-label="Profil LinkedIn"
+         data-delay="1">
+        <div class="card__icon-wrap">
+          <!-- Icône LinkedIn -->
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M20.447 20.452H16.89v-5.569c0-1.328-.027-3.037-1.852-3.037
+                     -1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046
+                     c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286z
+                     M5.337 7.433a1.98 1.98 0 0 1-1.984-1.98c0-1.093.89-1.98 1.984-1.98
+                     1.093 0 1.98.887 1.98 1.98a1.98 1.98 0 0 1-1.98 1.98z
+                     M7.119 20.452H3.555V9h3.564v11.452z"/>
+          </svg>
+        </div>
+        <div class="card__body">
+          <div class="card__platform">LinkedIn</div>
+          <div class="card__value">linkedin.com/in/alexandre-deschanel/</div>
+        </div>
+        <div class="card__arrow">
+          <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </div>
+      </a>
+
+      <!-- GitHub -->
+      <a class="card"
+         href="https://github.com/Desal-Soul"
+         target="_blank" rel="noopener noreferrer"
+         style="--platform-color: var(--c-github)"
+         aria-label="Profil GitHub"
+         data-delay="2">
+        <div class="card__icon-wrap">
+          <!-- Icône GitHub -->
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8
+                     8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04
+                     -3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7
+                     3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838
+                     1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776
+                     .417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93
+                     0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176
+                     0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405
+                     1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23
+                     .645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23
+                     3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81
+                     2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57
+                     C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
+          </svg>
+        </div>
+        <div class="card__body">
+          <div class="card__platform">GitHub</div>
+          <div class="card__value">github.com/Desal-Soul</div>
+        </div>
+        <div class="card__arrow">
+          <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </div>
+      </a>
+
+      <!-- GitLab -->
+      <a class="card"
+         href="https://gitlabinfo.iutmontp.univ-montp2.fr/deschanela"
+         target="_blank" rel="noopener noreferrer"
+         style="--platform-color: var(--c-gitlab)"
+         aria-label="Profil GitLab"
+         data-delay="3">
+        <div class="card__icon-wrap">
+          <!-- Icône GitLab -->
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M23.955 13.587l-1.342-4.135-2.664-8.189a.455.455 0 0 0-.867
+                     0L16.418 9.45H7.582L4.918 1.263a.455.455 0 0 0-.867
+                     0L1.387 9.452.045 13.587a.924.924 0 0 0 .331 1.023L12
+                     23.054l11.623-8.443a.92.92 0 0 0 .332-1.024"/>
+          </svg>
+        </div>
+        <div class="card__body">
+          <div class="card__platform">GitLab</div>
+          <div class="card__value">https://gitlabinfo.iutmontp.univ-montp2.fr/deschanela</div>
+        </div>
+        <div class="card__arrow">
+          <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </div>
+      </a>
+
+      <!-- Discord -->
+      <a class="card"
+         href="https://discord.com/users/484845929447292980"
+         target="_blank" rel="noopener noreferrer"
+         style="--platform-color: var(--c-discord)"
+         aria-label="Profil Discord"
+         data-delay="4">
+        <div class="card__icon-wrap">
+          <!-- Icône Discord -->
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074
+                     0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27
+                     0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0
+                     0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0
+                     0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0
+                     0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0
+                     .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0
+                     -.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0
+                     1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1
+                     .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1
+                     .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127
+                     12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107
+                     c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028
+                     19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054
+                     c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z
+                     M8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956
+                     -2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0
+                     1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085
+                     -2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0
+                     2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>
+          </svg>
+        </div>
+        <div class="card__body">
+          <div class="card__platform">Discord</div>
+          <div class="card__value">desal</div>
+        </div>
+        <div class="card__arrow">
+          <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </div>
+      </a>
+
+      <!-- GitHub -->
+      <a class="card"
+           href="https://github.com/Desal-42"
+           target="_blank" rel="noopener noreferrer"
+           style="--platform-color: var(--c-github)"
+           aria-label="Profil GitHub"
+           data-delay="2">
+            <div class="card__icon-wrap">
+                <!-- Icône GitHub -->
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8
+                     8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04
+                     -3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7
+                     3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838
+                     1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776
+                     .417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93
+                     0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176
+                     0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405
+                     1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23
+                     .645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23
+                     3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81
+                     2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57
+                     C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
+                </svg>
+            </div>
+            <div class="card__body">
+                <div class="card__platform">GitHub</div>
+                <div class="card__value">github.com/Desal-42</div>
+            </div>
+            <div class="card__arrow">
+                <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </div>
+        </a>
+    </section>
+    <!-- /grid -->
+
+  </main>
+  <!-- /page -->
+
+  <!-- ── Footer ── -->
+  <footer>
+    &copy; 2025 — Fait avec <span>&#9829;</span> et trop de café
+  </footer>
+
+  <!-- ===================== SCRIPT ===================== -->
+  <script>
+    /**
+     * Animation d'entrée des cartes avec délai échelonné
+     * Utilise IntersectionObserver pour déclencher l'animation
+     * uniquement quand chaque carte entre dans le viewport.
+     */
+    document.addEventListener('DOMContentLoaded', () => {
+
+      const cards = document.querySelectorAll('.card');
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const card  = entry.target;
+            const delay = parseInt(card.dataset.delay || '0', 10) * 90; // ms entre chaque carte
+            card.style.animationDelay = delay + 'ms';
+            card.classList.add('visible');
+            observer.unobserve(card); // ne déclencher qu'une fois
+          }
+        });
+      }, { threshold: 0.15 });
+
+      cards.forEach(card => observer.observe(card));
+
+      /**
+       * Effet de "tilt" léger au mouvement de la souris sur les cartes
+       * (désactivé sur écran tactile)
+       */
+      if (window.matchMedia('(hover: hover)').matches) {
+        cards.forEach(card => {
+          card.addEventListener('mousemove', (e) => {
+            const rect   = card.getBoundingClientRect();
+            const cx     = rect.left + rect.width  / 2;
+            const cy     = rect.top  + rect.height / 2;
+            const dx     = (e.clientX - cx) / (rect.width  / 2); // -1 à 1
+            const dy     = (e.clientY - cy) / (rect.height / 2); // -1 à 1
+            const rotX   =  dy * -5;   // degrés
+            const rotY   =  dx *  5;
+            card.style.transform =
+              `perspective(600px) rotateX(${rotX}deg) rotateY(${rotY}deg) translateY(-6px) scale(1.02)`;
+          });
+
+          card.addEventListener('mouseleave', () => {
+            card.style.transform = '';
+          });
+        });
+      }
+
+    });
+  </script>
+
+</body>
+</html>
